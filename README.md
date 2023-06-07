@@ -9,7 +9,8 @@ O tema para este projeto é o desenvolvimento de uma aplicação de uma loja de 
 
 ### Stack utilizada
 - Banco de dados: PostgreSQL 15.3
+- API: Java 20.01 e Spring Boot 3.1.0
 
 ### Instalação do ambiente de desenvolvimento
-- Para o banco de dados, a aplicação será conectada diretamente ao container docker durante o desenvolvimento.
- 
+- Banco de dados: a aplicação será conectada diretamente ao container docker durante o desenvolvimento.
+- API: execução a partir do Java instalado localmente
