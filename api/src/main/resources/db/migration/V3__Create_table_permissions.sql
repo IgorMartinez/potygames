@@ -1,5 +1,5 @@
 CREATE TABLE permissions (
     id SERIAL,
-    description TEXT,
+    description TEXT NOT NULL,
     PRIMARY KEY (id)
 );
