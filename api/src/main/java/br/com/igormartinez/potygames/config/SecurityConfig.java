@@ -1,8 +1,5 @@
 package br.com.igormartinez.potygames.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm;
 import org.springframework.security.web.SecurityFilterChain;
 
 import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
+import br.com.igormartinez.potygames.security.PasswordManager;
 import br.com.igormartinez.potygames.security.jwt.JwtConfigurer;
 
 @EnableWebSecurity
@@ -29,17 +24,12 @@ public class SecurityConfig {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private PasswordManager passwordManager;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-        
-        Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder("", 8, 185000, SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
-        encoders.put("pbkdf2", pbkdf2PasswordEncoder);
-        
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
-        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
-        
-        return passwordEncoder;
+        return passwordManager.getDefaultPasswordEncoder();
     }
 
     @Bean
