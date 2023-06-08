@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "name", nullable = false)
-    private String fullName;
+    private String name;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
@@ -112,12 +112,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -177,7 +177,7 @@ public class User implements UserDetails {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((accountNonExpired == null) ? 0 : accountNonExpired.hashCode());
@@ -202,10 +202,10 @@ public class User implements UserDetails {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (fullName == null) {
-            if (other.fullName != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!fullName.equals(other.fullName))
+        } else if (!name.equals(other.name))
             return false;
         if (email == null) {
             if (other.email != null)
