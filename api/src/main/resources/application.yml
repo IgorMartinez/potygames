@@ -1,3 +1,8 @@
+security:
+  jwt:
+    token:
+      secret-key: A1B4106364D1CDC2AA8A839F9EDBCF510DEEDA19E6255483CF1D928F64F318F4
+      expire-length: 3600000
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/potygames
@@ -9,4 +14,4 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    show-sql: false
