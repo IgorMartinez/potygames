@@ -3,6 +3,7 @@ package br.com.igormartinez.potygames.security;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -26,6 +27,7 @@ public class PasswordManager {
 
     public String encodePassword(String rawPassword) {
         PasswordEncoder passwordEncoder = getDefaultPasswordEncoder();
-        return passwordEncoder.encode(rawPassword);
+        String encodedString = passwordEncoder.encode(rawPassword);
+        return StringUtils.substringAfter(encodedString, "}"); // {pbkdf2}f88...
     }
 }
