@@ -58,8 +58,6 @@ public class SecurityConfig {
                     .requestMatchers("/auth/signin", "/auth/refresh").permitAll()
                     .requestMatchers("/api/**").authenticated()
             )
-            /*.cors()
-            .and() */
             /** .exceptionHandling(exceptionHandler -> exceptionHandler
                 .accessDeniedHandler(new CustomSpringSecurityExceptionHandler())
                 .authenticationEntryPoint(new CustomSpringSecurityExceptionHandler())
