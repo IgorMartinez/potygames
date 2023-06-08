@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 
 @ControllerAdvice
@@ -39,5 +40,12 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ResourceAlreadyExistsException.class})
+    public final ResponseEntity<ExceptionResponse> handleConflictExceptions(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 }
