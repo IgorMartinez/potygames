@@ -16,6 +16,7 @@ import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
+import br.com.igormartinez.potygames.exceptions.UserNotAuthorizedException;
 
 @ControllerAdvice
 @RestController
@@ -40,6 +41,13 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotAuthorizedException.class)
+    public final ResponseEntity<ExceptionResponse> handleUnauthorizedExceptions(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({ResourceAlreadyExistsException.class})
