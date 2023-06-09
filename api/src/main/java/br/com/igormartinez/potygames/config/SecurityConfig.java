@@ -46,7 +46,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers("/auth/signin", "/auth/refresh").permitAll()
+                    .requestMatchers("/api/user/v*/signup").permitAll()
                     .requestMatchers("/api/**").authenticated()
+                    .anyRequest().denyAll()
             )
             /** .exceptionHandling(exceptionHandler -> exceptionHandler
                 .accessDeniedHandler(new CustomSpringSecurityExceptionHandler())
