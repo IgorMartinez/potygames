@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
+import br.com.igormartinez.potygames.exceptions.UserNotAuthorizedException;
+import br.com.igormartinez.potygames.mapper.ObjectMapper;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.PasswordManager;
@@ -21,13 +24,15 @@ import br.com.igormartinez.potygames.security.PasswordManager;
 public class UserService implements UserDetailsService {
     
     @Autowired
+    AuthService authService;
+
+    @Autowired
     UserRepository repository;
 
     @Autowired
     PasswordManager passwordManager;
 
-    public UserService(UserRepository repository, PasswordManager passwordManager) {
-        this.repository = repository;
+    public UserService(UserRepository repository, AuthService authService, PasswordManager passwordManager) {
     }
 
     @Override
@@ -40,16 +45,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public List<User> findAll() {
-        return repository.findAll();
-    }
-
-    public User findById(Long id){
-        return repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-
-    public UserRegistrationDTO create(UserRegistrationDTO userDTO) {
+    public UserRegistrationDTO signup(UserRegistrationDTO userDTO) {
         if (userDTO == null) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
@@ -70,6 +66,27 @@ public class UserService implements UserDetailsService {
         return new UserRegistrationDTO(createdUser.getName(), createdUser.getEmail(), "");
     }
 
+    public List<UserDTO> findAll() {
+        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+            throw new UserNotAuthorizedException("The user not have permission to this resource");
+
+        return ObjectMapper.parseListObjects(repository.findAll(), UserDTO.class);
+    }
+
+    public UserDTO findById(Long id){
+        if (id == null || id <= 0)
+            throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
+
+        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !authService.verifyIdUserAuthenticated(id))
+            throw new UserNotAuthorizedException("The user not have permission to this resource");
+
+        User user = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return ObjectMapper.parseObject(user, UserDTO.class);
+    }
+
     public UserDTO update(UserDTO userDTO) {
         if (userDTO == null 
                 || userDTO.getId() == null || userDTO.getId() <= 0
@@ -80,6 +97,10 @@ public class UserService implements UserDetailsService {
                 || userDTO.getCredentialsNonExpired() == null || userDTO.getEnabled() == null) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
+        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !authService.verifyIdUserAuthenticated(userDTO.getId()))
+            throw new UserNotAuthorizedException("The user not have permission to this resource");
+
         if (!repository.existsById(userDTO.getId())) 
             throw new ResourceNotFoundException("User not found");
         
@@ -88,7 +109,7 @@ public class UserService implements UserDetailsService {
             throw new ResourceAlreadyExistsException("User alrealdy exists");
 
         if (user == null)
-            user = new User();
+            throw new ResourceNotFoundException("User not found");
 
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -114,6 +135,13 @@ public class UserService implements UserDetailsService {
     }
 
     public void delete(Long id) {
+        if (id == null || id <= 0)
+            throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
+
+        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !authService.verifyIdUserAuthenticated(id))
+            throw new UserNotAuthorizedException("The user not have permission to this resource");
+
         if (!repository.existsById(id))
             throw new ResourceNotFoundException("User not found");
         

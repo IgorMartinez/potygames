@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
-import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.services.UserService;
 
 @RestController
@@ -25,19 +24,19 @@ public class UserController {
     @Autowired
     UserService service;
 
+    @PostMapping("/signup")
+    public UserRegistrationDTO signup(@RequestBody UserRegistrationDTO userDTO) {
+        return service.signup(userDTO);
+    }
+    
     @GetMapping
-    public List<User> findAll() {
+    public List<UserDTO> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable(value = "id") Long id) {
+    public UserDTO findById(@PathVariable(value = "id") Long id) {
         return service.findById(id);
-    }
-
-    @PostMapping
-    public UserRegistrationDTO create(@RequestBody UserRegistrationDTO userDTO) {
-        return service.create(userDTO);
     }
 
     @PutMapping
