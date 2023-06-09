@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
 import br.com.igormartinez.potygames.mapper.ObjectMapper;
-import br.com.igormartinez.potygames.mock.MockUser;
+import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.models.User;
 
 public class ObjectMapperTest {

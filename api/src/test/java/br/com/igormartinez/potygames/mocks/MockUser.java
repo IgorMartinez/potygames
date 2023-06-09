@@ -1,10 +1,12 @@
-package br.com.igormartinez.potygames.mock;
+package br.com.igormartinez.potygames.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.enums.PermissionType;
+import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;
 
 public class MockUser {
@@ -19,7 +21,12 @@ public class MockUser {
         user.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setEnabled((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        user.setPermissions(new ArrayList<>());
+        
+        List<Permission> permissionList = new ArrayList<>();
+        Permission permission = new Permission();
+        permission.setDescription((number%2==0) ? PermissionType.ADMIN.getValue() : PermissionType.CUSTOMER.getValue());
+        permissionList.add(permission);
+        user.setPermissions(permissionList);
         return user;
     }
 
