@@ -1,4 +1,4 @@
-package br.com.igormartinez.potygames.mapper;
+package br.com.igormartinez.potygames.mappers;
 
 import java.util.ArrayList;
 import java.util.List;
