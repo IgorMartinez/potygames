@@ -2,6 +2,9 @@ package br.com.igormartinez.potygames.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
@@ -21,10 +24,32 @@ public class MockUser {
         user.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setEnabled((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        
+
         List<Permission> permissionList = new ArrayList<>();
         Permission permission = new Permission();
-        permission.setDescription((number%2==0) ? PermissionType.ADMIN.getValue() : PermissionType.CUSTOMER.getValue());
+        permission.setDescription(
+                (number%2==0) 
+                ? PermissionType.ADMIN.getValue() 
+                : PermissionType.CUSTOMER.getValue());
+        permissionList.add(permission);
+        user.setPermissions(permissionList);
+        return user;
+    }
+
+    public User mockUserSignup(Integer number) {
+        User user = new User();
+        user.setId(number.longValue());
+        user.setName("User name " + number);
+        user.setEmail("user_mail" + number + "@test.com");
+        user.setPassword("password" + number);
+        user.setAccountNonExpired(Boolean.TRUE);
+        user.setAccountNonLocked(Boolean.TRUE);
+        user.setCredentialsNonExpired(Boolean.TRUE);
+        user.setEnabled(Boolean.TRUE);
+
+        List<Permission> permissionList = new ArrayList<>();
+        Permission permission = new Permission();
+        permission.setDescription(PermissionType.CUSTOMER.getValue());
         permissionList.add(permission);
         user.setPermissions(permissionList);
         return user;
@@ -39,15 +64,21 @@ public class MockUser {
     }
 
     public UserDTO mockUserDTO(Integer number) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(number.longValue());
-        userDTO.setName("User name " + number);
-        userDTO.setEmail("user_mail" + number + "@test.com");
-        userDTO.setPassword("password" + number);
-        userDTO.setAccountNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        userDTO.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        userDTO.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        userDTO.setEnabled((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+        List<String> permissionList = new ArrayList<>();
+        permissionList.add((number%2==0) 
+                ? PermissionType.ADMIN.getValue() 
+                : PermissionType.CUSTOMER.getValue());
+
+        UserDTO userDTO = new UserDTO(
+            number.longValue(),
+            "User name " + number,
+            "user_mail" + number + "@test.com",
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonExpired
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonLocked
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // credentialsNonExpired
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // enabled
+            permissionList
+        );
         return userDTO;
     }
 
@@ -60,10 +91,11 @@ public class MockUser {
     }
 
     public UserRegistrationDTO mockUserRegistrationDTO(Integer number) {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO();
-        userRegistrationDTO.setName("User name " + number);
-        userRegistrationDTO.setEmail("user_mail" + number + "@test.com");
-        userRegistrationDTO.setPassword("password" + number);
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+            "User name " + number,
+            "user_mail" + number + "@test.com",
+            "password" + number
+        );
         return userRegistrationDTO;
     }
 
@@ -73,5 +105,22 @@ public class MockUser {
             userList.add(mockUserRegistrationDTO(i+1));
         }
         return userList;
+    }
+
+    public boolean isEquals(User user, UserDTO userDTO) {
+        List<String> listUser = user.getPermissions()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        return user.getId() == userDTO.id()
+            && user.getName().equals(userDTO.name())
+            && user.getEmail().equals(userDTO.email())
+            && user.getAccountNonExpired() == userDTO.accountNonExpired()
+            && user.getAccountNonLocked() == userDTO.accountNonLocked()
+            && user.getCredentialsNonExpired() == userDTO.credentialsNonExpired()
+            && user.getEnabled() == userDTO.enabled()
+            && listUser.size() == userDTO.permissions().size()
+            && listUser.containsAll(userDTO.permissions());
     }
 }
