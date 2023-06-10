@@ -5,13 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
@@ -66,18 +64,5 @@ public class AuthService {
             throw new BadCredentialsException("Invalid client request");
 
         return ResponseEntity.ok(token);
-    }
-
-    public boolean verifyPermissionUserAuthenticated(PermissionType permission) {
-        return SecurityContextHolder.getContext()
-            .getAuthentication()
-            .getAuthorities()
-            .stream()
-            .anyMatch(ga -> ga.getAuthority().equals(permission.getValue()));
-    }
-
-    public boolean verifyIdUserAuthenticated(long id) {
-        User userAuthenticated = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return id == userAuthenticated.getId();
     }
 }

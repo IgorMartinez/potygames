@@ -28,7 +28,7 @@ import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.PasswordManager;
-import br.com.igormartinez.potygames.services.AuthService;
+import br.com.igormartinez.potygames.security.SecurityContextManager;
 import br.com.igormartinez.potygames.services.UserService;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -41,13 +41,13 @@ public class UserServiceTest {
     private UserService service;
 
     @Mock
-    AuthService authService;
-
-    @Mock
     UserRepository repository;
 
     @Mock
     PasswordManager passwordManager;
+
+    @Mock
+    SecurityContextManager securityContextManager;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -91,7 +91,7 @@ public class UserServiceTest {
     @Test
     public void testFindAll() {
         List<User> mockedListUser = mockUser.mockUserList(10);
-        when(authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
         when(repository.findAll()).thenReturn(mockedListUser);
 
         List<UserDTO> listUserDTO = service.findAll();
@@ -133,8 +133,8 @@ public class UserServiceTest {
     public void testFindById() {
         User mockedUser = mockUser.mockUser(1);
 
-        when(authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(authService.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
         when(repository.findById(1L)).thenReturn(Optional.of(mockedUser));
 
         UserDTO userDTO = service.findById(1L);
@@ -154,8 +154,8 @@ public class UserServiceTest {
         UserDTO mockedUserDTO = mockUser.mockUserDTO(1);
         User mockedUser = mockUser.mockUser(1);
         
-        when(authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(authService.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
         when(repository.existsById(1L)).thenReturn(Boolean.TRUE);
         when(repository.findByEmail(mockedUserDTO.getEmail())).thenReturn(mockedUser);
         when(passwordManager.encodePassword(mockedUserDTO.getPassword())).thenReturn("encodedPassword");
@@ -174,8 +174,8 @@ public class UserServiceTest {
     }
 
     public void testDelete() {
-        when(authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(authService.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
         when(repository.existsById(1L)).thenReturn(Boolean.TRUE);
         service.delete(1L);
     }

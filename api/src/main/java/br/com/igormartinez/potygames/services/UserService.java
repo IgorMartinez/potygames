@@ -19,12 +19,10 @@ import br.com.igormartinez.potygames.mapper.ObjectMapper;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.PasswordManager;
+import br.com.igormartinez.potygames.security.SecurityContextManager;
 
 @Service
 public class UserService implements UserDetailsService {
-    
-    @Autowired
-    AuthService authService;
 
     @Autowired
     UserRepository repository;
@@ -32,7 +30,10 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordManager passwordManager;
 
-    public UserService(UserRepository repository, AuthService authService, PasswordManager passwordManager) {
+    @Autowired
+    SecurityContextManager securityContextManager;
+
+    public UserService(UserRepository repository, PasswordManager passwordManager, SecurityContextManager securityContextManager) {
     }
 
     @Override
@@ -67,7 +68,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDTO> findAll() {
-        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
             throw new UserNotAuthorizedException("The user not have permission to this resource");
 
         return ObjectMapper.parseListObjects(repository.findAll(), UserDTO.class);
@@ -77,8 +78,8 @@ public class UserService implements UserDetailsService {
         if (id == null || id <= 0)
             throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
 
-        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !authService.verifyIdUserAuthenticated(id))
+        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !securityContextManager.verifyIdUserAuthenticated(id))
             throw new UserNotAuthorizedException("The user not have permission to this resource");
 
         User user = repository.findById(id)
@@ -97,8 +98,8 @@ public class UserService implements UserDetailsService {
                 || userDTO.getCredentialsNonExpired() == null || userDTO.getEnabled() == null) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
-        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !authService.verifyIdUserAuthenticated(userDTO.getId()))
+        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !securityContextManager.verifyIdUserAuthenticated(userDTO.getId()))
             throw new UserNotAuthorizedException("The user not have permission to this resource");
 
         if (!repository.existsById(userDTO.getId())) 
@@ -138,8 +139,8 @@ public class UserService implements UserDetailsService {
         if (id == null || id <= 0)
             throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
 
-        if (!authService.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !authService.verifyIdUserAuthenticated(id))
+        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
+            || !securityContextManager.verifyIdUserAuthenticated(id))
             throw new UserNotAuthorizedException("The user not have permission to this resource");
 
         if (!repository.existsById(id))
