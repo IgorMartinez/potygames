@@ -4,15 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class UserNotAuthorizedException extends RuntimeException {
+public class UserUnauthorizedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public UserNotAuthorizedException(String ex) {
+    public UserUnauthorizedException(String ex) {
         super(ex);
     }
 
-    public UserNotAuthorizedException() {
+    public UserUnauthorizedException() {
         super("The user is not authorized to access this resource");
     }
 }
