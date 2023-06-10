@@ -1,8 +1,8 @@
 package br.com.igormartinez.potygames.models;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,11 +58,10 @@ public class User implements UserDetails {
     public User() { }
 
     public List<String> getRoles() {
-        List<String> roles = new ArrayList<>();
-        for (Permission permission : permissions) {
-            roles.add(permission.getDescription());
-        }
-        return roles;
+        return getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
     } 
 
     @Override
