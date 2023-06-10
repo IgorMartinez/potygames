@@ -1,8 +1,8 @@
 package br.com.igormartinez.potygames.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +14,11 @@ import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
-import br.com.igormartinez.potygames.exceptions.UserNotAuthorizedException;
-import br.com.igormartinez.potygames.mapper.ObjectMapper;
+import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
+import br.com.igormartinez.potygames.mappers.UserDTOMapper;
+import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;
+import br.com.igormartinez.potygames.repositories.PermissionRepository;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.PasswordManager;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
@@ -24,124 +26,117 @@ import br.com.igormartinez.potygames.security.SecurityContextManager;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    UserRepository repository;
+    private final UserRepository repository;
+    private final UserDTOMapper userDTOMapper;
+    private final PermissionRepository permissionRepository;
+    private final PasswordManager passwordManager;
+    private final SecurityContextManager securityContextManager;
 
-    @Autowired
-    PasswordManager passwordManager;
-
-    @Autowired
-    SecurityContextManager securityContextManager;
-
-    public UserService(UserRepository repository, PasswordManager passwordManager, SecurityContextManager securityContextManager) {
+    public UserService(
+            UserRepository repository, 
+            UserDTOMapper userDTOMapper,
+            PermissionRepository permissionRepository, 
+            PasswordManager passwordManager,
+            SecurityContextManager securityContextManager) {
+        this.repository = repository;
+        this.userDTOMapper = userDTOMapper;
+        this.permissionRepository = permissionRepository;
+        this.passwordManager = passwordManager;
+        this.securityContextManager = securityContextManager;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = repository.findByEmail(email);
-        
-        if (user == null) 
-            throw new UsernameNotFoundException("User not found");
-
-        return user;
+        return repository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public UserRegistrationDTO signup(UserRegistrationDTO userDTO) {
-        if (userDTO == null) 
+    public UserDTO signup(UserRegistrationDTO registrationDTO) {
+        if (registrationDTO == null
+            || registrationDTO.name() == null || registrationDTO.name().isBlank()
+            || registrationDTO.email() == null || registrationDTO.email().isBlank()
+            || registrationDTO.password() == null || registrationDTO.password().isBlank()) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
-        if (repository.findByEmail(userDTO.getEmail()) != null)
+        if (repository.existsByEmail(registrationDTO.email()))
             throw new ResourceAlreadyExistsException("User alrealdy exists");
 
         User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setName(userDTO.getName());
-        user.setPassword(passwordManager.encodePassword(userDTO.getPassword()));
+        user.setEmail(registrationDTO.email());
+        user.setName(registrationDTO.name());
+        user.setPassword(passwordManager.encodePassword(registrationDTO.password()));
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
         user.setEnabled(Boolean.TRUE);
 
-        User createdUser = repository.save(user);
+        Permission permission = permissionRepository.findByDescription(PermissionType.CUSTOMER.getValue());
+        user.setPermissions(List.of(permission));
 
-        return new UserRegistrationDTO(createdUser.getName(), createdUser.getEmail(), "");
+        User createdUser = repository.save(user);
+        return userDTOMapper.apply(createdUser);
     }
 
     public List<UserDTO> findAll() {
         if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
-            throw new UserNotAuthorizedException("The user not have permission to this resource");
+            throw new UserUnauthorizedException("The user not have permission to this resource");
 
-        return ObjectMapper.parseListObjects(repository.findAll(), UserDTO.class);
+        return repository.findAll()
+            .stream()
+            .map(userDTOMapper)
+            .collect(Collectors.toList());
     }
 
     public UserDTO findById(Long id){
         if (id == null || id <= 0)
             throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
 
-        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !securityContextManager.verifyIdUserAuthenticated(id))
-            throw new UserNotAuthorizedException("The user not have permission to this resource");
+        if (!securityContextManager.verifyIdUserAuthenticated(id)
+            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+            throw new UserUnauthorizedException("The user not have permission to this resource");
 
-        User user = repository.findById(id)
+        return repository.findById(id)
+            .map(userDTOMapper)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        return ObjectMapper.parseObject(user, UserDTO.class);
     }
 
     public UserDTO update(UserDTO userDTO) {
         if (userDTO == null 
-                || userDTO.getId() == null || userDTO.getId() <= 0
-                || userDTO.getName() == null || userDTO.getName().isBlank() 
-                || userDTO.getEmail() == null || userDTO.getEmail().isBlank()
-                || userDTO.getPassword() == null || userDTO.getPassword().isBlank()
-                || userDTO.getAccountNonExpired() == null || userDTO.getAccountNonLocked() == null
-                || userDTO.getCredentialsNonExpired() == null || userDTO.getEnabled() == null) 
+                || userDTO.id() == null || userDTO.id() <= 0
+                || userDTO.name() == null || userDTO.name().isBlank() 
+                || userDTO.email() == null || userDTO.email().isBlank()
+                || userDTO.accountNonExpired() == null || userDTO.accountNonLocked() == null
+                || userDTO.credentialsNonExpired() == null || userDTO.credentialsNonExpired() == null) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
-        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !securityContextManager.verifyIdUserAuthenticated(userDTO.getId()))
-            throw new UserNotAuthorizedException("The user not have permission to this resource");
+        if (!securityContextManager.verifyIdUserAuthenticated(userDTO.id())
+            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+            throw new UserUnauthorizedException("The user not have permission to this resource");
 
-        if (!repository.existsById(userDTO.getId())) 
-            throw new ResourceNotFoundException("User not found");
+        User user = repository.findById(userDTO.id())
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
-        User user = repository.findByEmail(userDTO.getEmail());
-        if (user != null && user.getId() != userDTO.getId())
-            throw new ResourceAlreadyExistsException("User alrealdy exists");
+        if (!user.getEmail().equals(userDTO.email()) && repository.existsByEmail(userDTO.email())) 
+            new ResourceAlreadyExistsException("User alrealdy exists");
 
-        if (user == null)
-            throw new ResourceNotFoundException("User not found");
-
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(passwordManager.encodePassword(userDTO.getPassword()));
-        user.setAccountNonExpired(userDTO.getAccountNonExpired());
-        user.setAccountNonLocked(userDTO.getAccountNonLocked());
-        user.setCredentialsNonExpired(userDTO.getCredentialsNonExpired());
-        user.setEnabled(userDTO.getCredentialsNonExpired());
+        user.setName(userDTO.name());
+        user.setEmail(userDTO.email());
+        user.setAccountNonExpired(userDTO.accountNonExpired());
+        user.setAccountNonLocked(userDTO.accountNonLocked());
+        user.setCredentialsNonExpired(userDTO.credentialsNonExpired());
+        user.setEnabled(userDTO.enabled());
 
         User updatedUser = repository.save(user);
-
-        UserDTO updatedUserDTO = new UserDTO();
-        updatedUserDTO.setId(updatedUser.getId());
-        updatedUserDTO.setName(updatedUser.getName());
-        updatedUserDTO.setEmail(updatedUser.getEmail());
-        updatedUserDTO.setPassword("");
-        updatedUserDTO.setAccountNonExpired(updatedUser.getAccountNonExpired());
-        updatedUserDTO.setAccountNonLocked(updatedUser.getAccountNonLocked());
-        updatedUserDTO.setCredentialsNonExpired(updatedUser.getCredentialsNonExpired());
-        updatedUserDTO.setEnabled(updatedUser.getEnabled());
-
-        return updatedUserDTO;
+        return userDTOMapper.apply(updatedUser);
     }
 
     public void delete(Long id) {
         if (id == null || id <= 0)
             throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
 
-        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)
-            || !securityContextManager.verifyIdUserAuthenticated(id))
-            throw new UserNotAuthorizedException("The user not have permission to this resource");
+        if (!securityContextManager.verifyIdUserAuthenticated(id)
+            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+            throw new UserUnauthorizedException("The user not have permission to this resource");
 
         if (!repository.existsById(id))
             throw new ResourceNotFoundException("User not found");
