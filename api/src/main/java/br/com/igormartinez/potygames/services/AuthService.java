@@ -1,6 +1,5 @@
 package br.com.igormartinez.potygames.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,14 +15,16 @@ import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
 
 @Service
 public class AuthService {
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository repository;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository repository;
+    public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager,
+            UserRepository repository) {
+        this.tokenProvider = tokenProvider;
+        this.authenticationManager = authenticationManager;
+        this.repository = repository;
+    }
 
     @SuppressWarnings("rawtypes")
     public ResponseEntity signin(AccountCredentials accountCredentials) {
@@ -35,9 +36,8 @@ public class AuthService {
         String password = accountCredentials.getPassword();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        User user = repository.findByEmail(username);
-        if (user == null)
-            throw new UsernameNotFoundException("Username " + username + " not found");
+        User user = repository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found"));
         
         Token token = tokenProvider.createAccessToken(username, user.getRoles());
         if (token == null)
