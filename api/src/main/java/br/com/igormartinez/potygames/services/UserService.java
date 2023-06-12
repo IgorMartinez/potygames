@@ -106,7 +106,8 @@ public class UserService implements UserDetailsService {
     }
 
     public UserPersonalInformationDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
-        if (userDTO == null 
+        if (id == null || id <= 0
+            || userDTO == null
             || userDTO.id() == null || userDTO.id() <= 0 || userDTO.id() != id
             || userDTO.name() == null || userDTO.name().isBlank()
             || userDTO.birthDate() == null
@@ -119,6 +120,7 @@ public class UserService implements UserDetailsService {
 
         User user = repository.findById(userDTO.id())
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            
         user.setName(userDTO.name());
         user.setBirthDate(userDTO.birthDate());
         user.setDocumentNumber(userDTO.documentNumber());
