@@ -53,9 +53,9 @@ public class UserService implements UserDetailsService {
 
     public UserDTO signup(UserRegistrationDTO registrationDTO) {
         if (registrationDTO == null
-            || registrationDTO.name() == null || registrationDTO.name().isBlank()
             || registrationDTO.email() == null || registrationDTO.email().isBlank()
             || registrationDTO.password() == null || registrationDTO.password().isBlank()
+            || registrationDTO.name() == null || registrationDTO.name().isBlank()
             || registrationDTO.birthDate() == null 
             || registrationDTO.documentNumber() == null || registrationDTO.documentNumber().isBlank()) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
