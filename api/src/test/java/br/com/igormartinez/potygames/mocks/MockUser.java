@@ -1,10 +1,8 @@
 package br.com.igormartinez.potygames.mocks;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.GrantedAuthority;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
@@ -20,6 +18,8 @@ public class MockUser {
         user.setName("User name " + number);
         user.setEmail("user_mail" + number + "@test.com");
         user.setPassword("password" + number);
+        user.setBirthDate(LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1));
+        user.setDocumentNumber("000.000.000-"+String.format("%02d", number%100));
         user.setAccountNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
@@ -42,6 +42,8 @@ public class MockUser {
         user.setName("User name " + number);
         user.setEmail("user_mail" + number + "@test.com");
         user.setPassword("password" + number);
+        user.setBirthDate(LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1));
+        user.setDocumentNumber("000.000.000-"+String.format("%02d", number%100));
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
@@ -71,8 +73,10 @@ public class MockUser {
 
         UserDTO userDTO = new UserDTO(
             number.longValue(),
-            "User name " + number,
             "user_mail" + number + "@test.com",
+            "User name " + number,
+            LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
+            "000.000.000-"+String.format("%02d", number%100),
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonExpired
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonLocked
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // credentialsNonExpired
@@ -94,7 +98,9 @@ public class MockUser {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
             "User name " + number,
             "user_mail" + number + "@test.com",
-            "password" + number
+            "password" + number,
+            LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
+            "000.000.000-"+String.format("%02d", number%100)
         );
         return userRegistrationDTO;
     }
@@ -105,22 +111,5 @@ public class MockUser {
             userList.add(mockUserRegistrationDTO(i+1));
         }
         return userList;
-    }
-
-    public boolean isEquals(User user, UserDTO userDTO) {
-        List<String> listUser = user.getPermissions()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        return user.getId() == userDTO.id()
-            && user.getName().equals(userDTO.name())
-            && user.getEmail().equals(userDTO.email())
-            && user.getAccountNonExpired() == userDTO.accountNonExpired()
-            && user.getAccountNonLocked() == userDTO.accountNonLocked()
-            && user.getCredentialsNonExpired() == userDTO.credentialsNonExpired()
-            && user.getEnabled() == userDTO.enabled()
-            && listUser.size() == userDTO.permissions().size()
-            && listUser.containsAll(userDTO.permissions());
     }
 }

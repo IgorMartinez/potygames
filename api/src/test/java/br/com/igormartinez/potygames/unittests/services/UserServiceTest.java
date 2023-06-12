@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,8 +126,10 @@ public class UserServiceTest {
         UserDTO createdUserDTO = service.signup(mockedUserRegistrationDTO);
         assertNotNull(createdUserDTO);
         assertEquals(Long.valueOf(1L), createdUserDTO.id());
-        assertEquals("User name 1", createdUserDTO.name());
         assertEquals("user_mail1@test.com", createdUserDTO.email());
+        assertEquals("User name 1", createdUserDTO.name());
+        assertTrue(LocalDate.of(1951, 2, 2).isEqual(createdUserDTO.birthDate()));
+        assertEquals("000.000.000-01", createdUserDTO.documentNumber());
         assertTrue(createdUserDTO.accountNonExpired());
         assertTrue(createdUserDTO.accountNonLocked());
         assertTrue(createdUserDTO.credentialsNonExpired());
@@ -145,30 +148,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSignupWithNullName() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(null, "teste", "teste");
-
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithBlankName() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(" ", "teste", "teste");
-
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
     public void testSignupWithNullEmail() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO("teste", null, "teste");
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                null, "pasword", "name", 
+                LocalDate.of(2023,06,12), "documentNumber");
 
         Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -179,7 +162,9 @@ public class UserServiceTest {
 
     @Test
     public void testSignupWithBlankEmail() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO("teste", "", "teste");
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                " ", "pasword", "name", 
+                LocalDate.of(2023,06,12), "documentNumber");
 
         Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -190,7 +175,9 @@ public class UserServiceTest {
 
     @Test
     public void testSignupWithNullPassword() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO("teste", "teste", null);
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", null, "name", 
+                LocalDate.of(2023,06,12), "documentNumber");
 
         Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -201,7 +188,74 @@ public class UserServiceTest {
 
     @Test
     public void testSignupWithBlankPassword() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO("teste", "teste", " ");
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "", "name", 
+                LocalDate.of(2023,06,12), "documentNumber");
+
+        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.signup(userRegistrationDTO);
+        });
+        String expectedMessage = "Request object cannot be null";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    public void testSignupWithNullName() {
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "password", null, 
+                LocalDate.of(2023,06,12), "documentNumber");
+
+        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.signup(userRegistrationDTO);
+        });
+        String expectedMessage = "Request object cannot be null";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    public void testSignupWithBlankName() {
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "password", "", 
+                LocalDate.of(2023,06,12), "documentNumber");
+
+        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.signup(userRegistrationDTO);
+        });
+        String expectedMessage = "Request object cannot be null";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    public void testSignupWithNullBirthDate() {
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "password", "name", 
+                null, "documentNumber");
+
+        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.signup(userRegistrationDTO);
+        });
+        String expectedMessage = "Request object cannot be null";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    public void testSignupWithNullDocumentNumber() {
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "password", "", 
+                LocalDate.of(2023,06,12), null);
+
+        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.signup(userRegistrationDTO);
+        });
+        String expectedMessage = "Request object cannot be null";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    public void testSignupWithDocumentNumber() {
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                "email", "password", "", 
+                LocalDate.of(2023,06,12), "");
 
         Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -235,8 +289,10 @@ public class UserServiceTest {
 
         UserDTO outputPos0 = output.get(0);
         assertEquals(Long.valueOf(1L), outputPos0.id());
-        assertEquals("User name 1", outputPos0.name());
         assertEquals("user_mail1@test.com", outputPos0.email());
+        assertEquals("User name 1", outputPos0.name());
+        assertTrue(LocalDate.of(1951, 2, 2).isEqual(outputPos0.birthDate()));
+        assertEquals("000.000.000-01", outputPos0.documentNumber());
         assertFalse(outputPos0.accountNonExpired());
         assertFalse(outputPos0.accountNonLocked());
         assertFalse(outputPos0.credentialsNonExpired());
@@ -246,8 +302,10 @@ public class UserServiceTest {
 
         UserDTO outputPos5 = output.get(5);
         assertEquals(Long.valueOf(6L), outputPos5.id());
-        assertEquals("User name 6", outputPos5.name());
         assertEquals("user_mail6@test.com", outputPos5.email());
+        assertEquals("User name 6", outputPos5.name());
+        assertTrue(LocalDate.of(1956, 7, 7).isEqual(outputPos5.birthDate()));
+        assertEquals("000.000.000-06", outputPos5.documentNumber());
         assertTrue(outputPos5.accountNonExpired());
         assertTrue(outputPos5.accountNonLocked());
         assertTrue(outputPos5.credentialsNonExpired());
@@ -257,8 +315,10 @@ public class UserServiceTest {
 
         UserDTO outputPos9 = output.get(9);
         assertEquals(Long.valueOf(10L), outputPos9.id());
-        assertEquals("User name 10", outputPos9.name());
         assertEquals("user_mail10@test.com", outputPos9.email());
+        assertEquals("User name 10", outputPos9.name());
+        assertTrue(LocalDate.of(1960, 11, 11).isEqual(outputPos9.birthDate()));
+        assertEquals("000.000.000-10", outputPos9.documentNumber());
         assertTrue(outputPos9.accountNonExpired());
         assertTrue(outputPos9.accountNonLocked());
         assertTrue(outputPos9.credentialsNonExpired());
@@ -327,8 +387,10 @@ public class UserServiceTest {
         UserDTO output = service.findById(1L);
         assertNotNull(output);
         assertEquals(Long.valueOf(1L), output.id());
-        assertEquals("User name 1", output.name());
         assertEquals("user_mail1@test.com", output.email());
+        assertEquals("User name 1", output.name());
+        assertTrue(LocalDate.of(1951, 2, 2).isEqual(output.birthDate()));
+        assertEquals("000.000.000-01", output.documentNumber());
         assertFalse(output.accountNonExpired());
         assertFalse(output.accountNonLocked());
         assertFalse(output.credentialsNonExpired());
@@ -348,8 +410,10 @@ public class UserServiceTest {
         UserDTO output = service.findById(1L);
         assertNotNull(output);
         assertEquals(Long.valueOf(1L), output.id());
-        assertEquals("User name 1", output.name());
         assertEquals("user_mail1@test.com", output.email());
+        assertEquals("User name 1", output.name());
+        assertTrue(LocalDate.of(1951, 2, 2).isEqual(output.birthDate()));
+        assertEquals("000.000.000-01", output.documentNumber());
         assertFalse(output.accountNonExpired());
         assertFalse(output.accountNonLocked());
         assertFalse(output.credentialsNonExpired());
