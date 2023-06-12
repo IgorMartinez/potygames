@@ -1,5 +1,6 @@
 package br.com.igormartinez.potygames.models;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "users")
@@ -28,14 +31,21 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "birth_date")
+    @Temporal(TemporalType.DATE)
+    private LocalDate birthDate;
+
+    @Column(name = "document_number", length = 14)
+    private String documentNumber;
 
     @Column(name = "account_non_expired", nullable = false)
     private Boolean accountNonExpired;
@@ -57,7 +67,7 @@ public class User implements UserDetails {
 
     public User() { }
 
-    public List<String> getRoles() {
+    public List<String> getPermissionDescriptionList() {
         return getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
@@ -111,14 +121,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -129,6 +131,30 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     public Boolean getAccountNonExpired() {
@@ -176,9 +202,11 @@ public class User implements UserDetails {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
+        result = prime * result + ((documentNumber == null) ? 0 : documentNumber.hashCode());
         result = prime * result + ((accountNonExpired == null) ? 0 : accountNonExpired.hashCode());
         result = prime * result + ((accountNonLocked == null) ? 0 : accountNonLocked.hashCode());
         result = prime * result + ((credentialsNonExpired == null) ? 0 : credentialsNonExpired.hashCode());
@@ -201,11 +229,6 @@ public class User implements UserDetails {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
         if (email == null) {
             if (other.email != null)
                 return false;
@@ -215,6 +238,21 @@ public class User implements UserDetails {
             if (other.password != null)
                 return false;
         } else if (!password.equals(other.password))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (birthDate == null) {
+            if (other.birthDate != null)
+                return false;
+        } else if (!birthDate.equals(other.birthDate))
+            return false;
+        if (documentNumber == null) {
+            if (other.documentNumber != null)
+                return false;
+        } else if (!documentNumber.equals(other.documentNumber))
             return false;
         if (accountNonExpired == null) {
             if (other.accountNonExpired != null)
@@ -244,5 +282,6 @@ public class User implements UserDetails {
         return true;
     }
 
+    
     
 }

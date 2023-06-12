@@ -39,7 +39,7 @@ public class AuthService {
         User user = repository.findByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found"));
         
-        Token token = tokenProvider.createAccessToken(username, user.getRoles());
+        Token token = tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
         if (token == null)
             throw new BadCredentialsException("Invalid client request");
 

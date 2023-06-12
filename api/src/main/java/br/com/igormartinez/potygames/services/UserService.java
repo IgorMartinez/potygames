@@ -55,7 +55,9 @@ public class UserService implements UserDetailsService {
         if (registrationDTO == null
             || registrationDTO.name() == null || registrationDTO.name().isBlank()
             || registrationDTO.email() == null || registrationDTO.email().isBlank()
-            || registrationDTO.password() == null || registrationDTO.password().isBlank()) 
+            || registrationDTO.password() == null || registrationDTO.password().isBlank()
+            || registrationDTO.birthDate() == null 
+            || registrationDTO.documentNumber() == null || registrationDTO.documentNumber().isBlank()) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
 
         if (repository.existsByEmail(registrationDTO.email()))
@@ -65,6 +67,8 @@ public class UserService implements UserDetailsService {
         user.setEmail(registrationDTO.email());
         user.setName(registrationDTO.name());
         user.setPassword(passwordManager.encodePassword(registrationDTO.password()));
+        user.setBirthDate(registrationDTO.birthDate());
+        user.setDocumentNumber(registrationDTO.documentNumber());
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
@@ -103,8 +107,10 @@ public class UserService implements UserDetailsService {
     public UserDTO update(UserDTO userDTO) {
         if (userDTO == null 
                 || userDTO.id() == null || userDTO.id() <= 0
-                || userDTO.name() == null || userDTO.name().isBlank() 
                 || userDTO.email() == null || userDTO.email().isBlank()
+                || userDTO.name() == null || userDTO.name().isBlank() 
+                || userDTO.birthDate() == null 
+                || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank()
                 || userDTO.accountNonExpired() == null || userDTO.accountNonLocked() == null
                 || userDTO.credentialsNonExpired() == null || userDTO.credentialsNonExpired() == null) 
             throw new RequiredObjectIsNullException("Request object cannot be null");
@@ -119,8 +125,10 @@ public class UserService implements UserDetailsService {
         if (!user.getEmail().equals(userDTO.email()) && repository.existsByEmail(userDTO.email())) 
             new ResourceAlreadyExistsException("User alrealdy exists");
 
-        user.setName(userDTO.name());
         user.setEmail(userDTO.email());
+        user.setName(userDTO.name());
+        user.setBirthDate(userDTO.birthDate());
+        user.setDocumentNumber(userDTO.documentNumber());
         user.setAccountNonExpired(userDTO.accountNonExpired());
         user.setAccountNonLocked(userDTO.accountNonLocked());
         user.setCredentialsNonExpired(userDTO.credentialsNonExpired());

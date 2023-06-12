@@ -1,7 +1,11 @@
 package br.com.igormartinez.potygames.data.dto.v1;
 
+import java.time.LocalDate;
+
 public record UserRegistrationDTO (
-    String name,
     String email,
-    String password
+    String password,
+    String name,
+    LocalDate birthDate,
+    String documentNumber
 ) { }
