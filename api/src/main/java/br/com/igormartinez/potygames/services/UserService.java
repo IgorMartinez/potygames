@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
@@ -104,16 +105,13 @@ public class UserService implements UserDetailsService {
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public UserDTO update(UserDTO userDTO) {
+    public UserPersonalInformationDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
         if (userDTO == null 
-                || userDTO.id() == null || userDTO.id() <= 0
-                || userDTO.email() == null || userDTO.email().isBlank()
-                || userDTO.name() == null || userDTO.name().isBlank() 
-                || userDTO.birthDate() == null 
-                || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank()
-                || userDTO.accountNonExpired() == null || userDTO.accountNonLocked() == null
-                || userDTO.credentialsNonExpired() == null || userDTO.credentialsNonExpired() == null) 
-            throw new RequiredObjectIsNullException("Request object cannot be null");
+            || userDTO.id() == null || userDTO.id() <= 0 || userDTO.id() != id
+            || userDTO.name() == null || userDTO.name().isBlank()
+            || userDTO.birthDate() == null
+            || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank())
+                throw new RequiredObjectIsNullException("Request object cannot be null");
 
         if (!securityContextManager.verifyIdUserAuthenticated(userDTO.id())
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
@@ -121,21 +119,14 @@ public class UserService implements UserDetailsService {
 
         User user = repository.findById(userDTO.id())
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        if (!user.getEmail().equals(userDTO.email()) && repository.existsByEmail(userDTO.email())) 
-            new ResourceAlreadyExistsException("User alrealdy exists");
-
-        user.setEmail(userDTO.email());
         user.setName(userDTO.name());
         user.setBirthDate(userDTO.birthDate());
         user.setDocumentNumber(userDTO.documentNumber());
-        user.setAccountNonExpired(userDTO.accountNonExpired());
-        user.setAccountNonLocked(userDTO.accountNonLocked());
-        user.setCredentialsNonExpired(userDTO.credentialsNonExpired());
-        user.setEnabled(userDTO.enabled());
 
         User updatedUser = repository.save(user);
-        return userDTOMapper.apply(updatedUser);
+        return new UserPersonalInformationDTO(
+                updatedUser.getId(), updatedUser.getName(), 
+                updatedUser.getBirthDate(), updatedUser.getDocumentNumber());
     }
 
     public void delete(Long id) {

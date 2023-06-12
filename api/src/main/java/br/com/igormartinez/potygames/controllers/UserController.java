@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
 import br.com.igormartinez.potygames.services.UserService;
 
 @RestController
@@ -39,9 +40,11 @@ public class UserController {
         return service.findById(id);
     }
 
-    @PutMapping
-    public UserDTO update(@RequestBody UserDTO userDTO) {
-        return service.update(userDTO);
+    @PutMapping("/{id}/personal-information")
+    public UserPersonalInformationDTO updatePersonalInformation(
+            @PathVariable(value = "id") Long id,
+            @RequestBody UserPersonalInformationDTO userDTO) {
+        return service.updatePersonaInformation(id, userDTO);
     }
 
     @DeleteMapping("/{id}")
