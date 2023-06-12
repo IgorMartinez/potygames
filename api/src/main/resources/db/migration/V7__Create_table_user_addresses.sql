@@ -2,6 +2,7 @@ CREATE TABLE user_addresses (
     id SERIAL,
     id_user INTEGER NOT NULL,
     favorite BOOLEAN DEFAULT FALSE,
+    billing_address BOOLEAN DEFAULT FALSE,
     description TEXT,
     street TEXT,
     number TEXT,
