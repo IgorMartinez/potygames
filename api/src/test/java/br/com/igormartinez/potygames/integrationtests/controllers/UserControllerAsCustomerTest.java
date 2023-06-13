@@ -138,11 +138,14 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                         .as(ExceptionResponse.class);
 
         assertNotNull(exceptionResponse);
-        assertNotNull(exceptionResponse.getTimestamp());
-        assertNotNull(exceptionResponse.getMessage());
-        assertEquals("The user not have permission to this resource", exceptionResponse.getMessage());
-        assertNotNull(exceptionResponse.getDetails());
-        assertEquals("uri=/api/user/v1", exceptionResponse.getDetails());
+        assertNotNull(exceptionResponse.getTitle());
+        assertEquals("Unauthorized", exceptionResponse.getTitle());
+        assertNotNull(exceptionResponse.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponse.getStatus().intValue());
+        assertNotNull(exceptionResponse.getDetail());
+        assertEquals("The user not have permission to this resource", exceptionResponse.getDetail());
+        assertNotNull(exceptionResponse.getInstance());
+        assertEquals("uri=/api/user/v1", exceptionResponse.getInstance());
     }
 
     @Test

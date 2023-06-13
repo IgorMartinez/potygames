@@ -22,7 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
@@ -117,7 +116,7 @@ public class AuthServiceTest {
 
         when(userRepository.findByEmail("test")).thenReturn(Optional.ofNullable(null));
 
-        Exception output = assertThrows(UsernameNotFoundException.class, () -> {
+        Exception output = assertThrows(BadCredentialsException.class, () -> {
             service.signin(accountCredentials);
         });
         String expectedMessage = "Bad credentials";
