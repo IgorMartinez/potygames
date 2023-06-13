@@ -1,8 +1,8 @@
 package br.com.igormartinez.potygames.exceptions.handlers;
 
 import java.io.IOException;
-import java.util.Date;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -20,15 +20,25 @@ public class CustomSpringSecurityExceptionHandler implements AuthenticationEntry
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "Authentication required", request.getRequestURI());
+        ExceptionResponse exceptionResponse = 
+            new ExceptionResponse(
+                "Unauthorized", 
+                HttpStatus.UNAUTHORIZED.value(), 
+                "Authentication required", 
+                request.getRequestURI());
         response.getWriter().write(exceptionResponse.toJsonString());
-        response.setStatus(401);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exc) throws IOException {
         response.setContentType("application/json");
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "Not authorized", request.getRequestURI());
+        ExceptionResponse exceptionResponse = 
+            new ExceptionResponse(
+                "Unauthorized", 
+                HttpStatus.UNAUTHORIZED.value(), 
+                "Not authorized", 
+                request.getRequestURI());
         response.getWriter().write(exceptionResponse.toJsonString());
         response.setStatus(401);
     }

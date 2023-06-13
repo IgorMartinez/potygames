@@ -1,36 +1,42 @@
 package br.com.igormartinez.potygames.exceptions;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ExceptionResponse implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Date timestamp;
-    private String message;
-    private String details;
+    private String title;
+    private Integer status;
+    private String detail;
+    private String instance;
 
-    public ExceptionResponse(Date timestamp, String message, String details){
-        this.timestamp = timestamp;
-        this.message = message;
-        this.details = details;
+    public ExceptionResponse(String title, Integer status, String detail, String instance) {
+        this.title = title;
+        this.status = status;
+        this.detail = detail;
+        this.instance = instance;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
-    public String getMessage() {
-        return message;
+    public String getTitle() {
+        return title;
     }
 
-    public String getDetails() {
-        return details;
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getInstance() {
+        return instance;
     }
 
     public String toJsonString(){
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        return "{\"timestamp\":\""+df.format(timestamp)+"\",\"message\":\""+message+"\",\"details\":\""+details+"\"}";
+        return "{\"title\":\""+title+"\",\"status\":\""+status+"\",\"detail\":\""+detail+"\",\"instance\":\""+instance+"\"}";
     }
 }
