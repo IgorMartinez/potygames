@@ -21,6 +21,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.exceptions.ErrorCreationTokenException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -44,14 +45,27 @@ public class JwtTokenProvider {
         algorithm = Algorithm.HMAC256(secretKey.getBytes());
     }
 
+    /**
+     * Receive a username and roles and return a valid token. 
+     * The user has already been authenticated.
+     * @param username
+     * @param roles
+     * @throws ErrorCreationTokenException
+     * @return Token
+     */
     public Token createAccessToken(String username, List<String> roles) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime validity = ZonedDateTime.now().plus(validInMilliseconds, ChronoUnit.MILLIS);
 
-        String accessToken = getAccessToken(username, roles, now, validity);
-        String refreshToken = getRefreshToken(username, roles, now);
-
-        return new Token(username, true, now, validity, accessToken, refreshToken);
+        try {
+            String accessToken = getAccessToken(username, roles, now, validity);
+            String refreshToken = getRefreshToken(username, roles, now);
+            
+            return new Token(username, true, now, validity, accessToken, refreshToken);
+        
+        } catch (Exception ex) {
+            throw new ErrorCreationTokenException();
+        }
     }
 
     public Token refreshToken(String refreshToken) {
