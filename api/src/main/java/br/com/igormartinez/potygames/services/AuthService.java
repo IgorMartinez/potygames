@@ -26,34 +26,29 @@ public class AuthService {
         this.repository = repository;
     }
 
-    @SuppressWarnings("rawtypes")
-    public ResponseEntity signin(AccountCredentials accountCredentials) {
+    public Token signin(AccountCredentials accountCredentials) {
         
-        if (isAccountCredentialsNull(accountCredentials))
-            throw new BadCredentialsException("Invalid client request");
+        if (accountCredentials == null 
+            || accountCredentials.getUsername() == null || accountCredentials.getUsername().isBlank()
+            || accountCredentials.getPassword() == null || accountCredentials.getPassword().isBlank())
+            throw new BadCredentialsException("Bad credentials");
         
         String username = accountCredentials.getUsername();
         String password = accountCredentials.getPassword();
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
+        
         User user = repository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Bad credentials"));
+        
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         
         Token token = tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
         if (token == null)
-            throw new BadCredentialsException("Invalid client request");
+            throw new BadCredentialsException("Bad credentials");
 
-        return ResponseEntity.ok(token);
-    }
-    
-    private boolean isAccountCredentialsNull(AccountCredentials accountCredentials) {
-        return accountCredentials == null 
-            || accountCredentials.getUsername() == null || accountCredentials.getUsername().isBlank()
-            || accountCredentials.getPassword() == null || accountCredentials.getPassword().isBlank();
+        return token;
     }
 
-    @SuppressWarnings("rawtypes")
-    public ResponseEntity refresh(String refreshToken) {
+    public Token refresh(String refreshToken) {
 
         if (refreshToken == null || refreshToken.isBlank())
             throw new BadCredentialsException("Invalid client request");
@@ -63,6 +58,6 @@ public class AuthService {
         if (token == null)
             throw new BadCredentialsException("Invalid client request");
 
-        return ResponseEntity.ok(token);
+        return token;
     }
 }

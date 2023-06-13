@@ -22,12 +22,12 @@ public class AuthController {
     @PostMapping("/signin")
     @SuppressWarnings("rawtypes")
     public ResponseEntity signin(@RequestBody AccountCredentials accountCredentials) {
-        return service.signin(accountCredentials);
+        return ResponseEntity.ok(service.signin(accountCredentials));
     }
 
     @PutMapping("/refresh")
     @SuppressWarnings("rawtypes")
     public ResponseEntity refresh(@RequestHeader("Authorization") String refreshToken) {
-        return service.refresh(refreshToken);
+        return ResponseEntity.ok(service.refresh(refreshToken));
     }
 }
