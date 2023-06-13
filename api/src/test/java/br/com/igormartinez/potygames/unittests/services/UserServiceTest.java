@@ -26,7 +26,7 @@ import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -113,7 +113,7 @@ public class UserServiceTest {
 
     @Test
     public void testSignupWithParamNull() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(null);
         });
         String expectedMessage = "Request object cannot be null";
@@ -126,7 +126,7 @@ public class UserServiceTest {
                 null, "pasword", "name", 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -139,7 +139,7 @@ public class UserServiceTest {
                 " ", "pasword", "name", 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -152,7 +152,7 @@ public class UserServiceTest {
                 "email", null, "name", 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -165,7 +165,7 @@ public class UserServiceTest {
                 "email", "", "name", 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -178,7 +178,7 @@ public class UserServiceTest {
                 "email", "password", null, 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -191,7 +191,7 @@ public class UserServiceTest {
                 "email", "password", "", 
                 LocalDate.of(2023,06,12), "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -204,7 +204,7 @@ public class UserServiceTest {
                 "email", "password", "name", 
                 null, "documentNumber");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -217,7 +217,7 @@ public class UserServiceTest {
                 "email", "password", "name", 
                 LocalDate.of(2023,06,12), null);
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -230,7 +230,7 @@ public class UserServiceTest {
                 "email", "password", "", 
                 LocalDate.of(2023,06,12), "");
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -353,7 +353,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdWithParamNull() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(null);
         });
         String expectedMessage = "ID cannot be null or less than zero";
@@ -362,7 +362,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdWithParamZero() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(0L);
         });
         String expectedMessage = "ID cannot be null or less than zero";
@@ -371,7 +371,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdWithParamNegative() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(-1231L);
         });
         String expectedMessage = "ID cannot be null or less than zero";
@@ -451,7 +451,7 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdNull() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(null, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -462,7 +462,7 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdZero() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(0L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -473,7 +473,7 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdNegative() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(-555L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -482,7 +482,7 @@ public class UserServiceTest {
 
     @Test
     public void testUpdatePersonalInformationWithParamUserDTONull() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, null);
         });
         String expectedMessage = "Request object cannot be null";
@@ -498,7 +498,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -514,7 +514,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -530,7 +530,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -546,7 +546,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -562,7 +562,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -578,7 +578,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -594,7 +594,7 @@ public class UserServiceTest {
             "000.000.000-01"
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -610,7 +610,7 @@ public class UserServiceTest {
             null
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -626,7 +626,7 @@ public class UserServiceTest {
             ""
         );
 
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
         String expectedMessage = "Request object cannot be null";
@@ -709,7 +709,7 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteWithParamNull() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(null);
         });
         String expectedMessage = "ID cannot be null or less than zero";
@@ -718,7 +718,7 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteWithParamZero() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(0L);
         });
         String expectedMessage = "ID cannot be null or less than zero";
@@ -727,7 +727,7 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteWithParamNegative() {
-        Exception output = assertThrows(RequiredObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(-1156L);
         });
         String expectedMessage = "ID cannot be null or less than zero";

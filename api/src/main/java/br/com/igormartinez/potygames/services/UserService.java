@@ -12,7 +12,7 @@ import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.exceptions.RequiredObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -59,7 +59,7 @@ public class UserService implements UserDetailsService {
             || registrationDTO.name() == null || registrationDTO.name().isBlank()
             || registrationDTO.birthDate() == null 
             || registrationDTO.documentNumber() == null || registrationDTO.documentNumber().isBlank()) 
-            throw new RequiredObjectIsNullException("Request object cannot be null");
+            throw new RequestObjectIsNullException("Request object cannot be null");
 
         if (repository.existsByEmail(registrationDTO.email()))
             throw new ResourceAlreadyExistsException("User alrealdy exists");
@@ -94,7 +94,7 @@ public class UserService implements UserDetailsService {
 
     public UserDTO findById(Long id){
         if (id == null || id <= 0)
-            throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
+            throw new RequestObjectIsNullException("ID cannot be null or less than zero");
 
         if (!securityContextManager.verifyIdUserAuthenticated(id)
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
             || userDTO.name() == null || userDTO.name().isBlank()
             || userDTO.birthDate() == null
             || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank())
-                throw new RequiredObjectIsNullException("Request object cannot be null");
+                throw new RequestObjectIsNullException("Request object cannot be null");
 
         if (!securityContextManager.verifyIdUserAuthenticated(userDTO.id())
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
@@ -133,7 +133,7 @@ public class UserService implements UserDetailsService {
 
     public void delete(Long id) {
         if (id == null || id <= 0)
-            throw new RequiredObjectIsNullException("ID cannot be null or less than zero");
+            throw new RequestObjectIsNullException("ID cannot be null or less than zero");
 
         if (!securityContextManager.verifyIdUserAuthenticated(id)
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
