@@ -50,12 +50,12 @@ public class AuthService {
     public Token refresh(String refreshToken) {
 
         if (refreshToken == null || refreshToken.isBlank())
-            throw new BadCredentialsException("Invalid client request");
+            throw new BadCredentialsException("Bad credentials");
         
         Token token = tokenProvider.refreshToken(refreshToken);
 
         if (token == null)
-            throw new BadCredentialsException("Invalid client request");
+            throw new BadCredentialsException("Bad credentials");
 
         return token;
     }
