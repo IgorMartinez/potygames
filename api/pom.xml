@@ -17,7 +17,7 @@
 		<java.version>20</java.version>
 		<java-jwt.version>3.18.3</java-jwt.version>
 		<modelmapper.version>3.1.1</modelmapper.version>
-		<testcontainers.version>1.17.6</testcontainers.version>
+		<testcontainers.version>1.18.3</testcontainers.version>
 		<rest-assured.version>5.3.0</rest-assured.version>
 		<springdoc.version>2.1.0</springdoc.version>
 	</properties>
@@ -93,7 +93,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>mysql</artifactId>
+			<artifactId>postgresql</artifactId>
 			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
