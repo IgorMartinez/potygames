@@ -1,5 +1,7 @@
 package br.com.igormartinez.potygames.security.jwt;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -43,8 +45,8 @@ public class JwtTokenProvider {
     }
 
     public Token createAccessToken(String username, List<String> roles) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validInMilliseconds);
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime validity = ZonedDateTime.now().plus(validInMilliseconds, ChronoUnit.MILLIS);
 
         String accessToken = getAccessToken(username, roles, now, validity);
         String refreshToken = getRefreshToken(username, roles, now);
@@ -63,26 +65,26 @@ public class JwtTokenProvider {
         return createAccessToken(username, roles);
     }
 
-    private String getAccessToken(String username, List<String> roles, Date now, Date validity) {
+    private String getAccessToken(String username, List<String> roles, ZonedDateTime now, ZonedDateTime validity) {
         String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
         return JWT.create()
             .withClaim("roles", roles)
-            .withIssuedAt(now)
-            .withExpiresAt(validity)
+            .withIssuedAt(Date.from(now.toInstant()))
+            .withExpiresAt(Date.from(validity.toInstant()))
             .withSubject(username)
             .withIssuer(issuerUrl)
             .sign(algorithm)
             .strip();
     }
 
-    private String getRefreshToken(String username, List<String> roles, Date now) {
-        Date validityRefreshToken = new Date(now.getTime() + (validInMilliseconds * 3));
+    private String getRefreshToken(String username, List<String> roles, ZonedDateTime now) {
+        ZonedDateTime validityRefreshToken = now.plus(validInMilliseconds * 3, ChronoUnit.MILLIS);
         
         return JWT.create()
             .withClaim("roles", roles)
-            .withIssuedAt(now)
-            .withExpiresAt(validityRefreshToken)
+            .withIssuedAt(Date.from(now.toInstant()))
+            .withExpiresAt(Date.from(validityRefreshToken.toInstant()))
             .withSubject(username)
             .sign(algorithm)
             .strip();

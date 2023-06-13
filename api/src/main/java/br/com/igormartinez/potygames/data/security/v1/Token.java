@@ -1,21 +1,21 @@
 package br.com.igormartinez.potygames.data.security.v1;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class Token implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String username;
     private Boolean authenticated;
-    private Date created;
-    private Date expiration;
+    private ZonedDateTime created;
+    private ZonedDateTime expiration;
     private String accessToken;
     private String refreshToken;
 
     public Token() {}
 
-    public Token(String username, Boolean authenticated, Date created, Date expiration, String accessToken, String refreshToken) {
+    public Token(String username, Boolean authenticated, ZonedDateTime created, ZonedDateTime expiration, String accessToken, String refreshToken) {
         this.username = username;
         this.authenticated = authenticated;
         this.created = created;
@@ -40,19 +40,19 @@ public class Token implements Serializable {
         this.authenticated = authenticated;
     }
 
-    public Date getCreated() {
+    public ZonedDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(ZonedDateTime created) {
         this.created = created;
     }
 
-    public Date getExpiration() {
+    public ZonedDateTime getExpiration() {
         return expiration;
     }
 
-    public void setExpiration(Date expiration) {
+    public void setExpiration(ZonedDateTime expiration) {
         this.expiration = expiration;
     }
 
