@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
 import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
@@ -29,33 +31,28 @@ public class AuthService {
         if (accountCredentials == null 
             || accountCredentials.getUsername() == null || accountCredentials.getUsername().isBlank()
             || accountCredentials.getPassword() == null || accountCredentials.getPassword().isBlank())
-            throw new BadCredentialsException("Bad credentials");
+            throw new RequestObjectIsNullException();
         
         String username = accountCredentials.getUsername();
         String password = accountCredentials.getPassword();
         
         User user = repository.findByEmail(username)
-            .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+            .orElseThrow(() -> new InvalidUsernamePasswordException());
         
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (BadCredentialsException ex) {
+            throw new InvalidUsernamePasswordException();
+        }
         
-        Token token = tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
-        if (token == null)
-            throw new BadCredentialsException("Bad credentials");
-
-        return token;
+        return tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
     }
 
     public Token refresh(String refreshToken) {
 
         if (refreshToken == null || refreshToken.isBlank())
-            throw new BadCredentialsException("Bad credentials");
+            throw new RequestObjectIsNullException();
         
-        Token token = tokenProvider.refreshToken(refreshToken);
-
-        if (token == null)
-            throw new BadCredentialsException("Bad credentials");
-
-        return token;
+        return tokenProvider.refreshToken(refreshToken);
     }
 }
