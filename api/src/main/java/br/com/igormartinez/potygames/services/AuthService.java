@@ -3,7 +3,6 @@ package br.com.igormartinez.potygames.services;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
@@ -36,7 +35,7 @@ public class AuthService {
         String password = accountCredentials.getPassword();
         
         User user = repository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Bad credentials"));
+            .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
         
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         
