@@ -10,4 +10,7 @@ public class TestConfigs {
 
     public static final String ORIGIN_LOCALHOST = "http://localhost:8080";
     public static final String ORIGIN_NOTALLOWED = "https://www.google.com/";
+
+    public static final String USER_ADMIN_USERNAME = "rlayzell0@pen.io";
+    public static final String USER_ADMIN_PASSWORD = "SDNrJOfLg";
 }
