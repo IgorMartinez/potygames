@@ -80,7 +80,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
     void testSigninWithoutAccountCredentials() {
         ExceptionResponse output = 
             given()
@@ -104,7 +103,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(3)
     void testSigninWithWrongEmail() {
         AccountCredentials accountCredentials = 
             new AccountCredentials("wrongemail", TestConfigs.USER_ADMIN_PASSWORD);
@@ -132,7 +130,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(4)
     void testSigninWithWrongPassword() {
         AccountCredentials accountCredentials = 
             new AccountCredentials(TestConfigs.USER_ADMIN_USERNAME, "wrongpassword");
@@ -211,7 +208,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
     
     @Test
-    @Order(102)
     void testRefreshTokenWithoutHeader() {
         ExceptionResponse output = 
             given()
@@ -235,7 +231,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(103)
     void testRefreshTokenWithTokenBlank() {
         ExceptionResponse output = 
             given()
@@ -260,7 +255,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(104)
     void testRefreshTokenWithTokenInvalid() {
         ExceptionResponse output = 
             given()
@@ -285,7 +279,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(105)
     void testRefreshTokenWithTokenExpired() {
         ExceptionResponse output = 
             given()
