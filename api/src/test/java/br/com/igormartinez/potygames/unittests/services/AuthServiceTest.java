@@ -21,10 +21,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
+
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
+import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
+import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
 import br.com.igormartinez.potygames.mocks.MockToken;
 import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.models.User;
@@ -59,10 +65,10 @@ public class AuthServiceTest {
 
     @Test
     void testSigninWithParamNull() {
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signin(null);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -70,10 +76,10 @@ public class AuthServiceTest {
     void testSigninWithParamUsernameNull() {
         AccountCredentials accountCredentials = new AccountCredentials(null, "test");
 
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -81,10 +87,10 @@ public class AuthServiceTest {
     void testSigninWithParamUsernameBlank() {
         AccountCredentials accountCredentials = new AccountCredentials("", "test");
 
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -92,10 +98,10 @@ public class AuthServiceTest {
     void testSigninWithParamPasswordNull() {
         AccountCredentials accountCredentials = new AccountCredentials("test", null);
 
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -103,10 +109,10 @@ public class AuthServiceTest {
     void testSigninWithParamPasswordBlank() {
         AccountCredentials accountCredentials = new AccountCredentials("test", "");
 
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -116,12 +122,11 @@ public class AuthServiceTest {
 
         when(userRepository.findByEmail("test")).thenReturn(Optional.ofNullable(null));
 
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(InvalidUsernamePasswordException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Invalid email or password";
         assertTrue(output.getMessage().contains(expectedMessage));
-
     }
 
     @Test
@@ -133,15 +138,33 @@ public class AuthServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        Exception output = assertThrows(AuthenticationException.class, () -> {
+        Exception output = assertThrows(InvalidUsernamePasswordException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Invalid email or password";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
-    void testSigninWithCorrectCredentials() {
+    void testSigninWithTokenCreationError() {
+        AccountCredentials accountCredentials = new AccountCredentials("test", "test");
+        User user = mockUser.mockUser(1);
+
+        when(userRepository.findByEmail("test")).thenReturn(Optional.of(user));
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenReturn(null);
+        when(tokenProvider.createAccessToken("test", user.getPermissionDescriptionList()))
+            .thenThrow(new JWTCreationException(null, null));
+
+        Exception output = assertThrows(TokenCreationErrorException.class, () -> {
+            service.signin(accountCredentials);
+        });
+        String expectedMessage = "There was an error while creating the JWT token";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testSigninWithTokenCreationSuccess() {
         AccountCredentials accountCredentials = new AccountCredentials("test", "test");
         User user = mockUser.mockUser(1);
         Token token = mockToken.mockToken(accountCredentials.getUsername());
@@ -183,43 +206,49 @@ public class AuthServiceTest {
     }
 
     @Test
-    void testSigninWithGeneratedTokenNull() {
-        AccountCredentials accountCredentials = new AccountCredentials("test", "test");
-        User user = mockUser.mockUser(1);
-
-        when(userRepository.findByEmail("test")).thenReturn(Optional.of(user));
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-            .thenReturn(null);
-        when(tokenProvider.createAccessToken("test", user.getPermissionDescriptionList()))
-            .thenReturn(null);
-
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
-            service.signin(accountCredentials);
-        });
-        String expectedMessage = "Bad credentials";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
     void testRefreshWithParamNull() {
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.refresh(null);
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     void testRefreshWithParamBlank() {
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
+        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.refresh("");
         });
-        String expectedMessage = "Bad credentials";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
-    void testSigninWithCorrectToken() {
+    void testRefreshWithInvalidToken() {
+        when(tokenProvider.refreshToken("mockedRefreshToken"))
+            .thenThrow(new JWTVerificationException(null));
+
+        Exception output = assertThrows(InvalidTokenException.class, () -> {
+            service.refresh("mockedRefreshToken");
+        });
+        String expectedMessage = "Invalid token";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testRefreshWithTokenCreationeError() {
+        when(tokenProvider.refreshToken("mockedRefreshToken"))
+            .thenThrow(new JWTCreationException(null, null));
+
+        Exception output = assertThrows(TokenCreationErrorException.class, () -> {
+            service.refresh("mockedRefreshToken");
+        });
+        String expectedMessage = "There was an error while creating the JWT token";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testRefreshWithTokenCreationSuccess() {
         Token token = mockToken.mockToken("test");
 
         ZonedDateTime expectedCreatedTime = ZonedDateTime.of(
@@ -252,17 +281,6 @@ public class AuthServiceTest {
         assertTrue(expectedExpirationTime.isEqual(output.getExpiration()));
         assertEquals("mockedAccessToken", output.getAccessToken());
         assertEquals("mockedRefreshToken", output.getRefreshToken());
-    }
-
-    @Test
-    void testRefreshWithGeneratedTokenNull() {
-        when(tokenProvider.refreshToken("mockedRefreshToken")).thenReturn(null);
-
-        Exception output = assertThrows(BadCredentialsException.class, () -> {
-            service.refresh("mockedRefreshToken");
-        });
-        String expectedMessage = "Bad credentials";
-        assertTrue(output.getMessage().contains(expectedMessage));
     }
 
 }
