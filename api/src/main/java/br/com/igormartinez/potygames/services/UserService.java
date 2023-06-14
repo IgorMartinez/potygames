@@ -59,10 +59,10 @@ public class UserService implements UserDetailsService {
             || registrationDTO.name() == null || registrationDTO.name().isBlank()
             || registrationDTO.birthDate() == null 
             || registrationDTO.documentNumber() == null || registrationDTO.documentNumber().isBlank()) 
-            throw new RequestObjectIsNullException("Request object cannot be null");
+            throw new RequestObjectIsNullException();
 
         if (repository.existsByEmail(registrationDTO.email()))
-            throw new ResourceAlreadyExistsException("User alrealdy exists");
+            throw new ResourceAlreadyExistsException();
 
         User user = new User();
         user.setEmail(registrationDTO.email());
@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
 
     public List<UserDTO> findAll() {
         if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
-            throw new UserUnauthorizedException("The user not have permission to this resource");
+            throw new UserUnauthorizedException();
 
         return repository.findAll()
             .stream()
@@ -94,15 +94,15 @@ public class UserService implements UserDetailsService {
 
     public UserDTO findById(Long id){
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException("ID cannot be null or less than zero");
+            throw new RequestObjectIsNullException();
 
         if (!securityContextManager.verifyIdUserAuthenticated(id)
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
-            throw new UserUnauthorizedException("The user not have permission to this resource");
+            throw new UserUnauthorizedException();
 
         return repository.findById(id)
             .map(userDTOMapper)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException());
     }
 
     public UserPersonalInformationDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
@@ -112,14 +112,14 @@ public class UserService implements UserDetailsService {
             || userDTO.name() == null || userDTO.name().isBlank()
             || userDTO.birthDate() == null
             || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank())
-                throw new RequestObjectIsNullException("Request object cannot be null");
+                throw new RequestObjectIsNullException();
 
         if (!securityContextManager.verifyIdUserAuthenticated(userDTO.id())
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
-            throw new UserUnauthorizedException("The user not have permission to this resource");
+            throw new UserUnauthorizedException();
 
         User user = repository.findById(userDTO.id())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException());
             
         user.setName(userDTO.name());
         user.setBirthDate(userDTO.birthDate());
@@ -127,20 +127,22 @@ public class UserService implements UserDetailsService {
 
         User updatedUser = repository.save(user);
         return new UserPersonalInformationDTO(
-                updatedUser.getId(), updatedUser.getName(), 
-                updatedUser.getBirthDate(), updatedUser.getDocumentNumber());
+                updatedUser.getId(), 
+                updatedUser.getName(), 
+                updatedUser.getBirthDate(), 
+                updatedUser.getDocumentNumber());
     }
 
     public void delete(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException("ID cannot be null or less than zero");
+            throw new RequestObjectIsNullException();
 
         if (!securityContextManager.verifyIdUserAuthenticated(id)
             && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
-            throw new UserUnauthorizedException("The user not have permission to this resource");
+            throw new UserUnauthorizedException();
 
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException("User not found");
+            throw new ResourceNotFoundException();
         
         repository.deleteById(id);
     }
