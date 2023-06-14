@@ -46,7 +46,6 @@ public class UserController {
         summary = "Find all user",
         responses = {
             @ApiResponse(description = "Success", responseCode = "200", content = @Content),
-            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
             @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
             @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
             @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
