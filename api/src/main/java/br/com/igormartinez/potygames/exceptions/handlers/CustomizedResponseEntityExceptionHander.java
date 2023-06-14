@@ -10,19 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.igormartinez.potygames.exceptions.ErrorCreationTokenException;
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
+import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
+import br.com.igormartinez.potygames.exceptions.MalformedRequestTokenException;
 
 @ControllerAdvice
 @RestController
 public class CustomizedResponseEntityExceptionHander extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ErrorCreationTokenException.class, Exception.class})
+    @ExceptionHandler({Exception.class})
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
@@ -46,7 +47,13 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({RequestObjectIsNullException.class, InvalidUsernamePasswordException.class, BadCredentialsException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({
+        RequestObjectIsNullException.class, 
+        InvalidUsernamePasswordException.class,
+        MalformedRequestTokenException.class,
+        InvalidTokenException.class, 
+        BadCredentialsException.class, 
+        UsernameNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(

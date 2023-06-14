@@ -2,6 +2,7 @@ package br.com.igormartinez.potygames.security.jwt;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +19,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.ErrorCreationTokenException;
+import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
+import br.com.igormartinez.potygames.exceptions.MalformedRequestTokenException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -50,31 +53,36 @@ public class JwtTokenProvider {
      * The user has already been authenticated.
      * @param username
      * @param roles
-     * @throws ErrorCreationTokenException
      * @return Token
      */
     public Token createAccessToken(String username, List<String> roles) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime validity = ZonedDateTime.now().plus(validInMilliseconds, ChronoUnit.MILLIS);
 
-        try {
-            String accessToken = getAccessToken(username, roles, now, validity);
-            String refreshToken = getRefreshToken(username, roles, now);
+        String accessToken = getAccessToken(username, roles, now, validity);
+        String refreshToken = getRefreshToken(username, roles, now);
             
-            return new Token(username, true, now, validity, accessToken, refreshToken);
-        
-        } catch (Exception ex) {
-            throw new ErrorCreationTokenException();
-        }
+        return new Token(username, true, now, validity, accessToken, refreshToken);
     }
 
     public Token refreshToken(String refreshToken) {
-        if (refreshToken.contains("Bearer ")) refreshToken = refreshToken.substring("Bearer ".length());
+        if (refreshToken.contains("Bearer ")) 
+            refreshToken = refreshToken.substring("Bearer ".length());
+        else
+            throw new MalformedRequestTokenException();
 
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT = verifier.verify(refreshToken);
-        String username = decodedJWT.getSubject();
-        List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
+        String username = "";
+        List<String> roles = new ArrayList<>();
+
+        try {
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            username = decodedJWT.getSubject();
+            roles = decodedJWT.getClaim("roles").asList(String.class);
+        } catch (JWTVerificationException ex) {
+            // catched in DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            throw new InvalidTokenException();
+        }
 
         return createAccessToken(username, roles);
     }
