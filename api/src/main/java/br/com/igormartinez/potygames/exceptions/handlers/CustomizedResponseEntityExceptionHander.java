@@ -15,15 +15,15 @@ import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
+import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
-import br.com.igormartinez.potygames.exceptions.MalformedRequestTokenException;
 
 @ControllerAdvice
 @RestController
 public class CustomizedResponseEntityExceptionHander extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({TokenCreationErrorException.class, Exception.class})
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
@@ -48,10 +48,7 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
     }
 
     @ExceptionHandler({
-        RequestObjectIsNullException.class, 
-        InvalidUsernamePasswordException.class,
-        MalformedRequestTokenException.class,
-        InvalidTokenException.class, 
+        RequestObjectIsNullException.class,
         BadCredentialsException.class, 
         UsernameNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
@@ -65,7 +62,10 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserUnauthorizedException.class)
+    @ExceptionHandler({
+        UserUnauthorizedException.class,
+        InvalidUsernamePasswordException.class,
+        InvalidTokenException.class})
     public final ResponseEntity<ExceptionResponse> handleUnauthorizedExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
