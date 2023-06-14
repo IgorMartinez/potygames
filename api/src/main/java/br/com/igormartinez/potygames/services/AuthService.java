@@ -5,9 +5,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
+import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.UserRepository;
@@ -41,18 +46,24 @@ public class AuthService {
         
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            return tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
         } catch (BadCredentialsException ex) {
             throw new InvalidUsernamePasswordException();
+        } catch (JWTCreationException ex){
+            throw new TokenCreationErrorException();
         }
-        
-        return tokenProvider.createAccessToken(username, user.getPermissionDescriptionList());
     }
 
     public Token refresh(String refreshToken) {
-
         if (refreshToken == null || refreshToken.isBlank())
             throw new RequestObjectIsNullException();
         
-        return tokenProvider.refreshToken(refreshToken);
+        try {
+            return tokenProvider.refreshToken(refreshToken);
+        } catch (JWTVerificationException ex){
+            throw new InvalidTokenException();
+        } catch (JWTCreationException ex){
+            throw new TokenCreationErrorException();
+        }
     }
 }
