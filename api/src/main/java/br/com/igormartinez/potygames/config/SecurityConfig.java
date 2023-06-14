@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
+import br.com.igormartinez.potygames.exceptions.handlers.CustomSpringSecurityExceptionHandler;
 import br.com.igormartinez.potygames.security.PasswordManager;
 import br.com.igormartinez.potygames.security.jwt.JwtConfigurer;
 
@@ -39,6 +40,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        CustomSpringSecurityExceptionHandler customExceptionHandler = new CustomSpringSecurityExceptionHandler();
+
         http
             .httpBasic(HttpBasicConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable)
@@ -51,10 +54,10 @@ public class SecurityConfig {
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().denyAll()
             )
-            /** .exceptionHandling(exceptionHandler -> exceptionHandler
-                .accessDeniedHandler(new CustomSpringSecurityExceptionHandler())
-                .authenticationEntryPoint(new CustomSpringSecurityExceptionHandler())
-            ) */
+            .exceptionHandling(exceptionHandler -> exceptionHandler
+                .accessDeniedHandler(customExceptionHandler)
+                .authenticationEntryPoint(customExceptionHandler)
+            )
             .apply(new JwtConfigurer(tokenProvider));
         
         return http.build();
