@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 public class ExceptionResponse implements Serializable {
     private static final long serialVersionUID = 1L;
+    private String type;
     private String title;
     private Integer status;
     private String detail;
     private String instance;
 
-    public ExceptionResponse(String title, Integer status, String detail, String instance) {
+    public ExceptionResponse(String type, String title, Integer status, String detail, String instance) {
+        this.type = type;
         this.title = title;
         this.status = status;
         this.detail = detail;
@@ -18,6 +20,10 @@ public class ExceptionResponse implements Serializable {
 
     public static long getSerialversionuid() {
         return serialVersionUID;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getTitle() {
@@ -37,6 +43,6 @@ public class ExceptionResponse implements Serializable {
     }
 
     public String toJsonString(){
-        return "{\"title\":\""+title+"\",\"status\":\""+status+"\",\"detail\":\""+detail+"\",\"instance\":\""+instance+"\"}";
+        return "{\"type\":\""+type+"\",\"title\":\""+title+"\",\"status\":\""+status+"\",\"detail\":\""+detail+"\",\"instance\":\""+instance+"\"}";
     }
 }

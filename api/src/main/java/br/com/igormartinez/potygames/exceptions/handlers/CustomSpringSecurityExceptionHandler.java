@@ -22,12 +22,13 @@ public class CustomSpringSecurityExceptionHandler implements AuthenticationEntry
         response.setContentType("application/json");
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
+                "about:blank",
                 "Unauthorized", 
-                HttpStatus.UNAUTHORIZED.value(), 
+                HttpStatus.FORBIDDEN.value(), 
                 "Authentication required", 
                 request.getRequestURI());
         response.getWriter().write(exceptionResponse.toJsonString());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
     }
 
     @Override
@@ -35,12 +36,13 @@ public class CustomSpringSecurityExceptionHandler implements AuthenticationEntry
         response.setContentType("application/json");
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
+                "about:blank",
                 "Unauthorized", 
-                HttpStatus.UNAUTHORIZED.value(), 
+                HttpStatus.FORBIDDEN.value(), 
                 "Not authorized", 
                 request.getRequestURI());
         response.getWriter().write(exceptionResponse.toJsonString());
-        response.setStatus(401);
+        response.setStatus(HttpStatus.FORBIDDEN.value());
     }
 
 }
