@@ -19,12 +19,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
-import br.com.igormartinez.potygames.exceptions.MalformedRequestTokenException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -54,6 +53,8 @@ public class JwtTokenProvider {
      * @param username
      * @param roles
      * @return Token
+     * @throws JWTCreationException
+     * @throws IllegalArgumentException
      */
     public Token createAccessToken(String username, List<String> roles) {
         ZonedDateTime now = ZonedDateTime.now();
@@ -65,28 +66,38 @@ public class JwtTokenProvider {
         return new Token(username, true, now, validity, accessToken, refreshToken);
     }
 
+    /**
+     * Receive a refresh token and return a new valid token
+     * @param refreshToken
+     * @return Token
+     * @throws JWTVerificationException error verifying the token
+     * @throws JWTCreationException error creating a new token
+     * @throws IllegalArgumentException inexpected args in a function
+     */
     public Token refreshToken(String refreshToken) {
-        if (refreshToken.contains("Bearer ")) 
-            refreshToken = refreshToken.substring("Bearer ".length());
-        else
-            throw new MalformedRequestTokenException();
+        if (refreshToken.contains("Bearer ")) refreshToken = refreshToken.substring("Bearer ".length());
 
         String username = "";
         List<String> roles = new ArrayList<>();
 
-        try {
-            JWTVerifier verifier = JWT.require(algorithm).build();
-            DecodedJWT decodedJWT = verifier.verify(refreshToken);
-            username = decodedJWT.getSubject();
-            roles = decodedJWT.getClaim("roles").asList(String.class);
-        } catch (JWTVerificationException ex) {
-            // catched in DecodedJWT decodedJWT = verifier.verify(refreshToken);
-            throw new InvalidTokenException();
-        }
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(refreshToken);
+        username = decodedJWT.getSubject();
+        roles = decodedJWT.getClaim("roles").asList(String.class);
 
         return createAccessToken(username, roles);
     }
 
+    /**
+     * Creates an access token from given parameters 
+     * @param username
+     * @param roles
+     * @param now
+     * @param validity
+     * @return String accessToken
+     * @throws JWTCreationException
+     * @throws IllegalArgumentException
+     */
     private String getAccessToken(String username, List<String> roles, ZonedDateTime now, ZonedDateTime validity) {
         String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
@@ -100,6 +111,15 @@ public class JwtTokenProvider {
             .strip();
     }
 
+    /**
+     * Creates an refresh token from given parameters
+     * @param username
+     * @param roles
+     * @param now
+     * @return String refreshToken
+     * @throws JWTCreationException
+     * @throws IllegalArgumentException
+     */
     private String getRefreshToken(String username, List<String> roles, ZonedDateTime now) {
         ZonedDateTime validityRefreshToken = now.plus(validInMilliseconds * 3, ChronoUnit.MILLIS);
         
