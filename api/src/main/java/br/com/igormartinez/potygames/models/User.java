@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -64,6 +65,9 @@ public class User implements UserDetails {
         joinColumns = {@JoinColumn (name = "id_user")}, 
         inverseJoinColumns = {@JoinColumn (name = "id_permission")})
     private List<Permission> permissions;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserAddress> addresses;
 
     public User() { }
 
@@ -197,6 +201,14 @@ public class User implements UserDetails {
         this.permissions = permissions;
     }
 
+    public List<UserAddress> getUserAddresses() {
+        return addresses;
+    }
+
+    public void setUserAddresses(List<UserAddress> addresses) {
+        this.addresses = addresses;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -212,6 +224,7 @@ public class User implements UserDetails {
         result = prime * result + ((credentialsNonExpired == null) ? 0 : credentialsNonExpired.hashCode());
         result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
         result = prime * result + ((permissions == null) ? 0 : permissions.hashCode());
+        result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
         return result;
     }
 
@@ -278,6 +291,11 @@ public class User implements UserDetails {
             if (other.permissions != null)
                 return false;
         } else if (!permissions.equals(other.permissions))
+            return false;
+        if (addresses == null) {
+            if (other.addresses != null)
+                return false;
+        } else if (!addresses.equals(other.addresses))
             return false;
         return true;
     }
