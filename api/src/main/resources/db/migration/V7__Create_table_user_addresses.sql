@@ -11,7 +11,7 @@ CREATE TABLE user_addresses (
     city TEXT,
     state TEXT,
     country TEXT,
-    zip_code VARCHAR(8),
+    zip_code VARCHAR(9),
     PRIMARY KEY (id),
     FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE
 );
