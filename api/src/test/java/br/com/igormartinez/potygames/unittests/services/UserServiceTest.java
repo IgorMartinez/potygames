@@ -246,7 +246,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceAlreadyExistsException.class, () -> {
             service.signup(mockedUserRegistrationDTO);
         });
-        String expectedMessage = "User alrealdy exists";
+        String expectedMessage = "Request could not be processed because the resource already exists";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -335,7 +335,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findAll();
         });
-        String expectedMessage = "The user not have permission to this resource";
+        String expectedMessage = "The user is not authorized to access this resource";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -356,7 +356,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(null);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -365,7 +365,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(0L);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -374,7 +374,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.findById(-1231L);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -431,7 +431,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "The user not have permission to this resource";
+        String expectedMessage = "The user is not authorized to access this resource";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -443,7 +443,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "User not found";
+        String expectedMessage = "The resource was not found";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -688,7 +688,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
-        String expectedMessage = "The user not have permission to this resource";
+        String expectedMessage = "The user is not authorized to access this resource";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -703,7 +703,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
-        String expectedMessage = "User not found";
+        String expectedMessage = "The resource was not found";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -712,7 +712,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(null);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -721,7 +721,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(0L);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -730,7 +730,7 @@ public class UserServiceTest {
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.delete(-1156L);
         });
-        String expectedMessage = "ID cannot be null or less than zero";
+        String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -759,7 +759,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The user not have permission to this resource";
+        String expectedMessage = "The user is not authorized to access this resource";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -771,7 +771,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "User not found";
+        String expectedMessage = "The resource was not found";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 }
