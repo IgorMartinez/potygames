@@ -83,7 +83,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDTO> findAll() {
-        if (!securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+        if (!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
 
         return repository.findAll()
@@ -96,8 +96,7 @@ public class UserService implements UserDetailsService {
         if (id == null || id <= 0)
             throw new RequestObjectIsNullException();
 
-        if (!securityContextManager.verifyIdUserAuthenticated(id)
-            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+        if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         return repository.findById(id)
@@ -114,8 +113,7 @@ public class UserService implements UserDetailsService {
             || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank())
                 throw new RequestObjectIsNullException();
 
-        if (!securityContextManager.verifyIdUserAuthenticated(userDTO.id())
-            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+        if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         User user = repository.findById(userDTO.id())
@@ -137,8 +135,7 @@ public class UserService implements UserDetailsService {
         if (id == null || id <= 0)
             throw new RequestObjectIsNullException();
 
-        if (!securityContextManager.verifyIdUserAuthenticated(id)
-            && !securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN))
+        if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         if (!repository.existsById(id))
