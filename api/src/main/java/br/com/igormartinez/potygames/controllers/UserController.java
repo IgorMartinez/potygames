@@ -73,6 +73,23 @@ public class UserController {
     }
 
     @Operation(
+        summary = "Delete a user",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
         summary = "Update the personal information of a user",
         responses = {
             @ApiResponse(description = "Success", responseCode = "200", content = @Content),
@@ -88,22 +105,5 @@ public class UserController {
             @PathVariable(value = "id") Long id,
             @RequestBody UserPersonalInformationDTO userDTO) {
         return service.updatePersonaInformation(id, userDTO);
-    }
-
-    @Operation(
-        summary = "Delete a user",
-        responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
-            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
-            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-        }
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
