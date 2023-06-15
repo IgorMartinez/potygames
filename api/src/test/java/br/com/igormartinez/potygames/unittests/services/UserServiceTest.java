@@ -281,7 +281,7 @@ public class UserServiceTest {
     @Test
     public void testFindAllAsAdmin() {
         List<User> mockedListUser = mockEntity.mockUserList(10);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(userRepository.findAll()).thenReturn(mockedListUser);
 
         List<UserDTO> output = service.findAll();
@@ -330,7 +330,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindAllAsNotAdmin() {
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.FALSE);
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findAll();
@@ -343,7 +343,7 @@ public class UserServiceTest {
     public void testFindAllWithNoUsersInDatabase() {
         List<User> mockedListUser = mockEntity.mockUserList(0);
 
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(userRepository.findAll()).thenReturn(mockedListUser);
 
         List<UserDTO> output = service.findAll();
@@ -379,10 +379,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindByIdAsSameUser() {
+    public void testFindByIdWithPermission() {
         User mockedUser = mockEntity.mockUser(1);
 
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockedUser));
 
         UserDTO output = service.findById(1L);
@@ -401,32 +401,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindByIdAsDifferenteUserAndAdmin() {
-        User mockedUser = mockEntity.mockUser(1);
-
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockedUser));
-
-        UserDTO output = service.findById(1L);
-        assertNotNull(output);
-        assertEquals(Long.valueOf(1L), output.id());
-        assertEquals("user_mail1@test.com", output.email());
-        assertEquals("User name 1", output.name());
-        assertTrue(LocalDate.of(1951, 2, 2).isEqual(output.birthDate()));
-        assertEquals("000.000.000-01", output.documentNumber());
-        assertFalse(output.accountNonExpired());
-        assertFalse(output.accountNonLocked());
-        assertFalse(output.credentialsNonExpired());
-        assertFalse(output.enabled());
-        assertEquals(1, output.permissions().size());
-        assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
-    }
-
-    @Test
-    public void testFindByIdAsDifferentUserAndNotAdmin() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.FALSE);
+    public void testFindByIdWithoutPermission() {
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.FALSE);
         
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findById(1L);
@@ -437,7 +413,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdWithNotFoundUser() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
 
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
@@ -634,7 +610,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdatePersonalInformationAsSameUser() {
+    public void testUpdatePersonalInformationWithPermisson() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
             1L, 
             "User name updated 1",
@@ -643,7 +619,7 @@ public class UserServiceTest {
         );
         User user = mockEntity.mockUser(1);
         
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
@@ -656,34 +632,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdatePersonalInformationAsDifferentUserAndAdmin() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "User name updated 1",
-            LocalDate.of(2023, 06, 12),
-            "001.001.001-01"
-        );
-        User user = mockEntity.mockUser(1);
-        
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
-
-        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
-        assertNotNull(output);
-        assertEquals(1L, output.id());
-        assertEquals("User name updated 1", output.name());
-        assertTrue(LocalDate.of(2023, 06, 12).isEqual(output.birthDate()));
-        assertEquals("001.001.001-01", output.documentNumber());
-    }
-
-    @Test
-    public void testUpdatePersonalInformationAsDifferentUserAndNotAdmin() {
+    public void testUpdatePersonalInformationWithoutPermission() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
         
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.FALSE);
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.FALSE);
 
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -696,8 +648,7 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithNotFoundUser() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
         
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
 
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
@@ -735,26 +686,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteAsSameUser() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+    public void testDeleteWithPermission() {
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
         when(userRepository.existsById(1L)).thenReturn(Boolean.TRUE);
 
         service.delete(1L);
     }
 
     @Test
-    public void testDeleteAsDifferentUserAndAdmin() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.TRUE);
-        when(userRepository.existsById(1L)).thenReturn(Boolean.TRUE);
-        
-        service.delete(1L);
-    }
-
-    @Test
-    public void testDeleteAsDifferentUserAndNotAdmin() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.FALSE);
-        when(securityContextManager.verifyPermissionUserAuthenticated(PermissionType.ADMIN)).thenReturn(Boolean.FALSE);
+    public void testDeleteWithoutPermission() {
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.FALSE);
 
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L);
@@ -765,7 +706,7 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteWithNotFoundUser() {
-        when(securityContextManager.verifyIdUserAuthenticated(1L)).thenReturn(Boolean.TRUE);
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
         when(userRepository.existsById(1L)).thenReturn(Boolean.FALSE);
 
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
