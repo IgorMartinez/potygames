@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import br.com.igormartinez.potygames.configs.TestConfigs;
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
 import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.enums.PermissionType;
@@ -34,14 +35,40 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
 
+    private static String USER_EMAIL = "usercontroller@customer.test";
+	private static String USER_PASSWORD = "securedpassword";
+    private static String USER_NAME = "User Controller Test";
+    private static LocalDate USER_BIRTH_DATE = LocalDate.of(1996,7,23);
+    private static String USER_DOCUMENT_NUMBER = "023.007.023-00";
+	private static Long USER_ID; // defined in signupAndAuthentication() 
+
     @Test
     @Order(0)
-    void authentication() {
+    void signupAndAuthentication() {
+        UserRegistrationDTO user = 
+            new UserRegistrationDTO(
+                USER_EMAIL, 
+                USER_PASSWORD, 
+                USER_NAME, 
+                USER_BIRTH_DATE, 
+                USER_DOCUMENT_NUMBER);
 
-        AccountCredentials accountCredentials = 
-            new AccountCredentials(
-                TestConfigs.USER_CUSTOMER_USERNAME, 
-                TestConfigs.USER_CUSTOMER_PASSWORD);
+        USER_ID = 
+            given()
+                .basePath("/api/user/v1/signup")
+                    .port(TestConfigs.SERVER_PORT)
+                    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .body(user)
+                .when()
+                    .post()
+                .then()
+                    .statusCode(HttpStatus.OK.value())
+                        .extract()
+                            .body()
+                                .as(UserDTO.class)
+									.id();
+
+        AccountCredentials accountCredentials = new AccountCredentials(USER_EMAIL, USER_PASSWORD);
 
         String accessToken = 
 			given()
@@ -52,7 +79,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 					.when()
 				.post()
 					.then()
-						.statusCode(200)
+						.statusCode(HttpStatus.OK.value())
 							.extract()
 							.body()
 								.as(Token.class)
@@ -62,6 +89,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
 			.setBasePath("/api/user/v1")
 			.setPort(TestConfigs.SERVER_PORT)
+			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
@@ -97,7 +125,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 2)
+                    .pathParam("id", USER_ID)
                 .when()
                     .get("{id}")
                 .then()
@@ -107,12 +135,11 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                         .as(UserDTO.class);
         
         assertNotNull(output);
-        assertTrue(output.id() > 0);
-        assertEquals(2, output.id());
-        assertEquals("fragge1@blinklist.com", output.email());
-        assertEquals("Fayre Ragge", output.name());
-        assertEquals(LocalDate.of(1984,04,24), output.birthDate());
-        assertEquals("917.590.242-42", output.documentNumber());
+        assertEquals(USER_ID, output.id());
+        assertEquals(USER_EMAIL, output.email());
+        assertEquals(USER_NAME, output.name());
+        assertEquals(USER_BIRTH_DATE, output.birthDate());
+        assertEquals(USER_DOCUMENT_NUMBER, output.documentNumber());
         assertTrue(output.accountNonExpired());
         assertTrue(output.accountNonLocked());
         assertTrue(output.credentialsNonExpired());
@@ -128,7 +155,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 3)
+                    .pathParam("id", USER_ID+1)
                 .when()
                     .get("{id}")
                 .then()
@@ -142,7 +169,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/3", output.getInstance());
+        assertEquals("/api/user/v1/"+(USER_ID+1), output.getInstance());
     }
 
     @Test
@@ -174,7 +201,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     void testUpdatePersonalInformationWithSameUser() {
         UserPersonalInformationDTO updateCustomer = 
             new UserPersonalInformationDTO(
-                Long.valueOf(2L), 
+                USER_ID, 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
                 "000.000.000-00");
@@ -183,7 +210,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 2)
+                    .pathParam("id", USER_ID)
                     .body(updateCustomer)
                 .when()
                     .put("{id}/personal-information")
@@ -194,7 +221,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                         .as(UserPersonalInformationDTO.class);
         
         assertNotNull(output);
-        assertEquals(2, output.id());
+        assertEquals(USER_ID, output.id());
         assertEquals("Test Name Updated", output.name());
         assertEquals(LocalDate.of(2023,06,14), output.birthDate());
         assertEquals("000.000.000-00", output.documentNumber());
@@ -205,7 +232,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     void testUpdatePersonalInformationWithOtherUser() {
         UserPersonalInformationDTO updateCustomer = 
             new UserPersonalInformationDTO(
-                Long.valueOf(3), 
+                USER_ID+1, 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
                 "000.000.000-00");
@@ -214,7 +241,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 3)
+                    .pathParam("id", USER_ID+1)
                     .body(updateCustomer)
                 .when()
                     .put("{id}/personal-information")
@@ -229,7 +256,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/3/personal-information", output.getInstance());
+        assertEquals("/api/user/v1/"+(USER_ID+1)+"/personal-information", output.getInstance());
     }
 
     @Test
@@ -246,7 +273,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 555)
+                    .pathParam("id", 0)
                     .body(updateCustomer)
                 .when()
                     .put("{id}/personal-information")
@@ -261,7 +288,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/555/personal-information", output.getInstance());
+        assertEquals("/api/user/v1/0/personal-information", output.getInstance());
     }
 
     @Test
@@ -272,7 +299,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 555)
+                    .pathParam("id", USER_ID)
                 .when()
                     .put("{id}/personal-information")
                 .then()
@@ -286,7 +313,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/user/v1/555/personal-information", output.getInstance());
+        assertEquals("/api/user/v1/"+USER_ID+"/personal-information", output.getInstance());
     }
 
     @Test
@@ -296,7 +323,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("id", 3)
+                    .pathParam("id", USER_ID+1)
                 .when()
                     .delete("{id}")
                 .then()
@@ -310,7 +337,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/3", output.getInstance());
+        assertEquals("/api/user/v1/"+(USER_ID+1), output.getInstance());
     }
 
     @Test
@@ -343,7 +370,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         given()
 			.spec(specification)
 			    .contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.pathParam("id", 2)
+				.pathParam("id", USER_ID)
 			.when()
 				.delete("{id}")
 			.then()

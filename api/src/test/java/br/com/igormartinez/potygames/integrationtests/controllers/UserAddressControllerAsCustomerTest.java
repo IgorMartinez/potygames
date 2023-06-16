@@ -48,7 +48,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	private static String USER_EMAIL = "useraddresscontroler@customer.test";
 	private static String USER_PASSWORD = "securedpassword";
 	private static Long USER_ID; // defined in signupAndAuthentication() 
-	private static Long USER_ADDRESS_ID;
+	private static Long USER_ADDRESS_ID; // defined in testCreateWithSameUser()
 
 
 	@BeforeAll
@@ -861,4 +861,19 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("/api/user/v1/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
 	}
 
+	@Test
+	@Order(1000)
+	void removeUserTest() {
+		given()
+			.spec(specification)
+			    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.pathParam("id", USER_ID)
+			.when()
+				.delete("{id}")
+			.then()
+				.statusCode(HttpStatus.NO_CONTENT.value())
+			.extract()
+				.body()
+					.asString();
+	}
 }
