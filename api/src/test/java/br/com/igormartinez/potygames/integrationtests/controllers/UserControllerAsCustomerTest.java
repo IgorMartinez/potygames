@@ -35,16 +35,16 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
 
+	private static Long USER_ID; // defined in testSignup() 
     private static String USER_EMAIL = "usercontroller@customer.test";
 	private static String USER_PASSWORD = "securedpassword";
     private static String USER_NAME = "User Controller Test";
     private static LocalDate USER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String USER_DOCUMENT_NUMBER = "023.007.023-00";
-	private static Long USER_ID; // defined in signupAndAuthentication() 
 
     @Test
     @Order(0)
-    void signupAndAuthentication() {
+    void testSignup() {
         UserRegistrationDTO user = 
             new UserRegistrationDTO(
                 USER_EMAIL, 
@@ -53,7 +53,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                 USER_BIRTH_DATE, 
                 USER_DOCUMENT_NUMBER);
 
-        USER_ID = 
+        UserDTO customerDTO = 
             given()
                 .basePath("/api/user/v1/signup")
                     .port(TestConfigs.SERVER_PORT)
@@ -65,9 +65,117 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.OK.value())
                         .extract()
                             .body()
-                                .as(UserDTO.class)
-									.id();
+                                .as(UserDTO.class);
+        
+        assertNotNull(customerDTO);
+        assertTrue(customerDTO.id() > 0);
+        assertEquals(USER_EMAIL, customerDTO.email());
+        assertEquals(USER_NAME, customerDTO.name());
+        assertEquals(USER_BIRTH_DATE, customerDTO.birthDate());
+        assertEquals(USER_DOCUMENT_NUMBER, customerDTO.documentNumber());
+        assertTrue(customerDTO.accountNonExpired());
+        assertTrue(customerDTO.accountNonLocked());
+        assertTrue(customerDTO.credentialsNonExpired());
+        assertTrue(customerDTO.enabled());
+        assertEquals(1, customerDTO.permissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), customerDTO.permissions().get(0));
 
+        USER_ID = customerDTO.id();
+    }
+
+    @Test
+    @Order(0)
+    void testSignupWithoutBody() {
+        ExceptionResponse output = 
+            given()
+                .basePath("/api/user/v1/signup")
+                    .port(TestConfigs.SERVER_PORT)
+                    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .when()
+                    .post()
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .extract()
+                            .body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Bad Request", output.getTitle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
+        assertEquals("Failed to read request", output.getDetail());
+        assertEquals("/api/user/v1/signup", output.getInstance());
+    }
+
+    @Test
+    @Order(0)
+    void testSignupWithEmailBlank() {
+        UserRegistrationDTO user = 
+            new UserRegistrationDTO(
+                "", 
+                "testsignup", 
+                "Signup Test", 
+                LocalDate.of(2023,6,13), 
+                "023.006.013-00");
+
+        ExceptionResponse output = 
+            given()
+                .basePath("/api/user/v1/signup")
+                    .port(TestConfigs.SERVER_PORT)
+                    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .body(user)
+                .when()
+                    .post()
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .extract()
+                            .body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Bad Request", output.getTitle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
+        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("/api/user/v1/signup", output.getInstance());
+    }
+
+    @Test
+    @Order(0)
+    void testSignupWithUserAlreadyExists() {
+        UserRegistrationDTO user = 
+            new UserRegistrationDTO(
+                "rlayzell0@pen.io", 
+                "1234", 
+                "User already exists", 
+                LocalDate.of(2023,6,14), 
+                "000.000.000-00");
+
+        ExceptionResponse output = 
+            given()
+                .basePath("/api/user/v1/signup")
+                    .port(TestConfigs.SERVER_PORT)
+                    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .body(user)
+                .when()
+                    .post()
+                .then()
+                    .statusCode(HttpStatus.CONFLICT.value())
+                        .extract()
+                            .body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Conflict", output.getTitle());
+        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus());
+        assertEquals("Request could not be processed because the resource already exists", output.getDetail());
+        assertEquals("/api/user/v1/signup", output.getInstance());
+    }
+
+    @Test
+    @Order(1)
+    void authentication() {
         AccountCredentials accountCredentials = new AccountCredentials(USER_EMAIL, USER_PASSWORD);
 
         String accessToken = 
@@ -96,7 +204,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     void testFindAll() {
         ExceptionResponse exceptionResponse =
             given()
@@ -119,7 +227,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @Order(10)
     void testFindByIdWithSameUser() {
         UserDTO output = 
             given()
@@ -149,7 +257,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @Order(10)
     void testFindByIdWithOtherUser() {
         ExceptionResponse output = 
             given()
@@ -173,7 +281,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @Order(10)
     void testFindByIdWithIdInvalid() {
         ExceptionResponse output = 
             given()
@@ -197,7 +305,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(20)
     void testUpdatePersonalInformationWithSameUser() {
         UserPersonalInformationDTO updateCustomer = 
             new UserPersonalInformationDTO(
@@ -228,7 +336,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(20)
     void testUpdatePersonalInformationWithOtherUser() {
         UserPersonalInformationDTO updateCustomer = 
             new UserPersonalInformationDTO(
@@ -260,7 +368,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(20)
     void testUpdatePersonalInformationWithIdInvalid() {
         UserPersonalInformationDTO updateCustomer = 
             new UserPersonalInformationDTO(
@@ -292,7 +400,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(20)
     void testUpdatePersonalInformationWithBodyEmpty() {
 
         ExceptionResponse output = 
@@ -317,7 +425,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(30)
     void testDeleteWithOtherUser() {
         ExceptionResponse output = 
             given()
@@ -341,7 +449,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(30)
     void testDeleteWithIdInvalid() {
         ExceptionResponse output = 
             given()
@@ -365,7 +473,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(31)
     void testDeleteWithSameUser() {
         given()
 			.spec(specification)
