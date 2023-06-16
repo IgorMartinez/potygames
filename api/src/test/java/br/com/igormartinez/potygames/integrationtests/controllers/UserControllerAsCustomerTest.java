@@ -1,4 +1,4 @@
-package br.com.igormartinez.potygames.integrationtests.controllers.usercontroller;
+package br.com.igormartinez.potygames.integrationtests.controllers;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;

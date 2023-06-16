@@ -1,4 +1,4 @@
-package br.com.igormartinez.potygames.integrationtests.controllers.usercontroller;
+package br.com.igormartinez.potygames.integrationtests.controllers;
 
 import org.junit.jupiter.api.TestMethodOrder;
 
