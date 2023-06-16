@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,7 +115,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	@Test
 	@Order(1)
 	void testFindAllAsSameUserWithNoAddress() throws JsonMappingException, JsonProcessingException {
-		String responseBody =
+		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", USER_ID)
@@ -126,8 +125,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 					.statusCode(HttpStatus.OK.value())
 						.extract()
 							.body()
-								.asString();
-		List<UserAddressDTO> output = objectMapper.readValue(responseBody, new TypeReference<List<UserAddressDTO>>() {});
+								.jsonPath()
+									.getList(".", UserAddressDTO.class);
 		assertNotNull(output);
 		assertEquals(0, output.size());
 	}
@@ -328,7 +327,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	@Test
 	@Order(11)
 	void testFindAllAsSameUserWithAddress() throws JsonMappingException, JsonProcessingException {
-		String responseBody =
+		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", USER_ID)
@@ -338,8 +337,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 					.statusCode(HttpStatus.OK.value())
 						.extract()
 							.body()
-								.asString();
-		List<UserAddressDTO> output = objectMapper.readValue(responseBody, new TypeReference<List<UserAddressDTO>>() {});
+								.jsonPath()
+									.getList(".", UserAddressDTO.class);
 		assertNotNull(output);
 		assertEquals(1, output.size());
 
