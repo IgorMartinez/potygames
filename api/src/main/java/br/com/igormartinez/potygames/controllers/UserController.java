@@ -67,8 +67,8 @@ public class UserController {
             @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
         }
     )
-    @GetMapping("/{id}")
-    public UserDTO findById(@PathVariable(value = "id") Long id) {
+    @GetMapping("/{user-id}")
+    public UserDTO findById(@PathVariable(value = "user-id") Long id) {
         return service.findById(id);
     }
 
@@ -83,8 +83,8 @@ public class UserController {
             @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
         }
     )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    @DeleteMapping("/{user-id}")
+    public ResponseEntity<?> delete(@PathVariable("user-id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -100,9 +100,9 @@ public class UserController {
             @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
         }
     )
-    @PutMapping("/{id}/personal-information")
+    @PutMapping("/{user-id}/personal-information")
     public UserPersonalInformationDTO updatePersonalInformation(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "user-id") Long id,
             @RequestBody UserPersonalInformationDTO userDTO) {
         return service.updatePersonaInformation(id, userDTO);
     }
