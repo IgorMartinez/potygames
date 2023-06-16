@@ -75,7 +75,7 @@ public class UserController {
     @Operation(
         summary = "Delete a user",
         responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
             @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
             @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
             @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
