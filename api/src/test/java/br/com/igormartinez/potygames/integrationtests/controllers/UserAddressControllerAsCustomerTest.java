@@ -11,17 +11,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
 import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
@@ -42,19 +36,11 @@ import io.restassured.specification.RequestSpecification;
 public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
-	private static ObjectMapper objectMapper;
 
 	private static String USER_EMAIL = "useraddresscontroler@customer.test";
 	private static String USER_PASSWORD = "securedpassword";
 	private static Long USER_ID; // defined in signupAndAuthentication() 
 	private static Long USER_ADDRESS_ID; // defined in testCreateWithSameUser()
-
-
-	@BeforeAll
-	public static void setup() {
-		objectMapper = new ObjectMapper();
-		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
 
     @Test
     @Order(0)
@@ -114,7 +100,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
 	@Test
 	@Order(1)
-	void testFindAllAsSameUserWithNoAddress() throws JsonMappingException, JsonProcessingException {
+	void testFindAllAsSameUserWithNoAddress() {
 		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
@@ -326,7 +312,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
 	@Test
 	@Order(11)
-	void testFindAllAsSameUserWithAddress() throws JsonMappingException, JsonProcessingException {
+	void testFindAllAsSameUserWithAddress() {
 		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
