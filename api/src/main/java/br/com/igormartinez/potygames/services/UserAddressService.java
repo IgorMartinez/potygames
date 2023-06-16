@@ -35,6 +35,9 @@ public class UserAddressService {
     }
 
     public List<UserAddressDTO> findAllByIdUser(Long idUser) {
+        if (idUser == null || idUser <= 0)
+            throw new RequestObjectIsNullException();
+
         if (!securityContextManager.checkSameUserOrAdmin(idUser))
             throw new UserUnauthorizedException();
 
@@ -60,8 +63,7 @@ public class UserAddressService {
     public UserAddressDTO create(Long idUser, UserAddressDTO addressDTO) {
         if (idUser == null || idUser <= 0
             || addressDTO == null
-            || addressDTO.id() != null 
-            || addressDTO.idUser() == null || addressDTO.idUser() != idUser)
+            || (addressDTO.idUser() != null && addressDTO.idUser() != idUser))
             throw new RequestObjectIsNullException();
 
         if (!securityContextManager.checkSameUserOrAdmin(idUser))
@@ -126,9 +128,6 @@ public class UserAddressService {
 
         UserAddress address = repository.findByIdAndUserId(idAddress, idUser)
             .orElseThrow(() -> new ResourceNotFoundException());
-
-        if (address.getUser().getId() != idUser)
-            throw new ResourceNotFoundException();
         
         repository.delete(address);
     }
