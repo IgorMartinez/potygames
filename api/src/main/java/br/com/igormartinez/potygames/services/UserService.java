@@ -56,9 +56,7 @@ public class UserService implements UserDetailsService {
         if (registrationDTO == null
             || registrationDTO.email() == null || registrationDTO.email().isBlank()
             || registrationDTO.password() == null || registrationDTO.password().isBlank()
-            || registrationDTO.name() == null || registrationDTO.name().isBlank()
-            || registrationDTO.birthDate() == null 
-            || registrationDTO.documentNumber() == null || registrationDTO.documentNumber().isBlank()) 
+            || registrationDTO.name() == null || registrationDTO.name().isBlank()) 
             throw new RequestObjectIsNullException();
 
         if (repository.existsByEmail(registrationDTO.email()))
@@ -69,7 +67,14 @@ public class UserService implements UserDetailsService {
         user.setName(registrationDTO.name());
         user.setPassword(passwordManager.encodePassword(registrationDTO.password()));
         user.setBirthDate(registrationDTO.birthDate());
-        user.setDocumentNumber(registrationDTO.documentNumber());
+        user.setDocumentNumber(
+            registrationDTO.documentNumber() != null && registrationDTO.documentNumber().isBlank() 
+            ? null
+            : registrationDTO.documentNumber());
+        user.setPhoneNumber(
+            registrationDTO.phoneNumber() != null && registrationDTO.phoneNumber().isBlank() 
+            ? null
+            : registrationDTO.phoneNumber());
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
@@ -108,9 +113,7 @@ public class UserService implements UserDetailsService {
         if (id == null || id <= 0
             || userDTO == null
             || userDTO.id() == null || userDTO.id() <= 0 || userDTO.id() != id
-            || userDTO.name() == null || userDTO.name().isBlank()
-            || userDTO.birthDate() == null
-            || userDTO.documentNumber() == null || userDTO.documentNumber().isBlank())
+            || userDTO.name() == null || userDTO.name().isBlank())
                 throw new RequestObjectIsNullException();
 
         if (!securityContextManager.checkSameUserOrAdmin(id))
@@ -121,14 +124,22 @@ public class UserService implements UserDetailsService {
             
         user.setName(userDTO.name());
         user.setBirthDate(userDTO.birthDate());
-        user.setDocumentNumber(userDTO.documentNumber());
+        user.setDocumentNumber(
+            userDTO.documentNumber() != null && userDTO.documentNumber().isBlank() 
+            ? null
+            : userDTO.documentNumber());
+        user.setPhoneNumber(
+            userDTO.phoneNumber() != null && userDTO.phoneNumber().isBlank() 
+            ? null
+            : userDTO.phoneNumber());
 
         User updatedUser = repository.save(user);
         return new UserPersonalInformationDTO(
                 updatedUser.getId(), 
                 updatedUser.getName(), 
                 updatedUser.getBirthDate(), 
-                updatedUser.getDocumentNumber());
+                updatedUser.getDocumentNumber(),
+                updatedUser.getPhoneNumber());
     }
 
     public void delete(Long id) {

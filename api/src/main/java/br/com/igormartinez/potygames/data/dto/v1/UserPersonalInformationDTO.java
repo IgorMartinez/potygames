@@ -6,5 +6,6 @@ public record UserPersonalInformationDTO(
     Long id,
     String name,
     LocalDate birthDate,
-    String documentNumber
+    String documentNumber,
+    String phoneNumber
 ) {}

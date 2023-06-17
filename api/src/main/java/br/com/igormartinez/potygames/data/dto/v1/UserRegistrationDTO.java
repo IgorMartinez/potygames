@@ -7,5 +7,6 @@ public record UserRegistrationDTO (
     String password,
     String name,
     LocalDate birthDate,
-    String documentNumber
+    String documentNumber,
+    String phoneNumber
 ) { }

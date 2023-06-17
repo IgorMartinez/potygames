@@ -9,6 +9,7 @@ public record UserDTO (
     String name,
     LocalDate birthDate,
     String documentNumber,
+    String phoneNumber,
     Boolean accountNonExpired,
     Boolean accountNonLocked, 
     Boolean credentialsNonExpired,
