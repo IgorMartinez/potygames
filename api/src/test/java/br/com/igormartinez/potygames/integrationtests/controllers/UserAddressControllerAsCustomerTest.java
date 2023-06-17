@@ -51,7 +51,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
                 USER_PASSWORD, 
                 "Signup Test", 
                 LocalDate.of(1996,7,23), 
-                "023.007.023-00");
+                "023.007.023-00",
+				"+5500987654321");
 
         USER_ID = 
             given()

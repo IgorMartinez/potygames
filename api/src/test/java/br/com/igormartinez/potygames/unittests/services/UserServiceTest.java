@@ -2,6 +2,7 @@ package br.com.igormartinez.potygames.unittests.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -124,7 +125,7 @@ public class UserServiceTest {
     public void testSignupWithEmailNull() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 null, "pasword", "name", 
-                LocalDate.of(2023,06,12), "documentNumber");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -137,7 +138,7 @@ public class UserServiceTest {
     public void testSignupWithEmailBlank() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 " ", "pasword", "name", 
-                LocalDate.of(2023,06,12), "documentNumber");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -150,7 +151,7 @@ public class UserServiceTest {
     public void testSignupWithPasswordNull() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 "email", null, "name", 
-                LocalDate.of(2023,06,12), "documentNumber");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -163,7 +164,7 @@ public class UserServiceTest {
     public void testSignupWithPasswordBlank() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 "email", "", "name", 
-                LocalDate.of(2023,06,12), "documentNumber");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -176,7 +177,7 @@ public class UserServiceTest {
     public void testSignupWithNameNull() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 "email", "password", null, 
-                LocalDate.of(2023,06,12), "documentNumber");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -189,46 +190,7 @@ public class UserServiceTest {
     public void testSignupWithNameBlank() {
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 "email", "password", "", 
-                LocalDate.of(2023,06,12), "documentNumber");
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithBirthDateNull() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "password", "name", 
-                null, "documentNumber");
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithDocumentNumberNull() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "password", "name", 
-                LocalDate.of(2023,06,12), null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithDocumentNumberBlank() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "password", "", 
-                LocalDate.of(2023,06,12), "");
+                null, null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.signup(userRegistrationDTO);
@@ -263,19 +225,98 @@ public class UserServiceTest {
         when(permissionRepository.findByDescription(PermissionType.CUSTOMER.getValue())).thenReturn(mockedPermission);
         when(userRepository.save(any(User.class))).thenReturn(mockedUser);
 
-        UserDTO createdUserDTO = service.signup(mockedUserRegistrationDTO);
-        assertNotNull(createdUserDTO);
-        assertEquals(Long.valueOf(1L), createdUserDTO.id());
-        assertEquals("user_mail1@test.com", createdUserDTO.email());
-        assertEquals("User name 1", createdUserDTO.name());
-        assertTrue(LocalDate.of(1951, 2, 2).isEqual(createdUserDTO.birthDate()));
-        assertEquals("000.000.000-01", createdUserDTO.documentNumber());
-        assertTrue(createdUserDTO.accountNonExpired());
-        assertTrue(createdUserDTO.accountNonLocked());
-        assertTrue(createdUserDTO.credentialsNonExpired());
-        assertTrue(createdUserDTO.enabled());
-        assertEquals(1, createdUserDTO.permissions().size());
-        assertTrue(createdUserDTO.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+        UserDTO output = service.signup(mockedUserRegistrationDTO);
+        assertNotNull(output);
+        assertEquals(Long.valueOf(1L), output.id());
+        assertEquals("user_mail1@test.com", output.email());
+        assertEquals("User name 1", output.name());
+        assertEquals(LocalDate.of(1951, 2, 2), output.birthDate());
+        assertEquals("000.000.000-01", output.documentNumber());
+        assertEquals("+5500900000001", output.phoneNumber());
+        assertTrue(output.accountNonExpired());
+        assertTrue(output.accountNonLocked());
+        assertTrue(output.credentialsNonExpired());
+        assertTrue(output.enabled());
+        assertEquals(1, output.permissions().size());
+        assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+    }
+
+    @Test
+    public void testSignupWithNotExistingUserAndOptionalParamsNull() {
+        UserRegistrationDTO mockedUserRegistrationDTO = new UserRegistrationDTO(
+            "user_mail1@test.com", 
+            "User name 1",
+            "password",
+            null,
+            null,
+            null
+        );
+        User mockedUser = mockEntity.mockUserSignup(1);
+        mockedUser.setBirthDate(null);
+        mockedUser.setDocumentNumber(null);
+        mockedUser.setPhoneNumber(null);
+
+        Permission mockedPermission = new Permission();
+        mockedPermission.setDescription(PermissionType.CUSTOMER.getValue());
+
+        when(userRepository.existsByEmail(mockedUserRegistrationDTO.email())).thenReturn(Boolean.FALSE);
+        when(passwordManager.encodePassword(mockedUserRegistrationDTO.password())).thenReturn("encodedPassword");
+        when(permissionRepository.findByDescription(PermissionType.CUSTOMER.getValue())).thenReturn(mockedPermission);
+        when(userRepository.save(any(User.class))).thenReturn(mockedUser);
+
+        UserDTO output = service.signup(mockedUserRegistrationDTO);
+        assertNotNull(output);
+        assertEquals(Long.valueOf(1L), output.id());
+        assertEquals("user_mail1@test.com", output.email());
+        assertEquals("User name 1", output.name());
+        assertNull(output.birthDate());
+        assertNull(output.documentNumber());
+        assertNull(output.phoneNumber());
+        assertTrue(output.accountNonExpired());
+        assertTrue(output.accountNonLocked());
+        assertTrue(output.credentialsNonExpired());
+        assertTrue(output.enabled());
+        assertEquals(1, output.permissions().size());
+        assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+    }
+
+    @Test
+    public void testSignupWithNotExistingUserAndOptionalParamsBlank() {
+        UserRegistrationDTO mockedUserRegistrationDTO = new UserRegistrationDTO(
+            "user_mail1@test.com", 
+            "User name 1",
+            "password",
+            null,
+            " ",
+            " "
+        );
+        User mockedUser = mockEntity.mockUserSignup(1);
+        mockedUser.setBirthDate(null);
+        mockedUser.setDocumentNumber(null);
+        mockedUser.setPhoneNumber(null);
+
+        Permission mockedPermission = new Permission();
+        mockedPermission.setDescription(PermissionType.CUSTOMER.getValue());
+
+        when(userRepository.existsByEmail(mockedUserRegistrationDTO.email())).thenReturn(Boolean.FALSE);
+        when(passwordManager.encodePassword(mockedUserRegistrationDTO.password())).thenReturn("encodedPassword");
+        when(permissionRepository.findByDescription(PermissionType.CUSTOMER.getValue())).thenReturn(mockedPermission);
+        when(userRepository.save(any(User.class))).thenReturn(mockedUser);
+
+        UserDTO output = service.signup(mockedUserRegistrationDTO);
+        assertNotNull(output);
+        assertEquals(Long.valueOf(1L), output.id());
+        assertEquals("user_mail1@test.com", output.email());
+        assertEquals("User name 1", output.name());
+        assertNull(output.birthDate());
+        assertNull(output.documentNumber());
+        assertNull(output.phoneNumber());
+        assertTrue(output.accountNonExpired());
+        assertTrue(output.accountNonLocked());
+        assertTrue(output.credentialsNonExpired());
+        assertTrue(output.enabled());
+        assertEquals(1, output.permissions().size());
+        assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
     }
 
     @Test
@@ -292,8 +333,9 @@ public class UserServiceTest {
         assertEquals(Long.valueOf(1L), outputPos0.id());
         assertEquals("user_mail1@test.com", outputPos0.email());
         assertEquals("User name 1", outputPos0.name());
-        assertTrue(LocalDate.of(1951, 2, 2).isEqual(outputPos0.birthDate()));
+        assertEquals(LocalDate.of(1951, 2, 2), outputPos0.birthDate());
         assertEquals("000.000.000-01", outputPos0.documentNumber());
+        assertEquals("+5500900000001", outputPos0.phoneNumber());
         assertFalse(outputPos0.accountNonExpired());
         assertFalse(outputPos0.accountNonLocked());
         assertFalse(outputPos0.credentialsNonExpired());
@@ -305,8 +347,9 @@ public class UserServiceTest {
         assertEquals(Long.valueOf(6L), outputPos5.id());
         assertEquals("user_mail6@test.com", outputPos5.email());
         assertEquals("User name 6", outputPos5.name());
-        assertTrue(LocalDate.of(1956, 7, 7).isEqual(outputPos5.birthDate()));
+        assertEquals(LocalDate.of(1956, 7, 7), outputPos5.birthDate());
         assertEquals("000.000.000-06", outputPos5.documentNumber());
+        assertEquals("+5500900000006", outputPos5.phoneNumber());
         assertTrue(outputPos5.accountNonExpired());
         assertTrue(outputPos5.accountNonLocked());
         assertTrue(outputPos5.credentialsNonExpired());
@@ -318,8 +361,9 @@ public class UserServiceTest {
         assertEquals(Long.valueOf(10L), outputPos9.id());
         assertEquals("user_mail10@test.com", outputPos9.email());
         assertEquals("User name 10", outputPos9.name());
-        assertTrue(LocalDate.of(1960, 11, 11).isEqual(outputPos9.birthDate()));
+        assertEquals(LocalDate.of(1960, 11, 11), outputPos9.birthDate());
         assertEquals("000.000.000-10", outputPos9.documentNumber());
+        assertEquals("+5500900000010", outputPos9.phoneNumber());
         assertTrue(outputPos9.accountNonExpired());
         assertTrue(outputPos9.accountNonLocked());
         assertTrue(outputPos9.credentialsNonExpired());
@@ -392,6 +436,7 @@ public class UserServiceTest {
         assertEquals("User name 1", output.name());
         assertTrue(LocalDate.of(1951, 2, 2).isEqual(output.birthDate()));
         assertEquals("000.000.000-01", output.documentNumber());
+        assertEquals("+5500900000001", output.phoneNumber());
         assertFalse(output.accountNonExpired());
         assertFalse(output.accountNonLocked());
         assertFalse(output.credentialsNonExpired());
@@ -468,11 +513,8 @@ public class UserServiceTest {
     @Test
     public void testUpdatePersonalInformationWithParamUserDTOIdNull() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            null, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            null, "User name 1",
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -484,11 +526,8 @@ public class UserServiceTest {
     @Test
     public void testUpdatePersonalInformationWithParamUserDTOIdZero() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            0L, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            0L, "User name 1",
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -500,11 +539,8 @@ public class UserServiceTest {
     @Test
     public void testUpdatePersonalInformationWithParamUserDTOIdNegative() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            -1231L, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            -1231L, "User name 1",
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -514,13 +550,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdatePersonalInformationWithParamUserDTOIdDifferentFromIdParam() {
+    public void testUpdatePersonalInformationWithMismatchParamIdAndDTO() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            2L, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            2L, "User name 1",
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -532,11 +565,8 @@ public class UserServiceTest {
     @Test
     public void testUpdatePersonalInformationWithParamUserDTONameNull() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            null,
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            1L, null,
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -548,11 +578,8 @@ public class UserServiceTest {
     @Test
     public void testUpdatePersonalInformationWithParamUserDTONameBlank() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "",
-            LocalDate.of(1951, 2, 2),
-            "000.000.000-01"
-        );
+            1L, "",
+            null,null, null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
@@ -562,61 +589,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdatePersonalInformationWithParamUserDTOBirthDateNull() {
+    public void testUpdatePersonalInformationWithPermission() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "User name 1",
-            null,
-            "000.000.000-01"
-        );
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTODocumentNumberNull() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            null
-        );
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTODocumentNumberBlank() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "User name 1",
-            LocalDate.of(1951, 2, 2),
-            ""
-        );
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithPermisson() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, 
-            "User name updated 1",
-            LocalDate.of(2023, 06, 12),
-            "001.001.001-01"
-        );
+            1L, "User name updated 1",
+            LocalDate.of(2010, 6, 12),
+            "000.000.001-01", "+5500987650001");
         User user = mockEntity.mockUser(1);
         
         when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
@@ -627,8 +604,49 @@ public class UserServiceTest {
         assertNotNull(output);
         assertEquals(1L, output.id());
         assertEquals("User name updated 1", output.name());
-        assertTrue(LocalDate.of(2023, 06, 12).isEqual(output.birthDate()));
-        assertEquals("001.001.001-01", output.documentNumber());
+        assertEquals(LocalDate.of(2010, 6, 12),output.birthDate());
+        assertEquals("000.000.001-01", output.documentNumber());
+        assertEquals("+5500987650001", output.phoneNumber());
+    }
+
+    @Test
+    public void testUpdatePersonalInformationWithPermissionAndOptionalParamNull() {
+        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
+            1L, "User name updated 1",
+            null, null, null);
+        User user = mockEntity.mockUser(1);
+        
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
+        assertNotNull(output);
+        assertEquals(1L, output.id());
+        assertEquals("User name updated 1", output.name());
+        assertNull(output.birthDate());
+        assertNull(output.documentNumber());
+        assertNull(output.phoneNumber());
+    }
+
+    @Test
+    public void testUpdatePersonalInformationWithPermissionAndOptionalParamBlank() {
+        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
+            1L, "User name updated 1",
+            null, " ", "");
+        User user = mockEntity.mockUser(1);
+        
+        when(securityContextManager.checkSameUserOrAdmin(1L)).thenReturn(Boolean.TRUE);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
+        assertNotNull(output);
+        assertEquals(1L, output.id());
+        assertEquals("User name updated 1", output.name());
+        assertNull(output.birthDate());
+        assertNull(output.documentNumber());
+        assertNull(output.phoneNumber());
     }
 
     @Test

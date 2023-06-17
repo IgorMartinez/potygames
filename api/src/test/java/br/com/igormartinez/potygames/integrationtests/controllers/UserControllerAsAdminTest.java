@@ -51,6 +51,7 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
     private static String CUSTOMER_NAME = "User Controller Test";
     private static LocalDate CUSTOMER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String CUSTOMER_DOCUMENT_NUMBER = "023.007.023-00";
+    private static String CUSTOMER_PHONE_NUMBER = "+5500987654321";
 
     @BeforeAll
 	public static void setup() {
@@ -67,7 +68,8 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
                 "securedpassword", 
                 CUSTOMER_NAME, 
                 CUSTOMER_BIRTH_DATE, 
-                CUSTOMER_DOCUMENT_NUMBER);
+                CUSTOMER_DOCUMENT_NUMBER,
+                CUSTOMER_PHONE_NUMBER);
 
         CUSTOMER_ID = 
             given()
@@ -136,6 +138,7 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
         assertEquals("Rey Layzell", outputPosition0.name());
         assertEquals(LocalDate.of(1966,6,11), outputPosition0.birthDate());
         assertEquals("755.507.583-29", outputPosition0.documentNumber());
+        assertEquals("+5545940815815", outputPosition0.phoneNumber());
         assertTrue(outputPosition0.accountNonExpired());
         assertTrue(outputPosition0.accountNonLocked());
         assertTrue(outputPosition0.credentialsNonExpired());
@@ -150,6 +153,7 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
         assertEquals("Vallie Horbart", outputPosition4.name());
         assertEquals(LocalDate.of(2000,9,4), outputPosition4.birthDate());
         assertEquals("103.467.163-55", outputPosition4.documentNumber());
+        assertEquals("+5565901976027", outputPosition4.phoneNumber());
         assertFalse(outputPosition4.accountNonExpired());
         assertFalse(outputPosition4.accountNonLocked());
         assertTrue(outputPosition4.credentialsNonExpired());
@@ -164,6 +168,7 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
         assertEquals(CUSTOMER_NAME, outputPosition10.name());
         assertEquals(CUSTOMER_BIRTH_DATE, outputPosition10.birthDate());
         assertEquals(CUSTOMER_DOCUMENT_NUMBER, outputPosition10.documentNumber());
+        assertEquals(CUSTOMER_PHONE_NUMBER, outputPosition10.phoneNumber());
         assertTrue(outputPosition10.accountNonExpired());
         assertTrue(outputPosition10.accountNonLocked());
         assertTrue(outputPosition10.credentialsNonExpired());
@@ -193,6 +198,7 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
         assertEquals(CUSTOMER_NAME, output.name());
         assertEquals(CUSTOMER_BIRTH_DATE, output.birthDate());
         assertEquals(CUSTOMER_DOCUMENT_NUMBER, output.documentNumber());
+        assertEquals(CUSTOMER_PHONE_NUMBER, output.phoneNumber());
         assertTrue(output.accountNonExpired());
         assertTrue(output.accountNonLocked());
         assertTrue(output.credentialsNonExpired());
@@ -209,7 +215,8 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
                 CUSTOMER_ID, 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
-                "000.000.000-00");
+                "000.000.000-00",
+                "+5511999991111");
 
         UserPersonalInformationDTO output = 
             given()
@@ -229,11 +236,12 @@ public class UserControllerAsAdminTest extends AbstractIntegrationTest {
         assertEquals("Test Name Updated", output.name());
         assertEquals(LocalDate.of(2023,06,14), output.birthDate());
         assertEquals("000.000.000-00", output.documentNumber());
+        assertEquals("+5511999991111", output.phoneNumber());
     }
 
     @Test
     @Order(4)
-    void testDeleteWithSameUser() {
+    void testDelete() {
         given()
 			.spec(specification)
 				.pathParam("id", CUSTOMER_ID)

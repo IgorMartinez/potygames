@@ -21,6 +21,7 @@ public class MockUser {
         user.setPassword("password" + number);
         user.setBirthDate(LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1));
         user.setDocumentNumber("000.000.000-"+String.format("%02d", number%100));
+        user.setPhoneNumber("+550090000"+String.format("%04d", number%10000));
         user.setAccountNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
         user.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
@@ -45,6 +46,7 @@ public class MockUser {
         user.setPassword("password" + number);
         user.setBirthDate(LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1));
         user.setDocumentNumber("000.000.000-"+String.format("%02d", number%100));
+        user.setPhoneNumber("+550090000"+String.format("%04d", number%10000));
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
@@ -78,6 +80,7 @@ public class MockUser {
             "User name " + number,
             LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
             "000.000.000-"+String.format("%02d", number%100),
+            "+550090000"+String.format("%04d", number%10000),
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonExpired
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // accountNonLocked
             (number%2==0) ? Boolean.TRUE : Boolean.FALSE, // credentialsNonExpired
@@ -100,7 +103,8 @@ public class MockUser {
             "User name " + number,
             "password" + number,
             LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
-            "000.000.000-"+String.format("%02d", number%100)
+            "000.000.000-"+String.format("%02d", number%100),
+            "+550090000"+String.format("%04d", number%10_000)
         );
     }
 
@@ -117,7 +121,8 @@ public class MockUser {
             number.longValue(), 
             "User name " + number,
             LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
-            "000.000.000-"+String.format("%02d", number%100)
+            "000.000.000-"+String.format("%02d", number%100),
+            "+550090000"+String.format("%04d", number%10000)
         );
     }
 

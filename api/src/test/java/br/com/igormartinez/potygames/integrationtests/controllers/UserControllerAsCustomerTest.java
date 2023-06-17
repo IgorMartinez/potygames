@@ -41,6 +41,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     private static String USER_NAME = "User Controller Test";
     private static LocalDate USER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String USER_DOCUMENT_NUMBER = "023.007.023-00";
+    private static String USER_PHONE_NUMBER = "+5500987654321";
 
     @Test
     @Order(0)
@@ -51,7 +52,8 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                 USER_PASSWORD, 
                 USER_NAME, 
                 USER_BIRTH_DATE, 
-                USER_DOCUMENT_NUMBER);
+                USER_DOCUMENT_NUMBER,
+                USER_PHONE_NUMBER);
 
         UserDTO customerDTO = 
             given()
@@ -113,10 +115,11 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         UserRegistrationDTO user = 
             new UserRegistrationDTO(
                 "", 
-                "testsignup", 
-                "Signup Test", 
-                LocalDate.of(2023,6,13), 
-                "023.006.013-00");
+                USER_PASSWORD, 
+                USER_NAME, 
+                USER_BIRTH_DATE, 
+                USER_DOCUMENT_NUMBER,
+                USER_PHONE_NUMBER);
 
         ExceptionResponse output = 
             given()
@@ -146,10 +149,11 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         UserRegistrationDTO user = 
             new UserRegistrationDTO(
                 "rlayzell0@pen.io", 
-                "1234", 
-                "User already exists", 
-                LocalDate.of(2023,6,14), 
-                "000.000.000-00");
+                USER_PASSWORD, 
+                USER_NAME, 
+                USER_BIRTH_DATE, 
+                USER_DOCUMENT_NUMBER,
+                USER_PHONE_NUMBER);
 
         ExceptionResponse output = 
             given()
@@ -248,6 +252,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals(USER_NAME, output.name());
         assertEquals(USER_BIRTH_DATE, output.birthDate());
         assertEquals(USER_DOCUMENT_NUMBER, output.documentNumber());
+        assertEquals(USER_PHONE_NUMBER, output.phoneNumber());
         assertTrue(output.accountNonExpired());
         assertTrue(output.accountNonLocked());
         assertTrue(output.credentialsNonExpired());
@@ -312,7 +317,8 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                 USER_ID, 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
-                "000.000.000-00");
+                "000.000.000-00",
+                "+5511999990000");
 
         UserPersonalInformationDTO output = 
             given()
@@ -333,6 +339,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Test Name Updated", output.name());
         assertEquals(LocalDate.of(2023,06,14), output.birthDate());
         assertEquals("000.000.000-00", output.documentNumber());
+        assertEquals("+5511999990000", output.phoneNumber());
     }
 
     @Test
@@ -343,7 +350,8 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                 USER_ID+1, 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
-                "000.000.000-00");
+                "000.000.000-00",
+                "+5511999990000");
 
         ExceptionResponse output = 
             given()
@@ -375,7 +383,8 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
                 Long.valueOf(3), 
                 "Test Name Updated", 
                 LocalDate.of(2023,06,14), 
-                "000.000.000-00");
+                "000.000.000-00",
+                "+5511999990000");
 
         ExceptionResponse output = 
             given()

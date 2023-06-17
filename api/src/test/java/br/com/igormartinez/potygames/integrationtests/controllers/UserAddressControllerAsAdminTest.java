@@ -44,6 +44,7 @@ public class UserAddressControllerAsAdminTest extends AbstractIntegrationTest {
     private static String CUSTOMER_NAME = "User Address Controller Test";
     private static LocalDate CUSTOMER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String CUSTOMER_DOCUMENT_NUMBER = "023.007.023-00";
+	private static String CUSTOMER_PHONE_NUMBER = "+5500987654321";
     private static Long CUSTOMER_ADDRESS_ID; // defined in testCreate
 
     @Test
@@ -55,7 +56,8 @@ public class UserAddressControllerAsAdminTest extends AbstractIntegrationTest {
                 "securedpassword", 
                 CUSTOMER_NAME, 
                 CUSTOMER_BIRTH_DATE, 
-                CUSTOMER_DOCUMENT_NUMBER);
+                CUSTOMER_DOCUMENT_NUMBER,
+				CUSTOMER_PHONE_NUMBER);
 
         CUSTOMER_ID = 
             given()

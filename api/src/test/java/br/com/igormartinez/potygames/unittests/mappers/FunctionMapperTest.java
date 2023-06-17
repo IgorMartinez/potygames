@@ -2,13 +2,15 @@ package br.com.igormartinez.potygames.unittests.mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
+import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.mappers.UserAddressDTOMapper;
 import br.com.igormartinez.potygames.mappers.UserDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockUser;
@@ -39,17 +41,18 @@ public class FunctionMapperTest {
                 
         UserDTO userDTO = userDTOMapper.apply(user);
         
-        assertEquals(user.getId(), userDTO.id());
-        assertEquals(user.getEmail(), userDTO.email());
-        assertEquals(user.getName(), userDTO.name());
-        assertTrue(user.getBirthDate().isEqual(userDTO.birthDate()));
-        assertEquals(user.getDocumentNumber(), userDTO.documentNumber());
-        assertEquals(user.getAccountNonExpired(), userDTO.accountNonExpired());
-        assertEquals(user.getAccountNonLocked(), userDTO.accountNonLocked());
-        assertEquals(user.getCredentialsNonExpired(), userDTO.credentialsNonExpired());
-        assertEquals(user.getEnabled(), userDTO.enabled());
-        assertEquals(user.getPermissionDescriptionList().size(), userDTO.permissions().size());
-        assertTrue(user.getPermissionDescriptionList().containsAll(userDTO.permissions()));
+        assertEquals(1L, userDTO.id());
+        assertEquals("user_mail1@test.com", userDTO.email());
+        assertEquals("User name 1", userDTO.name());
+        assertEquals(LocalDate.of(1951,2,2), userDTO.birthDate());
+        assertEquals("000.000.000-01", userDTO.documentNumber());
+        assertEquals("+5500900000001", userDTO.phoneNumber());
+        assertFalse(userDTO.accountNonExpired());
+        assertFalse(userDTO.accountNonLocked());
+        assertFalse(userDTO.credentialsNonExpired());
+        assertFalse(userDTO.enabled());
+        assertEquals(1, userDTO.permissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), userDTO.permissions().get(0));
     }
 
     @Test
