@@ -45,8 +45,11 @@ public class User implements UserDetails {
     @Temporal(TemporalType.DATE)
     private LocalDate birthDate;
 
-    @Column(name = "document_number", length = 14)
+    @Column(name = "document_number")
     private String documentNumber;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Column(name = "account_non_expired", nullable = false)
     private Boolean accountNonExpired;
@@ -161,6 +164,14 @@ public class User implements UserDetails {
         this.documentNumber = documentNumber;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public Boolean getAccountNonExpired() {
         return accountNonExpired;
     }
@@ -219,6 +230,7 @@ public class User implements UserDetails {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
         result = prime * result + ((documentNumber == null) ? 0 : documentNumber.hashCode());
+        result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
         result = prime * result + ((accountNonExpired == null) ? 0 : accountNonExpired.hashCode());
         result = prime * result + ((accountNonLocked == null) ? 0 : accountNonLocked.hashCode());
         result = prime * result + ((credentialsNonExpired == null) ? 0 : credentialsNonExpired.hashCode());
@@ -266,6 +278,11 @@ public class User implements UserDetails {
             if (other.documentNumber != null)
                 return false;
         } else if (!documentNumber.equals(other.documentNumber))
+            return false;
+        if (phoneNumber == null) {
+            if (other.phoneNumber != null)
+                return false;
+        } else if (!phoneNumber.equals(other.phoneNumber))
             return false;
         if (accountNonExpired == null) {
             if (other.accountNonExpired != null)
