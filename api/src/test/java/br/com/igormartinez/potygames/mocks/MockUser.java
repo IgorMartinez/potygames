@@ -100,8 +100,8 @@ public class MockUser {
     public UserRegistrationDTO mockUserRegistrationDTO(Integer number) {
         return new UserRegistrationDTO(
             "user_mail" + number + "@test.com",
-            "User name " + number,
             "password" + number,
+            "User name " + number,
             LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1),
             "000.000.000-"+String.format("%02d", number%100),
             "+550090000"+String.format("%04d", number%10_000)

@@ -1,10 +1,13 @@
 package br.com.igormartinez.potygames.unittests.services;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -359,6 +363,24 @@ public class UserAddressServiceTest {
         assertEquals("State 1", output.state());
         assertEquals("Country 1", output.country());
         assertEquals("00000-001", output.zipCode());
+        
+        ArgumentCaptor<UserAddress> argumentCaptor = ArgumentCaptor.forClass(UserAddress.class);
+        verify(repository).save(argumentCaptor.capture());
+        UserAddress capturedObject = argumentCaptor.getValue();
+        assertNotNull(capturedObject);
+        assertNull(capturedObject.getId());
+        assertEquals(Long.valueOf(1L), capturedObject.getUser().getId());
+        assertFalse(capturedObject.getFavorite());
+        assertFalse(capturedObject.getBillingAddress());
+        assertEquals("Description 1", capturedObject.getDescription());
+        assertEquals("Street 1", capturedObject.getStreet());
+        assertEquals("Number 1", capturedObject.getNumber());
+        assertEquals("Complement 1", capturedObject.getComplement());
+        assertEquals("Neighborhood 1", capturedObject.getNeighborhood());
+        assertEquals("City 1", capturedObject.getCity());
+        assertEquals("State 1", capturedObject.getState());
+        assertEquals("Country 1", capturedObject.getCountry());
+        assertEquals("00000-001", capturedObject.getZipCode());
     }
 
     @Test

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -239,14 +241,31 @@ public class UserServiceTest {
         assertTrue(output.enabled());
         assertEquals(1, output.permissions().size());
         assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(argumentCaptor.capture());
+        User capturedObject = argumentCaptor.getValue();
+        assertNotNull(capturedObject);
+        assertNull(capturedObject.getId());
+        assertEquals("user_mail1@test.com", capturedObject.getEmail());
+        assertEquals("User name 1", capturedObject.getName());
+        assertEquals(LocalDate.of(1951, 2, 2), capturedObject.getBirthDate());
+        assertEquals("000.000.000-01", capturedObject.getDocumentNumber());
+        assertEquals("+5500900000001", capturedObject.getPhoneNumber());
+        assertTrue(capturedObject.getAccountNonExpired());
+        assertTrue(capturedObject.getAccountNonLocked());
+        assertTrue(capturedObject.getCredentialsNonExpired());
+        assertTrue(capturedObject.getEnabled());
+        assertEquals(1, capturedObject.getPermissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), capturedObject.getPermissions().get(0).getDescription());
     }
 
     @Test
     public void testSignupWithNotExistingUserAndOptionalParamsNull() {
         UserRegistrationDTO mockedUserRegistrationDTO = new UserRegistrationDTO(
             "user_mail1@test.com", 
+            "password1",
             "User name 1",
-            "password",
             null,
             null,
             null
@@ -278,14 +297,32 @@ public class UserServiceTest {
         assertTrue(output.enabled());
         assertEquals(1, output.permissions().size());
         assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(argumentCaptor.capture());
+        User capturedObject = argumentCaptor.getValue();
+        assertNotNull(capturedObject);
+        assertNull(capturedObject.getId());
+        assertEquals("user_mail1@test.com", capturedObject.getEmail());
+        assertEquals("User name 1", capturedObject.getName());
+        assertEquals("encodedPassword", capturedObject.getPassword());
+        assertNull(capturedObject.getBirthDate());
+        assertNull(capturedObject.getDocumentNumber());
+        assertNull(capturedObject.getPhoneNumber());
+        assertTrue(capturedObject.getAccountNonExpired());
+        assertTrue(capturedObject.getAccountNonLocked());
+        assertTrue(capturedObject.getCredentialsNonExpired());
+        assertTrue(capturedObject.getEnabled());
+        assertEquals(1, capturedObject.getPermissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), capturedObject.getPermissions().get(0).getDescription());
     }
 
     @Test
     public void testSignupWithNotExistingUserAndOptionalParamsBlank() {
         UserRegistrationDTO mockedUserRegistrationDTO = new UserRegistrationDTO(
             "user_mail1@test.com", 
+            "password1",
             "User name 1",
-            "password",
             null,
             " ",
             " "
@@ -317,6 +354,24 @@ public class UserServiceTest {
         assertTrue(output.enabled());
         assertEquals(1, output.permissions().size());
         assertTrue(output.permissions().get(0).equals(PermissionType.CUSTOMER.getValue()));
+
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(argumentCaptor.capture());
+        User capturedObject = argumentCaptor.getValue();
+        assertNotNull(capturedObject);
+        assertNull(capturedObject.getId());
+        assertEquals("user_mail1@test.com", capturedObject.getEmail());
+        assertEquals("User name 1", capturedObject.getName());
+        assertEquals("encodedPassword", capturedObject.getPassword());
+        assertNull(capturedObject.getBirthDate());
+        assertNull(capturedObject.getDocumentNumber());
+        assertNull(capturedObject.getPhoneNumber());
+        assertTrue(capturedObject.getAccountNonExpired());
+        assertTrue(capturedObject.getAccountNonLocked());
+        assertTrue(capturedObject.getCredentialsNonExpired());
+        assertTrue(capturedObject.getEnabled());
+        assertEquals(1, capturedObject.getPermissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), capturedObject.getPermissions().get(0).getDescription());
     }
 
     @Test
