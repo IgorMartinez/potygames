@@ -18,7 +18,7 @@ import br.com.igormartinez.potygames.mocks.MockUserAddress;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.models.UserAddress;
 
-public class FunctionMapperTest {
+public class UserMappersTest {
     
     MockUser mockUser;
     MockUserAddress mockUserAddress;
