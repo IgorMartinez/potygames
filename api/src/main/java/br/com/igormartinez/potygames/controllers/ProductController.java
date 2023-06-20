@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
 import br.com.igormartinez.potygames.services.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @RequestMapping("api/product/v1")
@@ -23,30 +26,79 @@ public class ProductController {
     @Autowired
     private ProductService service;
     
+    @Operation(
+        summary = "Find all products",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
     @GetMapping
     public List<ProductDTO> findAll() {
         return service.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ProductDTO findById(@PathVariable(value = "id") Long id) {
+    @Operation(
+        summary = "Find a product by given id",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
+    @GetMapping("/{product-id}")
+    public ProductDTO findById(@PathVariable(value = "product-id") Long id) {
         return service.findById(id);
     }
 
+    @Operation(
+        summary = "Creates a new product",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
     @PostMapping
     public ProductDTO create(@RequestBody ProductDTO product) {
         return service.create(product);
     }
 
-    @PutMapping("/{id}")
+    @Operation(
+        summary = "Updates a product",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
+    @PutMapping("/{product-id}")
     public ProductDTO update(
-        @PathVariable(value = "id") Long id,
+        @PathVariable(value = "product-id") Long id,
         @RequestBody ProductDTO product) {
         return service.update(id, product);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+    @Operation(
+        summary = "Delete a product",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
+    @DeleteMapping("/{product-id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "product-id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
