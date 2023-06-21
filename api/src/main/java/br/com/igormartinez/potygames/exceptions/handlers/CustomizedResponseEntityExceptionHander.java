@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
@@ -86,7 +87,9 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({ResourceAlreadyExistsException.class})
+    @ExceptionHandler({
+        ResourceAlreadyExistsException.class,
+        DeleteAssociationConflictException.class})
     public final ResponseEntity<ExceptionResponse> handleConflictExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
             new ExceptionResponse(
