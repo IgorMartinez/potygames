@@ -57,7 +57,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
         UserDTO customerDTO = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -90,7 +90,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
     void testSignupWithoutBody() {
         ExceptionResponse output = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .when()
@@ -106,7 +106,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/user/v1/signup", output.getInstance());
+        assertEquals("/api/v1/user/signup", output.getInstance());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
         ExceptionResponse output = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -140,7 +140,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/signup", output.getInstance());
+        assertEquals("/api/v1/user/signup", output.getInstance());
     }
 
     @Test
@@ -157,7 +157,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
         ExceptionResponse output = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -174,7 +174,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Conflict", output.getTitle());
         assertEquals(HttpStatus.CONFLICT.value(), output.getStatus());
         assertEquals("Request could not be processed because the resource already exists", output.getDetail());
-        assertEquals("/api/user/v1/signup", output.getInstance());
+        assertEquals("/api/v1/user/signup", output.getInstance());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
 
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-			.setBasePath("/api/user/v1")
+			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
@@ -227,7 +227,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", exceptionResponse.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponse.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", exceptionResponse.getDetail());
-        assertEquals("/api/user/v1", exceptionResponse.getInstance());
+        assertEquals("/api/v1/user", exceptionResponse.getInstance());
     }
 
     @Test
@@ -282,7 +282,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/0", output.getInstance());
+        assertEquals("/api/v1/user/0", output.getInstance());
     }
 
     @Test
@@ -372,7 +372,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/personal-information", output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/personal-information", output.getInstance());
     }
 
     @Test
@@ -405,7 +405,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/0/personal-information", output.getInstance());
+        assertEquals("/api/v1/user/0/personal-information", output.getInstance());
     }
 
     @Test
@@ -430,7 +430,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/personal-information", output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/personal-information", output.getInstance());
     }
 
     @Test
@@ -454,7 +454,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
     }
 
     @Test
@@ -478,7 +478,7 @@ public class UserControllerAsCustomerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/-10", output.getInstance());
+        assertEquals("/api/v1/user/-10", output.getInstance());
     }
 
     @Test

@@ -61,7 +61,7 @@ public class UserAddressControllerAsAdminTest extends AbstractIntegrationTest {
 
         CUSTOMER_ID = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -93,7 +93,7 @@ public class UserAddressControllerAsAdminTest extends AbstractIntegrationTest {
 
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-			.setBasePath("/api/user/v1")
+			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))

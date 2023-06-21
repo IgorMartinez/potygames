@@ -56,7 +56,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
         USER_ID = 
             given()
-                .basePath("/api/user/v1/signup")
+                .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -91,7 +91,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-			.setBasePath("/api/user/v1")
+			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
@@ -138,7 +138,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address", output.getInstance());
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+0+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+0+"/address", output.getInstance());
 	}
 
 	@Test
@@ -250,7 +250,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address", output.getInstance());
 	}
 
 	@Test
@@ -279,7 +279,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+0+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+0+"/address", output.getInstance());
 	}
 
 	@Test
@@ -308,7 +308,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address", output.getInstance());
 	}
 
 	@Test
@@ -433,7 +433,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -463,7 +463,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+0+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+0+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -493,7 +493,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
@@ -523,7 +523,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -553,7 +553,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 	
 	@Test
@@ -594,7 +594,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
 	}
 
 	@Test
@@ -652,7 +652,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -677,7 +677,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/0/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/0/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -702,7 +702,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
@@ -727,7 +727,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
 	}
 
 	@Test
@@ -769,7 +769,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -794,7 +794,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/0/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/0/address/"+USER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
@@ -819,7 +819,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/user/v1/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
@@ -844,7 +844,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/user/v1/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
 	}
 
 	@Test

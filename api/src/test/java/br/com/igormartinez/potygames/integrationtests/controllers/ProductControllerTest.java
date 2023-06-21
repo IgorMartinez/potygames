@@ -47,7 +47,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindAllAsUnauthenticatedWithoutQueryParams() {
         List<ProductDTO> output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.when()
@@ -92,7 +92,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindAllAsUnauthenticatedPage2Size10DirectionASC() {
         List<ProductDTO> output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
                     .queryParam("page", 2)
                     .queryParam("size", 10)
@@ -140,7 +140,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindAllAsUnauthenticatedPage1Size12DirectionASC() {
         List<ProductDTO> output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
                     .queryParam("page", 1)
                     .queryParam("size", 12)
@@ -188,7 +188,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindAllAsUnauthenticatedPage0Size10DirectionDESC() {
         List<ProductDTO> output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
                     .queryParam("page", 0)
                     .queryParam("size", 10)
@@ -236,7 +236,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindByIdAsUnauthenticated() {
         ProductDTO output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .pathParam("product-id", 15)
@@ -262,7 +262,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindByIdAsUnauthenticatedWithParamIdInvalid() {
         ExceptionResponse output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .pathParam("product-id", 0)
@@ -279,7 +279,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1/0", output.getInstance());
+        assertEquals("/api/v1/product/0", output.getInstance());
     }
 
     @Test
@@ -287,7 +287,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testFindByIdAsUnauthenticatedWithProductNotFound() {
         ExceptionResponse output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .pathParam("product-id", 12546)
@@ -304,7 +304,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/product/v1/12546", output.getInstance());
+        assertEquals("/api/v1/product/12546", output.getInstance());
     }
 
     @Test
@@ -315,7 +315,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
         ExceptionResponse output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(productDTO)
@@ -332,7 +332,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Forbidden", output.getTitle());
         assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
         assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/product/v1", output.getInstance());
+        assertEquals("/api/v1/product", output.getInstance());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
         ExceptionResponse output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .pathParam("product-id", 1)
@@ -361,7 +361,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Forbidden", output.getTitle());
         assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
         assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/product/v1/1", output.getInstance());
+        assertEquals("/api/v1/product/1", output.getInstance());
     }
 
     @Test
@@ -369,7 +369,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     void testDeleteAsUnauthenticated() {
         ExceptionResponse output = 
             given()
-				.basePath("/api/product/v1")
+				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .pathParam("product-id", 1)
@@ -386,7 +386,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Forbidden", output.getTitle());
         assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
         assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/product/v1/1", output.getInstance());
+        assertEquals("/api/v1/product/1", output.getInstance());
     }
 
     @Test
@@ -411,7 +411,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-			.setBasePath("/api/product/v1")
+			.setBasePath("/api/v1/product")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
@@ -538,7 +538,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1", output.getInstance());
+        assertEquals("/api/v1/product", output.getInstance());
     }
 
     @Test
@@ -564,7 +564,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/product/v1", output.getInstance());
+        assertEquals("/api/v1/product", output.getInstance());
     }
 
     @Test
@@ -619,7 +619,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1/0", output.getInstance());
+        assertEquals("/api/v1/product/0", output.getInstance());
     }
 
     @Test
@@ -646,7 +646,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1/1024", output.getInstance());
+        assertEquals("/api/v1/product/1024", output.getInstance());
     }
 
     @Test
@@ -673,7 +673,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1/1", output.getInstance());
+        assertEquals("/api/v1/product/1", output.getInstance());
     }
 
     @Test
@@ -700,7 +700,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/product/v1/"+PRODUCT_ID, output.getInstance());
+        assertEquals("/api/v1/product/"+PRODUCT_ID, output.getInstance());
     }
 
     @Test
@@ -727,7 +727,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/product/v1/"+(PRODUCT_ID+1), output.getInstance());
+        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
     }
 
     @Test
@@ -750,7 +750,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/product/v1/0", output.getInstance());
+        assertEquals("/api/v1/product/0", output.getInstance());
     }
 
     @Test
@@ -773,7 +773,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/product/v1/"+(PRODUCT_ID+1), output.getInstance());
+        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
     }
 
     @Test
@@ -813,7 +813,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-			.setBasePath("/api/product/v1")
+			.setBasePath("/api/v1/product")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
@@ -911,7 +911,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/product/v1", output.getInstance());
+        assertEquals("/api/v1/product", output.getInstance());
     }
 
     @Test
@@ -938,7 +938,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/product/v1/1", output.getInstance());
+        assertEquals("/api/v1/product/1", output.getInstance());
     }
 
     @Test
@@ -961,7 +961,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/product/v1/1", output.getInstance());
+        assertEquals("/api/v1/product/1", output.getInstance());
     }
 
 }

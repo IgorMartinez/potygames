@@ -61,7 +61,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     void testTokenGeneratedInSignin() {
         UserDTO output = 
             given()
-                .basePath("/api/user/v1")
+                .basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token.getAccessToken())
@@ -189,7 +189,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     void testTokenGeneratedInRefresh() {
         UserDTO output = 
             given()
-                .basePath("/api/user/v1")
+                .basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token.getAccessToken())
