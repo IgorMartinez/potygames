@@ -577,33 +577,7 @@ public class UserServiceTest {
         String expectedMessage = "Request object cannot be null";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTOIdZero() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            0L, "User name 1",
-            null,null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTOIdNegative() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            -1231L, "User name 1",
-            null,null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
+    
     @Test
     public void testUpdatePersonalInformationWithMismatchParamIdAndDTO() {
         UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(

@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
     public UserPersonalInformationDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
         if (id == null || id <= 0
             || userDTO == null
-            || userDTO.id() == null || userDTO.id() <= 0 || userDTO.id() != id
+            || userDTO.id() == null || id.compareTo(userDTO.id()) != 0
             || userDTO.name() == null || userDTO.name().isBlank())
                 throw new RequestObjectIsNullException();
 
