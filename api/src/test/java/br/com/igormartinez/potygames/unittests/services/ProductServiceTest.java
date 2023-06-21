@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
@@ -65,12 +69,19 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testFindAllWithProducts() {
-        List<Product> listProduct = productMocker.mockEntityList(10);
+    void testFindAllWithProductsPage0() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.ASC, "id"));
+        Page<Product> page = productMocker.mockProductPage(94, pageable);
 
-        when(productRepository.findAll()).thenReturn(listProduct);
+        when(productRepository.findAll(pageable)).thenReturn(page);
 
-        List<ProductDTO> output = service.findAll();
+        Page<ProductDTO> outputPage = service.findAll(pageable);
+        assertEquals(0, outputPage.getNumber());
+        assertEquals(10, outputPage.getSize());
+        assertEquals(10, outputPage.getTotalPages());
+        assertEquals(94, outputPage.getTotalElements());
+
+        List<ProductDTO> output = outputPage.getContent();
         assertNotNull(output);
         assertEquals(10, output.size());
 
@@ -79,7 +90,7 @@ public class ProductServiceTest {
         assertEquals(1L, outputPosition0.idProductType());
         assertEquals("Product name 1", outputPosition0.name());
         assertEquals("Product alt name 1", outputPosition0.altName());
-        assertEquals(new BigDecimal(1.99), outputPosition0.price());
+        assertEquals(new BigDecimal("1.99"), outputPosition0.price());
         assertEquals(1, outputPosition0.quantity());
 
         ProductDTO outputPosition4 = output.get(4);
@@ -87,7 +98,7 @@ public class ProductServiceTest {
         assertEquals(5L, outputPosition4.idProductType());
         assertEquals("Product name 5", outputPosition4.name());
         assertEquals("Product alt name 5", outputPosition4.altName());
-        assertEquals(new BigDecimal(5.99), outputPosition4.price());
+        assertEquals(new BigDecimal("5.99"), outputPosition4.price());
         assertEquals(5, outputPosition4.quantity());
 
         ProductDTO outputPosition9 = output.get(9);
@@ -95,17 +106,100 @@ public class ProductServiceTest {
         assertEquals(10L, outputPosition9.idProductType());
         assertEquals("Product name 10", outputPosition9.name());
         assertEquals("Product alt name 10", outputPosition9.altName());
-        assertEquals(new BigDecimal(10.99), outputPosition9.price());
+        assertEquals(new BigDecimal("10.99"), outputPosition9.price());
         assertEquals(10, outputPosition9.quantity());
     }
 
     @Test
+    void testFindAllWithProductsPage4() {
+        Pageable pageable = PageRequest.of(4, 10, Sort.by(Direction.ASC, "name"));
+        Page<Product> page = productMocker.mockProductPage(94, pageable);
+
+        when(productRepository.findAll(pageable)).thenReturn(page);
+
+        Page<ProductDTO> outputPage = service.findAll(pageable);
+        assertEquals(4, outputPage.getNumber());
+        assertEquals(10, outputPage.getSize());
+        assertEquals(10, outputPage.getTotalPages());
+        assertEquals(94, outputPage.getTotalElements());
+
+        List<ProductDTO> output = outputPage.getContent();
+        assertNotNull(output);
+        assertEquals(10, output.size());
+
+        ProductDTO outputPosition0 = output.get(0);
+        assertEquals(41L, outputPosition0.id());
+        assertEquals(41L, outputPosition0.idProductType());
+        assertEquals("Product name 41", outputPosition0.name());
+        assertEquals("Product alt name 41", outputPosition0.altName());
+        assertEquals(new BigDecimal("41.99"), outputPosition0.price());
+        assertEquals(41, outputPosition0.quantity());
+
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(45L, outputPosition4.id());
+        assertEquals(45L, outputPosition4.idProductType());
+        assertEquals("Product name 45", outputPosition4.name());
+        assertEquals("Product alt name 45", outputPosition4.altName());
+        assertEquals(new BigDecimal("45.99"), outputPosition4.price());
+        assertEquals(45, outputPosition4.quantity());
+
+        ProductDTO outputPosition9 = output.get(9);
+        assertEquals(50L, outputPosition9.id());
+        assertEquals(50L, outputPosition9.idProductType());
+        assertEquals("Product name 50", outputPosition9.name());
+        assertEquals("Product alt name 50", outputPosition9.altName());
+        assertEquals(new BigDecimal("50.99"), outputPosition9.price());
+        assertEquals(50, outputPosition9.quantity());
+    }
+
+    @Test
+    void testFindAllWithProductsPage9() {
+        Pageable pageable = PageRequest.of(9, 10, Sort.by(Direction.ASC, "name"));
+        Page<Product> page = productMocker.mockProductPage(94, pageable);
+
+        when(productRepository.findAll(pageable)).thenReturn(page);
+
+        Page<ProductDTO> outputPage = service.findAll(pageable);
+        assertEquals(9, outputPage.getNumber());
+        assertEquals(10, outputPage.getSize());
+        assertEquals(10, outputPage.getTotalPages());
+        assertEquals(94, outputPage.getTotalElements());
+
+        List<ProductDTO> output = outputPage.getContent();
+        assertNotNull(output);
+        assertEquals(4, output.size());
+
+        ProductDTO outputPosition0 = output.get(0);
+        assertEquals(91L, outputPosition0.id());
+        assertEquals(91L, outputPosition0.idProductType());
+        assertEquals("Product name 91", outputPosition0.name());
+        assertEquals("Product alt name 91", outputPosition0.altName());
+        assertEquals(new BigDecimal("91.99"), outputPosition0.price());
+        assertEquals(91, outputPosition0.quantity());
+
+        ProductDTO outputPosition3 = output.get(3);
+        assertEquals(94L, outputPosition3.id());
+        assertEquals(94L, outputPosition3.idProductType());
+        assertEquals("Product name 94", outputPosition3.name());
+        assertEquals("Product alt name 94", outputPosition3.altName());
+        assertEquals(new BigDecimal("94.99"), outputPosition3.price());
+        assertEquals(94, outputPosition3.quantity());
+    }
+
+    @Test
     void testFindAllWithoutProducts() {
-        List<Product> listProduct = new ArrayList<>();
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.ASC, "name"));
+        Page<Product> page = productMocker.mockProductPage(0, pageable);
 
-        when(productRepository.findAll()).thenReturn(listProduct);
+        when(productRepository.findAll(pageable)).thenReturn(page);
 
-        List<ProductDTO> output = service.findAll();
+        Page<ProductDTO> outputPage = service.findAll(pageable);
+        assertEquals(0, outputPage.getNumber());
+        assertEquals(10, outputPage.getSize());
+        assertEquals(0, outputPage.getTotalPages());
+        assertEquals(0, outputPage.getTotalElements());
+
+        List<ProductDTO> output = outputPage.getContent();
         assertNotNull(output);
         assertEquals(0, output.size());
     }
@@ -149,7 +243,7 @@ public class ProductServiceTest {
         assertEquals(1L, output.idProductType());
         assertEquals("Product name 1", output.name());
         assertEquals("Product alt name 1", output.altName());
-        assertEquals(new BigDecimal(1.99), output.price());
+        assertEquals(new BigDecimal("1.99"), output.price());
         assertEquals(1, output.quantity());
     }
 
@@ -255,7 +349,7 @@ public class ProductServiceTest {
     void testCreateWithParamDTOPriceNegative() {
         ProductDTO productDTO = new ProductDTO(
             null, 1L, "Product name 1", 
-            null, new BigDecimal(-10), null);
+            null, new BigDecimal("-10"), null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.create(productDTO);
@@ -268,7 +362,7 @@ public class ProductServiceTest {
     void testCreateWithParamDTOQuantityNull() {
         ProductDTO productDTO = new ProductDTO(
             null, 1L, "Product name 1", 
-            null, new BigDecimal(1.99), null);
+            null, new BigDecimal("1.99"), null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.create(productDTO);
@@ -281,7 +375,7 @@ public class ProductServiceTest {
     void testCreateWithParamDTOQuantityNegative() {
         ProductDTO productDTO = new ProductDTO(
             null, 1L, "Product name 1", 
-            null, new BigDecimal(1.99), -1);
+            null, new BigDecimal("1.99"), -1);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.create(productDTO);
@@ -294,7 +388,7 @@ public class ProductServiceTest {
     void testCreateWithoutPermission() {
         ProductDTO productDTO = new ProductDTO(
             null, 1L, "Product name 1", 
-            null, new BigDecimal(1.99), 1);
+            null, new BigDecimal("1.99"), 1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -320,7 +414,7 @@ public class ProductServiceTest {
         assertEquals(1L, output.idProductType());
         assertEquals("Product name 1", output.name());
         assertEquals("Product alt name 1", output.altName());
-        assertEquals(new BigDecimal(1.99), output.price());
+        assertEquals(new BigDecimal("1.99"), output.price());
         assertEquals(1, output.quantity());
         
         ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
@@ -332,7 +426,7 @@ public class ProductServiceTest {
         assertEquals("Type of product 1", capturedProduct.getType().getDescription());
         assertEquals("Product name 1", capturedProduct.getName());
         assertEquals("Product alt name 1", capturedProduct.getAltName());
-        assertEquals(new BigDecimal(1.99), capturedProduct.getPrice());
+        assertEquals(new BigDecimal("1.99"), capturedProduct.getPrice());
         assertEquals(1, capturedProduct.getQuantity());
     }
 
@@ -500,7 +594,7 @@ public class ProductServiceTest {
     void testUpdateWithParamDTOPriceNegative() {
         ProductDTO productDTO = new ProductDTO(
             1L, 1L, "Product name 1", 
-            null, new BigDecimal(-10), null);
+            null, new BigDecimal("-10"), null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.update(1L, productDTO);
@@ -513,7 +607,7 @@ public class ProductServiceTest {
     void testUpdateWithParamDTOQuantityNull() {
         ProductDTO productDTO = new ProductDTO(
             1L, 1L, "Product name 1", 
-            null, new BigDecimal(1.99), null);
+            null, new BigDecimal("1.99"), null);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.update(1L, productDTO);
@@ -526,7 +620,7 @@ public class ProductServiceTest {
     void testUpdateWithParamDTOQuantityNegative() {
         ProductDTO productDTO = new ProductDTO(
             1L, 1L, "Product name 1", 
-            null, new BigDecimal(1.99), -10);
+            null, new BigDecimal("1.99"), -10);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
             service.update(1L, productDTO);
@@ -556,7 +650,7 @@ public class ProductServiceTest {
         
         ProductDTO updateProductDTO = new ProductDTO(
             1L, 2L, "Product name updated 1", 
-            "Alt name updated", new BigDecimal(99.11), 2);
+            "Alt name updated", new BigDecimal("99.11"), 2);
 
         Product product = productMocker.mockEntity(1);
 
@@ -573,7 +667,7 @@ public class ProductServiceTest {
         assertEquals(2L, output.idProductType());
         assertEquals("Product name updated 1", output.name());
         assertEquals("Alt name updated", output.altName());
-        assertEquals(new BigDecimal(99.11), output.price());
+        assertEquals(new BigDecimal("99.11"), output.price());
         assertEquals(2, output.quantity());
     }
 

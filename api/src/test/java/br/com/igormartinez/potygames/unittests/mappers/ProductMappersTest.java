@@ -36,7 +36,7 @@ public class ProductMappersTest {
         assertEquals(1L, productDTO.idProductType());
         assertEquals("Product name 1", productDTO.name());
         assertEquals("Product alt name 1", productDTO.altName());
-        assertEquals(new BigDecimal(1.99), productDTO.price());
+        assertEquals(new BigDecimal("1.99"), productDTO.price());
         assertEquals(1, productDTO.quantity());
     }
 }

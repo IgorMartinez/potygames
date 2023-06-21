@@ -44,7 +44,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(0)
-    void testFindAllAsUnauthenticated() {
+    void testFindAllAsUnauthenticatedWithoutQueryParams() {
         List<ProductDTO> output = 
             given()
 				.basePath("/api/product/v1")
@@ -57,10 +57,10 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 						.extract()
 							.body()
 								.jsonPath()
-                                    .getList(".", ProductDTO.class);
+                                    .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(18, output.size());
+        assertEquals(10, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -70,21 +70,165 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals(new BigDecimal("74.86"), outputPosition0.price());
         assertEquals(377, outputPosition0.quantity());
 
-        ProductDTO outputPosition8 = output.get(8);
-        assertEquals(9L, outputPosition8.id());
-        assertEquals(5L, outputPosition8.idProductType());
-        assertEquals("Ice Cream - Life Savers", outputPosition8.name());
-        assertEquals("Minna", outputPosition8.altName());
-        assertEquals(new BigDecimal("84.48"), outputPosition8.price());
-        assertEquals(149, outputPosition8.quantity());
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(5L, outputPosition4.id());
+        assertEquals(1L, outputPosition4.idProductType());
+        assertEquals("Stock - Beef, Brown", outputPosition4.name());
+        assertEquals("Bibi", outputPosition4.altName());
+        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
+        assertEquals(307, outputPosition4.quantity());
 
-        ProductDTO outputPosition17 = output.get(17);
-        assertEquals(18L, outputPosition17.id());
-        assertEquals(7L, outputPosition17.idProductType());
-        assertEquals("Beans - Soya Bean", outputPosition17.name());
-        assertEquals("Vinnie", outputPosition17.altName());
-        assertEquals(new BigDecimal("2.91"), outputPosition17.price());
-        assertEquals(307, outputPosition17.quantity());
+        ProductDTO outputPosition9 = output.get(9);
+        assertEquals(10L, outputPosition9.id());
+        assertEquals(7L, outputPosition9.idProductType());
+        assertEquals("Wine - Harrow Estates, Vidal", outputPosition9.name());
+        assertEquals("Fitzgerald", outputPosition9.altName());
+        assertEquals(new BigDecimal("45.87"), outputPosition9.price());
+        assertEquals(287, outputPosition9.quantity());
+    }
+
+    @Test
+    @Order(0)
+    void testFindAllAsUnauthenticatedPage2Size10DirectionASC() {
+        List<ProductDTO> output = 
+            given()
+				.basePath("/api/product/v1")
+					.port(TestConfigs.SERVER_PORT)
+                    .queryParam("page", 2)
+                    .queryParam("size", 10)
+                    .queryParam("direction", "asc")
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.when()
+				    .get()
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.jsonPath()
+                                    .getList("content", ProductDTO.class);
+
+        assertNotNull(output);
+        assertEquals(10, output.size());
+
+        ProductDTO outputPosition0 = output.get(0);
+        assertEquals(21L, outputPosition0.id());
+        assertEquals(6L, outputPosition0.idProductType());
+        assertEquals("Bread - Focaccia Quarter", outputPosition0.name());
+        assertEquals("Kristin", outputPosition0.altName());
+        assertEquals(new BigDecimal("77.59"), outputPosition0.price());
+        assertEquals(616, outputPosition0.quantity());
+
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(25L, outputPosition4.id());
+        assertEquals(7L, outputPosition4.idProductType());
+        assertEquals("Cheese - Roquefort Pappillon", outputPosition4.name());
+        assertEquals("Clare", outputPosition4.altName());
+        assertEquals(new BigDecimal("25.69"), outputPosition4.price());
+        assertEquals(10, outputPosition4.quantity());
+
+        ProductDTO outputPosition9 = output.get(9);
+        assertEquals(30L, outputPosition9.id());
+        assertEquals(6L, outputPosition9.idProductType());
+        assertEquals("Wine - Pinot Grigio Collavini", outputPosition9.name());
+        assertEquals("Gordan", outputPosition9.altName());
+        assertEquals(new BigDecimal("8.47"), outputPosition9.price());
+        assertEquals(203, outputPosition9.quantity());
+    }
+
+    @Test
+    @Order(0)
+    void testFindAllAsUnauthenticatedPage1Size12DirectionASC() {
+        List<ProductDTO> output = 
+            given()
+				.basePath("/api/product/v1")
+					.port(TestConfigs.SERVER_PORT)
+                    .queryParam("page", 1)
+                    .queryParam("size", 12)
+                    .queryParam("direction", "asc")
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.when()
+				    .get()
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.jsonPath()
+                                    .getList("content", ProductDTO.class);
+
+        assertNotNull(output);
+        assertEquals(12, output.size());
+
+        ProductDTO outputPosition0 = output.get(0);
+        assertEquals(13L, outputPosition0.id());
+        assertEquals(8L, outputPosition0.idProductType());
+        assertEquals("Bagel - Everything Presliced", outputPosition0.name());
+        assertEquals("Rancell", outputPosition0.altName());
+        assertEquals(new BigDecimal("50.52"), outputPosition0.price());
+        assertEquals(562, outputPosition0.quantity());
+
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(17L, outputPosition4.id());
+        assertEquals(8L, outputPosition4.idProductType());
+        assertEquals("Lettuce - Boston Bib - Organic", outputPosition4.name());
+        assertEquals("Melisenda", outputPosition4.altName());
+        assertEquals(new BigDecimal("16.86"), outputPosition4.price());
+        assertEquals(928, outputPosition4.quantity());
+
+        ProductDTO outputPosition11 = output.get(11);
+        assertEquals(24L, outputPosition11.id());
+        assertEquals(10L, outputPosition11.idProductType());
+        assertEquals("Tia Maria", outputPosition11.name());
+        assertEquals("Rosamund", outputPosition11.altName());
+        assertEquals(new BigDecimal("29.79"), outputPosition11.price());
+        assertEquals(65, outputPosition11.quantity());
+    }
+
+    @Test
+    @Order(0)
+    void testFindAllAsUnauthenticatedPage0Size10DirectionDESC() {
+        List<ProductDTO> output = 
+            given()
+				.basePath("/api/product/v1")
+					.port(TestConfigs.SERVER_PORT)
+                    .queryParam("page", 0)
+                    .queryParam("size", 10)
+                    .queryParam("direction", "desc")
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.when()
+				    .get()
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.jsonPath()
+                                    .getList("content", ProductDTO.class);
+
+        assertNotNull(output);
+        assertEquals(10, output.size());
+
+        ProductDTO outputPosition0 = output.get(0);
+        assertEquals(1000L, outputPosition0.id());
+        assertEquals(10L, outputPosition0.idProductType());
+        assertEquals("Ketchup - Tomato", outputPosition0.name());
+        assertEquals("Sandor", outputPosition0.altName());
+        assertEquals(new BigDecimal("57.28"), outputPosition0.price());
+        assertEquals(745, outputPosition0.quantity());
+
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(996L, outputPosition4.id());
+        assertEquals(7L, outputPosition4.idProductType());
+        assertEquals("Mountain Dew", outputPosition4.name());
+        assertEquals("Nevins", outputPosition4.altName());
+        assertEquals(new BigDecimal("91.98"), outputPosition4.price());
+        assertEquals(636, outputPosition4.quantity());
+
+        ProductDTO outputPosition9 = output.get(9);
+        assertEquals(991L, outputPosition9.id());
+        assertEquals(3L, outputPosition9.idProductType());
+        assertEquals("Pepper - Black, Whole", outputPosition9.name());
+        assertEquals("Aeriela", outputPosition9.altName());
+        assertEquals(new BigDecimal("47.43"), outputPosition9.price());
+        assertEquals(680, outputPosition9.quantity());
     }
 
     @Test
@@ -288,10 +432,10 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 						.extract()
 							.body()
 								.jsonPath()
-                                    .getList(".", ProductDTO.class);
+                                    .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(18, output.size());
+        assertEquals(10, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -301,21 +445,21 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals(new BigDecimal("74.86"), outputPosition0.price());
         assertEquals(377, outputPosition0.quantity());
 
-        ProductDTO outputPosition8 = output.get(8);
-        assertEquals(9L, outputPosition8.id());
-        assertEquals(5L, outputPosition8.idProductType());
-        assertEquals("Ice Cream - Life Savers", outputPosition8.name());
-        assertEquals("Minna", outputPosition8.altName());
-        assertEquals(new BigDecimal("84.48"), outputPosition8.price());
-        assertEquals(149, outputPosition8.quantity());
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(5L, outputPosition4.id());
+        assertEquals(1L, outputPosition4.idProductType());
+        assertEquals("Stock - Beef, Brown", outputPosition4.name());
+        assertEquals("Bibi", outputPosition4.altName());
+        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
+        assertEquals(307, outputPosition4.quantity());
 
-        ProductDTO outputPosition17 = output.get(17);
-        assertEquals(18L, outputPosition17.id());
+        ProductDTO outputPosition17 = output.get(9);
+        assertEquals(10L, outputPosition17.id());
         assertEquals(7L, outputPosition17.idProductType());
-        assertEquals("Beans - Soya Bean", outputPosition17.name());
-        assertEquals("Vinnie", outputPosition17.altName());
-        assertEquals(new BigDecimal("2.91"), outputPosition17.price());
-        assertEquals(307, outputPosition17.quantity());
+        assertEquals("Wine - Harrow Estates, Vidal", outputPosition17.name());
+        assertEquals("Fitzgerald", outputPosition17.altName());
+        assertEquals(new BigDecimal("45.87"), outputPosition17.price());
+        assertEquals(287, outputPosition17.quantity());
     }
 
     @Test
@@ -690,10 +834,10 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 						.extract()
 							.body()
 								.jsonPath()
-                                    .getList(".", ProductDTO.class);
+                                    .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(18, output.size());
+        assertEquals(10, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -703,21 +847,21 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals(new BigDecimal("74.86"), outputPosition0.price());
         assertEquals(377, outputPosition0.quantity());
 
-        ProductDTO outputPosition8 = output.get(8);
-        assertEquals(9L, outputPosition8.id());
-        assertEquals(5L, outputPosition8.idProductType());
-        assertEquals("Ice Cream - Life Savers", outputPosition8.name());
-        assertEquals("Minna", outputPosition8.altName());
-        assertEquals(new BigDecimal("84.48"), outputPosition8.price());
-        assertEquals(149, outputPosition8.quantity());
+        ProductDTO outputPosition4 = output.get(4);
+        assertEquals(5L, outputPosition4.id());
+        assertEquals(1L, outputPosition4.idProductType());
+        assertEquals("Stock - Beef, Brown", outputPosition4.name());
+        assertEquals("Bibi", outputPosition4.altName());
+        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
+        assertEquals(307, outputPosition4.quantity());
 
-        ProductDTO outputPosition17 = output.get(17);
-        assertEquals(18L, outputPosition17.id());
+        ProductDTO outputPosition17 = output.get(9);
+        assertEquals(10L, outputPosition17.id());
         assertEquals(7L, outputPosition17.idProductType());
-        assertEquals("Beans - Soya Bean", outputPosition17.name());
-        assertEquals("Vinnie", outputPosition17.altName());
-        assertEquals(new BigDecimal("2.91"), outputPosition17.price());
-        assertEquals(307, outputPosition17.quantity());
+        assertEquals("Wine - Harrow Estates, Vidal", outputPosition17.name());
+        assertEquals("Fitzgerald", outputPosition17.altName());
+        assertEquals(new BigDecimal("45.87"), outputPosition17.price());
+        assertEquals(287, outputPosition17.quantity());
     }
 
     @Test
