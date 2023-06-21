@@ -285,7 +285,7 @@ public class UserAddressServiceTest {
     }
 
     @Test
-    void testCreateIdWithParamIdUserZero() {
+    void testCreateWithParamIdUserZero() {
         UserAddressDTO addressDTO = mockUserAddress.mockDTO(1, 1);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
@@ -409,7 +409,7 @@ public class UserAddressServiceTest {
     }
 
     @Test
-    void testUpdateIdWithParamIdUserZero() {
+    void testUpdateWithParamIdUserZero() {
         UserAddressDTO addressDTO = mockUserAddress.mockDTO(1, 1);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
@@ -442,7 +442,7 @@ public class UserAddressServiceTest {
     }
 
     @Test
-    void testUpdateIdWithParamIdAddressZero() {
+    void testUpdateWithParamIdAddressZero() {
         UserAddressDTO addressDTO = mockUserAddress.mockDTO(1, 1);
 
         Exception output = assertThrows(RequestObjectIsNullException.class, () -> {

@@ -63,7 +63,7 @@ public class UserAddressService {
     public UserAddressDTO create(Long idUser, UserAddressDTO addressDTO) {
         if (idUser == null || idUser <= 0
             || addressDTO == null
-            || (addressDTO.idUser() != null && addressDTO.idUser() != idUser))
+            || (addressDTO.idUser() != null && addressDTO.idUser().compareTo(idUser) != 0))
             throw new RequestObjectIsNullException();
 
         if (!securityContextManager.checkSameUserOrAdmin(idUser))
@@ -93,8 +93,8 @@ public class UserAddressService {
         if (idUser == null || idUser <= 0
             || idAddress == null || idAddress <= 0
             || addressDTO == null
-            || addressDTO.id() == null || addressDTO.id() != idAddress
-            || addressDTO.idUser() == null || addressDTO.idUser() != idUser)
+            || addressDTO.id() == null || idAddress.compareTo(addressDTO.id()) != 0
+            || addressDTO.idUser() == null || idUser.compareTo(addressDTO.idUser()) != 0)
             throw new RequestObjectIsNullException();
 
         if (!securityContextManager.checkSameUserOrAdmin(idUser))
