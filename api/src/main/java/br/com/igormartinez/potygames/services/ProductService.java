@@ -1,7 +1,7 @@
 package br.com.igormartinez.potygames.services;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
@@ -31,11 +31,10 @@ public class ProductService {
         this.securityContextManager = securityContextManager;
     }
 
-    public List<ProductDTO> findAll() {
-        return productRepository.findAll()
-            .stream()
-            .map(productDTOMapper)
-            .toList();
+    public Page<ProductDTO> findAll(Pageable pageable) {
+        return productRepository
+            .findAll(pageable)
+            .map(productDTOMapper);
     }
 
     public ProductDTO findById(Long id) {
@@ -76,7 +75,7 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO productDTO) {
         if (id == null || id <= 0
             || productDTO == null
-            || productDTO.id() != id
+            || productDTO.id() == null || productDTO.id().compareTo(id) != 0
             || productDTO.idProductType() == null || productDTO.idProductType() <= 0
             || productDTO.name() == null || productDTO.name().isBlank()
             || productDTO.price() == null || productDTO.price().signum() == -1
