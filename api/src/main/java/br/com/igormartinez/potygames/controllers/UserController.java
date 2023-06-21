@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
-@RequestMapping("api/user/v1")
+@RequestMapping("api/v1/user")
 public class UserController {
 
     @Autowired

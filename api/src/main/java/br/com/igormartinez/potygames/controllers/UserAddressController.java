@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
-@RequestMapping("api/user/v1/{user-id}/address")
+@RequestMapping("api/v1/user/{user-id}/address")
 public class UserAddressController {
 
     @Autowired

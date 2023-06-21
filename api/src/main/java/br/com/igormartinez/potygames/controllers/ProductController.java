@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
-@RequestMapping("api/product/v1")
+@RequestMapping("api/v1/product")
 public class ProductController {
 
     @Autowired
