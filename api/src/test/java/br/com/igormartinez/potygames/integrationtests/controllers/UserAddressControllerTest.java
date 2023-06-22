@@ -33,28 +33,193 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest {
+public class UserAddressControllerTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
 
-	private static String USER_EMAIL = "useraddresscontroler@customer.test";
-	private static String USER_PASSWORD = "securedpassword";
-	private static Long USER_ID; // defined in signupAndAuthentication() 
-	private static Long USER_ADDRESS_ID; // defined in testCreateWithSameUser()
+    private static String ADMIN_EMAIL = "rlayzell0@pen.io";
+    private static String ADMIN_PASSWORD = "SDNrJOfLg";
+
+	private static String CUSTOMER_EMAIL = "useraddresscontroler@customer.test";
+	private static String CUSTOMER_PASSWORD = "securedpassword";
+	private static Long CUSTOMER_ID; // defined in signupAndAuthentication() 
+	private static Long CUSTOMER_ADDRESS_ID; // defined in testCreateWithSameUser()
+
+	@Test
+    @Order(0)
+    void testFindAllAsUnauthenticated() {
+        ExceptionResponse output = 
+            given()
+				.basePath("/api/v1/user")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .pathParam("user-id", 1)
+				.when()
+				    .get("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.FORBIDDEN.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Forbidden", output.getTitle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
+        assertEquals("Authentication required", output.getDetail());
+        assertEquals("/api/v1/user/1/address", output.getInstance());
+    }
+
+	@Test
+    @Order(0)
+    void testFindByIdAsUnauthenticated() {
+        ExceptionResponse output = 
+            given()
+				.basePath("/api/v1/user")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .pathParam("user-id", 1)
+                    .pathParam("address-id", 1)
+				.when()
+				    .get("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.FORBIDDEN.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Forbidden", output.getTitle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
+        assertEquals("Authentication required", output.getDetail());
+        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+    }
+
+	@Test
+    @Order(0)
+    void testCreateAsUnauthenticated() {
+		UserAddressDTO addressDTO = new UserAddressDTO(
+			null,
+            CUSTOMER_ID, 
+            Boolean.FALSE, 
+            Boolean.FALSE, 
+            "Home", 
+            "Avenida Bueno Siqueira", 
+            "5684", 
+            null, 
+            "São Afonso", 
+            "Santo Antônio", 
+            "São Paulo", 
+            "Brasil", 
+            "10001-555"
+		);
+
+        ExceptionResponse output = 
+            given()
+				.basePath("/api/v1/user")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .pathParam("user-id", 1)
+					.body(addressDTO)
+				.when()
+				    .post("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.FORBIDDEN.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Forbidden", output.getTitle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
+        assertEquals("Authentication required", output.getDetail());
+        assertEquals("/api/v1/user/1/address", output.getInstance());
+    }
+
+	@Test
+    @Order(0)
+    void testUpdateAsUnauthenticated() {
+		UserAddressDTO addressDTO = new UserAddressDTO(
+			1L,
+            CUSTOMER_ID, 
+            Boolean.FALSE, 
+            Boolean.FALSE, 
+            "Home", 
+            "Avenida Bueno Siqueira", 
+            "5684", 
+            null, 
+            "São Afonso", 
+            "Santo Antônio", 
+            "São Paulo", 
+            "Brasil", 
+            "10001-555"
+		);
+
+        ExceptionResponse output = 
+            given()
+				.basePath("/api/v1/user")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .pathParam("user-id", 1)
+					.pathParam("address-id", 1)
+					.body(addressDTO)
+				.when()
+				    .put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.FORBIDDEN.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Forbidden", output.getTitle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
+        assertEquals("Authentication required", output.getDetail());
+        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+    }
+
+	@Test
+    @Order(0)
+    void testDeleteAsUnauthenticated() {
+        ExceptionResponse output = 
+            given()
+				.basePath("/api/v1/user")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .pathParam("user-id", 1)
+					.pathParam("address-id", 1)
+				.when()
+				    .delete("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.FORBIDDEN.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Forbidden", output.getTitle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
+        assertEquals("Authentication required", output.getDetail());
+        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+    }
 
     @Test
-    @Order(0)
-    void signupAndAuthentication() {
+    @Order(100)
+    void signupAndAuthenticationAsCustomer() {
 		UserRegistrationDTO user = 
             new UserRegistrationDTO(
-                USER_EMAIL, 
-                USER_PASSWORD, 
+                CUSTOMER_EMAIL, 
+                CUSTOMER_PASSWORD, 
                 "Signup Test", 
                 LocalDate.of(1996,7,23), 
                 "023.007.023-00",
 				"+5500987654321");
 
-        USER_ID = 
+        CUSTOMER_ID = 
             given()
                 .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
@@ -71,8 +236,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
         AccountCredentials accountCredentials = 
             new AccountCredentials(
-                USER_EMAIL, 
-                USER_PASSWORD);
+                CUSTOMER_EMAIL, 
+                CUSTOMER_PASSWORD);
 
         String accessToken = 
 			given()
@@ -100,12 +265,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
     }
 
 	@Test
-	@Order(1)
-	void testFindAllAsSameUserWithNoAddress() {
+	@Order(110)
+	void testFindAllAsCustomerWithSameUserAndNoAddress() {
 		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 				.when()
 					.get("/{user-id}/address")
 				.then()
@@ -119,12 +284,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(1)
-	void testFindAllAsOtherUser() {
+	@Order(110)
+	void testFindAllAsCustomerWithOtherUser() {
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID+1)
+					.pathParam("user-id", CUSTOMER_ID+1)
 				.when()
 					.get("/{user-id}/address")
 				.then()
@@ -138,12 +303,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
 	}
 
 	@Test
-	@Order(1)
-	void testFindAllWithIdUserInvalid() {
+	@Order(110)
+	void testFindAllAsCustomerWithIdUserInvalid() {
 		ExceptionResponse output =
 			given()
 				.spec(specification)
@@ -165,11 +330,11 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(10)
-	void testCreateWithSameUser() {
+	@Order(120)
+	void testCreateAsCustomerWithSameUser() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
 			null,
-            USER_ID, 
+            CUSTOMER_ID, 
             Boolean.FALSE, 
             Boolean.FALSE, 
             "Home", 
@@ -186,7 +351,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		UserAddressDTO output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 					.body(addressDTO)
 				.when()
 					.post("/{user-id}/address")
@@ -198,7 +363,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		
 		assertNotNull(output);
 		assertTrue(output.id() > 0);
-		assertEquals(USER_ID, output.idUser());
+		assertEquals(CUSTOMER_ID, output.idUser());
 		assertFalse(output.favorite());
 		assertFalse(output.billingAddress());
         assertEquals("Home", output.description());
@@ -211,15 +376,15 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Brasil", output.country());
         assertEquals("10001-555", output.zipCode());
 
-		USER_ADDRESS_ID = output.id();
+		CUSTOMER_ADDRESS_ID = output.id();
 	}
 
 	@Test
-	@Order(10)
-	void testCreateWithOtherUser() {
+	@Order(120)
+	void testCreateAsCustomerWithOtherUser() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
 			null,
-            USER_ID+1, 
+            CUSTOMER_ID+1, 
             Boolean.FALSE, 
             Boolean.FALSE, 
             "Home", 
@@ -236,7 +401,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID+1)
+					.pathParam("user-id", CUSTOMER_ID+1)
 					.body(addressDTO)
 				.when()
 					.post("/{user-id}/address")
@@ -250,12 +415,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
 	}
 
 	@Test
-	@Order(10)
-	void testCreateWithIdUserInvalid() {
+	@Order(120)
+	void testCreateAsCustomerWithIdUserInvalid() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
 			null, null, null, null, 
 			null, null, null, null, null, 
@@ -283,17 +448,17 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(10)
-	void testCreateWithMismatchIdUserAndDTO() {
+	@Order(120)
+	void testCreateAsCustomerWithMismatchIdUserAndDTO() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			null, USER_ID+1, null, null, 
+			null, CUSTOMER_ID+1, null, null, 
 			null, null, null, null, null, 
 			null, null, null, null);
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 					.body(addressDTO)
 				.when()
 					.post("/{user-id}/address")
@@ -308,16 +473,16 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address", output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address", output.getInstance());
 	}
 
 	@Test
-	@Order(11)
-	void testFindAllAsSameUserWithAddress() {
+	@Order(121)
+	void testFindAllAsCustomerWithSameUserAsAddress() {
 		List<UserAddressDTO> output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 				.when()
 					.get("/{user-id}/address")
 				.then()
@@ -331,8 +496,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 
 		UserAddressDTO output0 = output.get(0);
 		assertNotNull(output0);
-		assertEquals(USER_ADDRESS_ID, output0.id());
-		assertEquals(USER_ID, output0.idUser());
+		assertEquals(CUSTOMER_ADDRESS_ID, output0.id());
+		assertEquals(CUSTOMER_ID, output0.idUser());
 		assertFalse(output0.favorite());
 		assertFalse(output0.billingAddress());
         assertEquals("Home", output0.description());
@@ -347,11 +512,11 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateAsSameUser() {
+	@Order(130)
+	void testUpdateAsCustomerWithSameUser() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			USER_ADDRESS_ID,
-            USER_ID, 
+			CUSTOMER_ADDRESS_ID,
+            CUSTOMER_ID, 
             Boolean.TRUE, 
             Boolean.FALSE, 
             "Home", 
@@ -368,8 +533,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		UserAddressDTO output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -380,8 +545,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 								.as(UserAddressDTO.class);
 		
 		assertNotNull(output);
-		assertEquals(USER_ADDRESS_ID, output.id());
-		assertEquals(USER_ID, output.idUser());
+		assertEquals(CUSTOMER_ADDRESS_ID, output.id());
+		assertEquals(CUSTOMER_ID, output.idUser());
 		assertTrue(output.favorite());
 		assertFalse(output.billingAddress());
         assertEquals("Home", output.description());
@@ -396,11 +561,11 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateAsOtherUser() {
+	@Order(130)
+	void testUpdateAsCustomerWithOtherUser() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			USER_ADDRESS_ID,
-            USER_ID+1, 
+			CUSTOMER_ADDRESS_ID,
+            CUSTOMER_ID+1, 
             Boolean.TRUE, 
             Boolean.FALSE, 
             "Home", 
@@ -417,8 +582,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID+1)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID+1)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -433,12 +598,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateWithIdUserInvalid() {
+	@Order(130)
+	void testUpdateAsCustomerWithIdUserInvalid() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
 			null, null, null, null, 
 			null, null, null, null, null, 
@@ -448,7 +613,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 			given()
 				.spec(specification)
 					.pathParam("user-id", 0)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -463,12 +628,12 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+0+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+0+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateWithIdAddressInvalid() {
+	@Order(130)
+	void testUpdateAsCustomerWithIdAddressInvalid() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
 			null, null, null, null, 
 			null, null, null, null, null, 
@@ -477,7 +642,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 					.pathParam("address-id", 0)
 					.body(addressDTO)
 				.when()
@@ -493,22 +658,22 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateWithMismatchIdAddressAndDTO() {
+	@Order(130)
+	void testUpdateAsCustomerWithMismatchIdAddressAndDTO() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			USER_ADDRESS_ID+1, null, null, null, 
+			CUSTOMER_ADDRESS_ID+1, null, null, null, 
 			null, null, null, null, null, 
 			null, null, null, null);
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -523,22 +688,22 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(20)
-	void testUpdateWithMismatchIdUserAndDTO() {
+	@Order(130)
+	void testUpdateAsCustomerWithMismatchIdUserAndDTO() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			USER_ADDRESS_ID, USER_ID+1, null, null, 
+			CUSTOMER_ADDRESS_ID, CUSTOMER_ID+1, null, null, 
 			null, null, null, null, null, 
 			null, null, null, null);
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -553,15 +718,15 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 	
 	@Test
-	@Order(20)
-	void testUpdateWithIdAddressWrong() {
+	@Order(130)
+	void testUpdateAsCustomerWithIdAddressWrong() {
 		UserAddressDTO addressDTO = new UserAddressDTO(
-			USER_ADDRESS_ID+1,
-            USER_ID, 
+			CUSTOMER_ADDRESS_ID+1,
+            CUSTOMER_ID, 
             Boolean.TRUE, 
             Boolean.FALSE, 
             "Home", 
@@ -578,8 +743,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID+1)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID+1)
 					.body(addressDTO)
 				.when()
 					.put("/{user-id}/address/{address-id}")
@@ -594,18 +759,18 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
 	}
 
 	@Test
-	@Order(30)
-	void testFindByIdAsSameUser() {
+	@Order(140)
+	void testFindByIdAsCustomerWithSameUser() {
 
 		UserAddressDTO output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 				.when()
 					.get("/{user-id}/address/{address-id}")
 				.then()
@@ -615,8 +780,8 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 								.as(UserAddressDTO.class);
 		
 		assertNotNull(output);
-		assertEquals(USER_ADDRESS_ID, output.id());
-		assertEquals(USER_ID, output.idUser());
+		assertEquals(CUSTOMER_ADDRESS_ID, output.id());
+		assertEquals(CUSTOMER_ID, output.idUser());
 		assertTrue(output.favorite());
 		assertFalse(output.billingAddress());
         assertEquals("Home", output.description());
@@ -631,14 +796,14 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(30)
-	void testFindByIdAsOtherUser() {
+	@Order(140)
+	void testFindByIdAsCustomerWithOtherUser() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID+1)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID+1)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 				.when()
 					.get("/{user-id}/address/{address-id}")
 				.then()
@@ -652,18 +817,18 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(30)
-	void testFindByIdWithIdUserInvalid() {
+	@Order(140)
+	void testFindByIdAsCustomerWithIdUserInvalid() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", 0)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 				.when()
 					.get("/{user-id}/address/{address-id}")
 				.then()
@@ -677,17 +842,17 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(30)
-	void testFindByIdWithIdAddressInvalid() {
+	@Order(140)
+	void testFindByIdAsCustomerWithIdAddressInvalid() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 					.pathParam("address-id", 0)
 				.when()
 					.get("/{user-id}/address/{address-id}")
@@ -702,18 +867,18 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
-	@Order(30)
-	void testFindByIdWithIdAddressWrong() {
+	@Order(140)
+	void testFindByIdAsCustomerWithIdAddressWrong() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID+1)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID+1)
 				.when()
 					.get("/{user-id}/address/{address-id}")
 				.then()
@@ -727,17 +892,17 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
 	}
 
 	@Test
-	@Order(40)
-	void testDeleteAsSameUser() {
+	@Order(150)
+	void testDeleteAsCustomerWithSameUser() {
 
 		given()
 			.spec(specification)
-				.pathParam("user-id", USER_ID)
-				.pathParam("address-id", USER_ADDRESS_ID)
+				.pathParam("user-id", CUSTOMER_ID)
+				.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 			.when()
 				.delete("/{user-id}/address/{address-id}")
 			.then()
@@ -748,14 +913,14 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 	}
 
 	@Test
-	@Order(40)
-	void testDeleteAsOtherUser() {
+	@Order(150)
+	void testDeleteAsCustomerWithOtherUser() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID+1)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("user-id", CUSTOMER_ID+1)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 				.when()
 					.delete("/{user-id}/address/{address-id}")
 				.then()
@@ -769,18 +934,18 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
         assertEquals("The user is not authorized to access this resource", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(40)
-	void testDeleteWithIdUserInvalid() {
+	@Order(150)
+	void testDeleteAsCustomerWithIdUserInvalid() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", 0)
-					.pathParam("address-id", USER_ADDRESS_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
 				.when()
 					.delete("/{user-id}/address/{address-id}")
 				.then()
@@ -794,17 +959,17 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0/address/"+USER_ADDRESS_ID, output.getInstance());
+        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
 	@Test
-	@Order(40)
-	void testDeleteWithIdAddressInvalid() {
+	@Order(150)
+	void testDeleteAsCustomerWithIdAddressInvalid() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
+					.pathParam("user-id", CUSTOMER_ID)
 					.pathParam("address-id", 0)
 				.when()
 					.delete("/{user-id}/address/{address-id}")
@@ -819,18 +984,18 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
         assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/address/0", output.getInstance());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
 	}
 
 	@Test
-	@Order(40)
-	void testDeleteWithIdAddressWrong() {
+	@Order(150)
+	void testDeleteAsCustomerWithIdAddressWrong() {
 
 		ExceptionResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", USER_ID)
-					.pathParam("address-id", USER_ADDRESS_ID+1)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID+1)
 				.when()
 					.delete("/{user-id}/address/{address-id}")
 				.then()
@@ -844,7 +1009,219 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
         assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID)+"/address/"+(USER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
+	}
+
+	@Test
+    @Order(200)
+    void authenticationAsAdmin() {
+        AccountCredentials accountCredentials = new AccountCredentials(ADMIN_EMAIL, ADMIN_PASSWORD);
+
+        String accessToken = 
+			given()
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(accountCredentials)
+					.when()
+				.post()
+					.then()
+						.statusCode(HttpStatus.OK.value())
+							.extract()
+							.body()
+								.as(Token.class)
+								    .getAccessToken();
+
+		specification = new RequestSpecBuilder()
+			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+			.setBasePath("/api/v1/user")
+			.setPort(TestConfigs.SERVER_PORT)
+			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
+			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+			.build();
+    }
+
+	@Test
+	@Order(210)
+	void testCreateAsAdmin() {
+		UserAddressDTO addressDTO = new UserAddressDTO(
+			null,
+            CUSTOMER_ID, 
+            Boolean.FALSE, 
+            Boolean.FALSE, 
+            "Home", 
+            "Avenida Bueno Siqueira", 
+            "5684", 
+            "House", 
+            "São Afonso", 
+            "Santo Antônio", 
+            "São Paulo", 
+            "Brasil", 
+            "10001-555"
+		);
+
+		UserAddressDTO output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.body(addressDTO)
+				.when()
+					.post("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.as(UserAddressDTO.class);
+		
+		assertNotNull(output);
+		assertTrue(output.id() > 0);
+		assertEquals(CUSTOMER_ID, output.idUser());
+		assertFalse(output.favorite());
+		assertFalse(output.billingAddress());
+        assertEquals("Home", output.description());
+        assertEquals("Avenida Bueno Siqueira", output.street());
+        assertEquals("5684", output.number());
+		assertEquals("House", output.complement());
+        assertEquals("São Afonso", output.neighborhood());
+        assertEquals("Santo Antônio", output.city());
+        assertEquals("São Paulo", output.state());
+        assertEquals("Brasil", output.country());
+        assertEquals("10001-555", output.zipCode());
+
+		CUSTOMER_ADDRESS_ID = output.id();
+	}
+
+	@Test
+	@Order(220)
+	void testFindAllAsAdmin() {
+		List<UserAddressDTO> output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+				.when()
+					.get("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.jsonPath()
+									.getList(".", UserAddressDTO.class);
+		assertNotNull(output);
+		assertEquals(1, output.size());
+
+		UserAddressDTO output0 = output.get(0);
+		assertNotNull(output0);
+		assertEquals(CUSTOMER_ADDRESS_ID, output0.id());
+		assertEquals(CUSTOMER_ID, output0.idUser());
+		assertFalse(output0.favorite());
+		assertFalse(output0.billingAddress());
+        assertEquals("Home", output0.description());
+        assertEquals("Avenida Bueno Siqueira", output0.street());
+        assertEquals("5684", output0.number());
+        assertEquals("House", output0.complement());
+        assertEquals("São Afonso", output0.neighborhood());
+        assertEquals("Santo Antônio", output0.city());
+        assertEquals("São Paulo", output0.state());
+        assertEquals("Brasil", output0.country());
+        assertEquals("10001-555", output0.zipCode());
+	}
+
+	@Test
+	@Order(220)
+	void testFindByIdAsAdmin() {
+		UserAddressDTO output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+				.when()
+					.get("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.as(UserAddressDTO.class);
+
+		assertNotNull(output);
+		assertTrue(output.id() > 0);
+		assertEquals(CUSTOMER_ID, output.idUser());
+		assertFalse(output.favorite());
+		assertFalse(output.billingAddress());
+        assertEquals("Home", output.description());
+        assertEquals("Avenida Bueno Siqueira", output.street());
+        assertEquals("5684", output.number());
+		assertEquals("House", output.complement());
+        assertEquals("São Afonso", output.neighborhood());
+        assertEquals("Santo Antônio", output.city());
+        assertEquals("São Paulo", output.state());
+        assertEquals("Brasil", output.country());
+        assertEquals("10001-555", output.zipCode());
+	}
+
+	@Test
+	@Order(240)
+	void testUpdateAsAdmin() {
+		UserAddressDTO addressDTO = new UserAddressDTO(
+			CUSTOMER_ADDRESS_ID,
+            CUSTOMER_ID, 
+            Boolean.TRUE, 
+            Boolean.FALSE, 
+            "Home", 
+            "Avenida João", 
+            "5684", 
+            null, 
+            "São Afonso", 
+            "São Francisco", 
+            "São Paulo", 
+            "Brasil", 
+            "10101-555"
+		);
+
+		UserAddressDTO output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.OK.value())
+						.extract()
+							.body()
+								.as(UserAddressDTO.class);
+		
+		assertNotNull(output);
+		assertEquals(CUSTOMER_ADDRESS_ID, output.id());
+		assertEquals(CUSTOMER_ID, output.idUser());
+		assertTrue(output.favorite());
+		assertFalse(output.billingAddress());
+        assertEquals("Home", output.description());
+        assertEquals("Avenida João", output.street());
+        assertEquals("5684", output.number());
+		assertNull(output.complement());
+        assertEquals("São Afonso", output.neighborhood());
+        assertEquals("São Francisco", output.city());
+        assertEquals("São Paulo", output.state());
+        assertEquals("Brasil", output.country());
+        assertEquals("10101-555", output.zipCode());
+	}
+
+	@Test
+	@Order(250)
+	void testDeleteAsAdmin() {
+		given()
+			.spec(specification)
+				.pathParam("user-id", CUSTOMER_ID)
+				.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+			.when()
+				.delete("/{user-id}/address/{address-id}")
+			.then()
+				.statusCode(HttpStatus.NO_CONTENT.value())
+					.extract()
+						.body()
+							.asString();
 	}
 
 	@Test
@@ -853,7 +1230,7 @@ public class UserAddressControllerAsCustomerTest extends AbstractIntegrationTest
 		given()
 			.spec(specification)
 			    .contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.pathParam("id", USER_ID)
+				.pathParam("id", CUSTOMER_ID)
 			.when()
 				.delete("{id}")
 			.then()
