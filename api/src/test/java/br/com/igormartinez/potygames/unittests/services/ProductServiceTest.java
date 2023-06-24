@@ -447,7 +447,7 @@ public class ProductServiceTest {
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.create(null);
         });
-        String expectedMessage = "The productDTO argument must not be null";
+        String expectedMessage = "The request body must not be null.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 

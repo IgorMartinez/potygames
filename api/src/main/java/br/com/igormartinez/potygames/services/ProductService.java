@@ -81,7 +81,7 @@ public class ProductService {
 
     public ProductDTO create(ProductDTO productDTO) {
         if (productDTO == null)
-           throw new RequestValidationException("The productDTO argument must not be null.");
+           throw new RequestValidationException("The request body must not be null.");
 
         if(!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
