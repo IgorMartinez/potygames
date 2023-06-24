@@ -14,6 +14,7 @@ import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictExcepti
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
@@ -57,6 +58,7 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
 
     @ExceptionHandler({
         RequestObjectIsNullException.class,
+        RequestValidationException.class,
         BadCredentialsException.class, 
         UsernameNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {

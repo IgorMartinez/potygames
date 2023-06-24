@@ -278,7 +278,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/0", output.getInstance());
     }
 
@@ -303,7 +303,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/12546", output.getInstance());
     }
 
@@ -537,7 +537,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product type ID must not be null.", output.getDetail());
         assertEquals("/api/v1/product", output.getInstance());
     }
 
@@ -563,7 +563,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product type was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product", output.getInstance());
     }
 
@@ -618,7 +618,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/0", output.getInstance());
     }
 
@@ -645,7 +645,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The ID in the request body must match the value of the product-id parameter.", output.getDetail());
         assertEquals("/api/v1/product/1024", output.getInstance());
     }
 
@@ -672,7 +672,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product type ID must not be null.", output.getDetail());
         assertEquals("/api/v1/product/1", output.getInstance());
     }
 
@@ -699,7 +699,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product type was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/"+PRODUCT_ID, output.getInstance());
     }
 
@@ -726,7 +726,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
     }
 
@@ -749,7 +749,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/0", output.getInstance());
     }
 
@@ -772,7 +772,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
     }
 

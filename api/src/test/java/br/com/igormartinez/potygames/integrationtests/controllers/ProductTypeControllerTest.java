@@ -58,7 +58,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(11, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -271,7 +271,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(11, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -612,7 +612,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(11, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());

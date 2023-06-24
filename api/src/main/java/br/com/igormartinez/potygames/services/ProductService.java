@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
-import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.ProductDTOMapper;
@@ -31,6 +31,39 @@ public class ProductService {
         this.securityContextManager = securityContextManager;
     }
 
+    public Product prepareEntity(Product product, ProductDTO productDTO) {
+        if (productDTO == null)
+            throw new IllegalArgumentException("The productDTO argument must not be null.");
+
+        if (product == null)
+            product = new Product();
+
+        if (productDTO.idProductType() == null) 
+            throw new RequestValidationException("The product type ID must not be null.");
+        ProductType type = productTypeRepository.findById(productDTO.idProductType())
+            .orElseThrow(() -> new ResourceNotFoundException("The product type was not found with the given ID."));
+        product.setType(type);
+
+        if (productDTO.name() == null || productDTO.name().isBlank()) 
+            throw new RequestValidationException("The product name must not be blank.");
+        product.setName(productDTO.name());
+
+        product.setAltName(
+            (productDTO.altName() == null || productDTO.altName().isBlank())
+            ? null : productDTO.altName()
+        );
+
+        if (productDTO.price() == null || productDTO.price().signum() == -1)
+            throw new RequestValidationException("The product price must be greater than or equal to zero.");
+        product.setPrice(productDTO.price());
+
+        if (productDTO.quantity() == null || productDTO.quantity() < 0)
+            throw new RequestValidationException("The quantity of the product must not be null or negative.");
+        product.setQuantity(productDTO.quantity());
+
+        return product;
+    }
+
     public Page<ProductDTO> findAll(Pageable pageable) {
         return productRepository
             .findAll(pageable)
@@ -39,81 +72,57 @@ public class ProductService {
 
     public ProductDTO findById(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The product-id must be a positive integer value.");
 
         return productRepository.findById(id)
             .map(productDTOMapper)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
     }
 
     public ProductDTO create(ProductDTO productDTO) {
-        if (productDTO == null 
-            || productDTO.idProductType() == null || productDTO.idProductType() <= 0
-            || productDTO.name() == null || productDTO.name().isBlank()
-            || productDTO.price() == null || productDTO.price().signum() == -1
-            || productDTO.quantity() == null || productDTO.quantity() < 0)
-           throw new RequestObjectIsNullException();
+        if (productDTO == null)
+           throw new RequestValidationException("The productDTO argument must not be null.");
 
-        if(!securityContextManager.checkAdmin()) {
+        if(!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
-        }
 
-        ProductType type = productTypeRepository
-            .findById(productDTO.idProductType())
-            .orElseThrow(() -> new ResourceNotFoundException());
-
-        Product product = new Product();
-        product.setType(type);
-        product.setName(productDTO.name());
-        product.setAltName(productDTO.altName());
-        product.setPrice(productDTO.price());
-        product.setQuantity(productDTO.quantity());
+        Product product = prepareEntity(null, productDTO);
 
         return productDTOMapper.apply(productRepository.save(product));
     }
 
     public ProductDTO update(Long id, ProductDTO productDTO) {
-        if (id == null || id <= 0
-            || productDTO == null
-            || productDTO.id() == null || productDTO.id().compareTo(id) != 0
-            || productDTO.idProductType() == null || productDTO.idProductType() <= 0
-            || productDTO.name() == null || productDTO.name().isBlank()
-            || productDTO.price() == null || productDTO.price().signum() == -1
-            || productDTO.quantity() == null || productDTO.quantity() < 0)
-        throw new RequestObjectIsNullException();
+        if (id == null || id <= 0)
+            throw new RequestValidationException("The product-id must be a positive integer value.");
 
-        if(!securityContextManager.checkAdmin()) {
+        if (productDTO == null)
+            throw new RequestValidationException("The request body must not be null.");
+
+        if (productDTO.id() == null || productDTO.id().compareTo(id) != 0)
+            throw new RequestValidationException("The ID in the request body must match the value of the product-id parameter.");
+
+        if(!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
-        }
-
-        ProductType type = productTypeRepository
-            .findById(productDTO.idProductType())
-            .orElseThrow(() -> new ResourceNotFoundException());
 
         Product product = productRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException());
-        
-        product.setType(type);
-        product.setName(productDTO.name());
-        product.setAltName(productDTO.altName());
-        product.setPrice(productDTO.price());
-        product.setQuantity(productDTO.quantity());
+            .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
+
+        product = prepareEntity(product, productDTO);
 
         return productDTOMapper.apply(productRepository.save(product));
     }
 
     public void delete(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The product-id must be a positive integer value.");
 
-        if(!securityContextManager.checkAdmin()) {
+        if(!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
-        }
 
         Product product = productRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
         
         productRepository.delete(product);
     }

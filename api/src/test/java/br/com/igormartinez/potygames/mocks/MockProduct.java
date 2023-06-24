@@ -30,6 +30,22 @@ public class MockProduct {
         return product;
     }
 
+    public Product mockEntity(ProductDTO productDTO) {
+        ProductType type = new ProductType();
+        type.setId(productDTO.idProductType());
+        type.setDescription("Type of product " + productDTO.idProductType());
+
+        Product product = new Product();
+        product.setId(productDTO.id());
+        product.setType(type);
+        product.setName(productDTO.name());
+        product.setAltName(productDTO.altName());
+        product.setPrice(productDTO.price());
+        product.setQuantity(productDTO.quantity());
+
+        return product;
+    }
+
     public List<Product> mockEntityList(int number) {
         List<Product> list = new ArrayList<>();
         for (int i=1; i<=number; i++) {
