@@ -1,14 +1,5 @@
--- Data generated via Mockaroo
-
-INSERT INTO product_types (description)
+INSERT INTO product_types (key_word, description)
 VALUES 
-('Convolvulaceae'),
-('Euphorbiaceae'),
-('Opegraphaceae'),
-('Polemoniaceae'),
-('Scrophulariaceae'),
-('Pyrenulaceae'),
-('Violaceae'),
-('Iridaceae'),
-('Oleaceae'),
-('Rosaceae');
+('board-game', 'Board Games'),
+('yugioh-deck', 'Yu-Gi-Oh! Decks'),
+('yugioh-booster-box', 'Yu-Gi-Oh! Booster Box');
