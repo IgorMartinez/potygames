@@ -1,7 +1,5 @@
 package br.com.igormartinez.potygames.models;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,15 +23,9 @@ public class Product {
     
     @Column(name = "name", nullable = false)
     private String name;
-    
-    @Column(name = "alt_name")
-    private String altName;
-    
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
-    
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+
+    @Column(name = "description")
+    private String description;
 
     public Product() {
     }
@@ -62,28 +54,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getAltName() {
-        return altName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAltName(String altName) {
-        this.altName = altName;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -93,9 +69,7 @@ public class Product {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((altName == null) ? 0 : altName.hashCode());
-        result = prime * result + ((price == null) ? 0 : price.hashCode());
-        result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         return result;
     }
 
@@ -123,21 +97,12 @@ public class Product {
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (altName == null) {
-            if (other.altName != null)
+        if (description == null) {
+            if (other.description != null)
                 return false;
-        } else if (!altName.equals(other.altName))
-            return false;
-        if (price == null) {
-            if (other.price != null)
-                return false;
-        } else if (!price.equals(other.price))
-            return false;
-        if (quantity == null) {
-            if (other.quantity != null)
-                return false;
-        } else if (!quantity.equals(other.quantity))
+        } else if (!description.equals(other.description))
             return false;
         return true;
     }
+    
 }

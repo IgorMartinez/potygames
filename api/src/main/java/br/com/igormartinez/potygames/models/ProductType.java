@@ -19,6 +19,9 @@ public class ProductType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="key_word")
+    private String keyWord;
+
     @Column(name="description")
     private String description;
 
@@ -51,11 +54,20 @@ public class ProductType {
         this.products = products;
     }
 
+    public String getKeyWord() {
+        return keyWord;
+    }
+
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((keyWord == null) ? 0 : keyWord.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((products == null) ? 0 : products.hashCode());
         return result;
@@ -75,6 +87,11 @@ public class ProductType {
                 return false;
         } else if (!id.equals(other.id))
             return false;
+        if (keyWord == null) {
+            if (other.keyWord != null)
+                return false;
+        } else if (!keyWord.equals(other.keyWord))
+            return false;
         if (description == null) {
             if (other.description != null)
                 return false;
@@ -87,4 +104,6 @@ public class ProductType {
             return false;
         return true;
     }
+
+    
 }

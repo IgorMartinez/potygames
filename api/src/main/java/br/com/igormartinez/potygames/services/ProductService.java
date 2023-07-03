@@ -48,18 +48,10 @@ public class ProductService {
             throw new RequestValidationException("The product name must not be blank.");
         product.setName(productDTO.name());
 
-        product.setAltName(
-            (productDTO.altName() == null || productDTO.altName().isBlank())
-            ? null : productDTO.altName()
+        product.setDescription(
+            (productDTO.description() == null || productDTO.description().isBlank())
+            ? null : productDTO.description()
         );
-
-        if (productDTO.price() == null || productDTO.price().signum() == -1)
-            throw new RequestValidationException("The product price must be greater than or equal to zero.");
-        product.setPrice(productDTO.price());
-
-        if (productDTO.quantity() == null || productDTO.quantity() < 0)
-            throw new RequestValidationException("The quantity of the product must not be null or negative.");
-        product.setQuantity(productDTO.quantity());
 
         return product;
     }
