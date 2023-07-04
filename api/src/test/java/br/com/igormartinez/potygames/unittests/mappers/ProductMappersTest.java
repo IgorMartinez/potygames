@@ -3,8 +3,6 @@ package br.com.igormartinez.potygames.unittests.mappers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,11 +25,11 @@ public class ProductMappersTest {
 
     @BeforeEach
     public void setup() {
-        productMocker = new MockProduct();
-        productDTOMapper = new ProductDTOMapper();
-
         productTypeMocker = new MockProductType();
         productTypeDTOMapper = new ProductTypeDTOMapper();
+
+        productMocker = new MockProduct(productTypeMocker);
+        productDTOMapper = new ProductDTOMapper();
     }
 
     @Test
@@ -44,9 +42,7 @@ public class ProductMappersTest {
         assertEquals(1L, productDTO.id());
         assertEquals(1L, productDTO.idProductType());
         assertEquals("Product name 1", productDTO.name());
-        assertEquals("Product alt name 1", productDTO.altName());
-        assertEquals(new BigDecimal("1.99"), productDTO.price());
-        assertEquals(1, productDTO.quantity());
+        assertEquals("Product description 1", productDTO.description());
     }
 
     @Test
@@ -57,6 +53,7 @@ public class ProductMappersTest {
 
         assertNotNull(productTypeDTO);
         assertEquals(1L, productTypeDTO.id());
+        assertEquals("keyword-1", productTypeDTO.keyword());
         assertEquals("Description 1", productTypeDTO.description());
     }
 }

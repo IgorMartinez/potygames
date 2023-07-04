@@ -1,6 +1,5 @@
 package br.com.igormartinez.potygames.mocks;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,38 +9,31 @@ import org.springframework.data.domain.Pageable;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
 import br.com.igormartinez.potygames.models.Product;
-import br.com.igormartinez.potygames.models.ProductType;
 
 public class MockProduct {
+
+    private MockProductType mockProductType;
+
+    public MockProduct(MockProductType mockProductType) {
+        this.mockProductType = mockProductType;
+    }
     
     public Product mockEntity(int number) {
-        ProductType type = new ProductType();
-        type.setId(Long.valueOf(number));
-        type.setDescription("Type of product " + number);
-
         Product product = new Product();
         product.setId(Long.valueOf(number));
-        product.setType(type);
+        product.setType(mockProductType.mockEntity(number));
         product.setName("Product name " + number);
-        product.setAltName("Product alt name " + number);
-        product.setPrice(new BigDecimal(number + ".99"));
-        product.setQuantity(number);
+        product.setDescription("Product description " + number);
 
         return product;
     }
 
     public Product mockEntity(ProductDTO productDTO) {
-        ProductType type = new ProductType();
-        type.setId(productDTO.idProductType());
-        type.setDescription("Type of product " + productDTO.idProductType());
-
         Product product = new Product();
         product.setId(productDTO.id());
-        product.setType(type);
+        product.setType(mockProductType.mockEntity(productDTO.idProductType().intValue()));
         product.setName(productDTO.name());
-        product.setAltName(productDTO.altName());
-        product.setPrice(productDTO.price());
-        product.setQuantity(productDTO.quantity());
+        product.setDescription(productDTO.description());
 
         return product;
     }
@@ -67,9 +59,7 @@ public class MockProduct {
             Long.valueOf(number), 
             Long.valueOf(number), 
             "Product name " + number, 
-            "Product alt name " + number, 
-            new BigDecimal(number + ".99"), 
-            number);
+            "Product description " + number);
     }
 
     public List<ProductDTO> mockDTOList(int number) {

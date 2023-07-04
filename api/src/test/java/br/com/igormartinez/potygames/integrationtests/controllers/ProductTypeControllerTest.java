@@ -39,7 +39,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
     private static String CUSTOMER_PASSWORD = "ZkIfFOo";
 
     private static Long PRODUCT_TYPE_ID;
-
+ 
     @Test
     @Order(0)
     void testFindAllAsUnauthenticated() {
@@ -58,19 +58,17 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(11, output.size());
+        assertEquals(3, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
-        assertEquals("Convolvulaceae", outputPosition0.description());
+        assertEquals("board-game", outputPosition0.keyword());
+        assertEquals("Board Games", outputPosition0.description());
 
-        ProductTypeDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals("Scrophulariaceae", outputPosition4.description());
-        
-        ProductTypeDTO outputPosition9 = output.get(9);
-        assertEquals(10L, outputPosition9.id());;
-        assertEquals("Rosaceae", outputPosition9.description());
+        ProductTypeDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals("yugioh-booster-box", outputPosition2.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", outputPosition2.description());
     }
 
     @Test
@@ -92,7 +90,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(output);
         assertEquals(3L, output.id());
-        assertEquals("Opegraphaceae", output.description());
+        assertEquals("yugioh-booster-box", output.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", output.description());
     }
 
     @Test
@@ -116,13 +115,13 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-type-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/type/0", output.getInstance());
     }
 
     @Test
     @Order(0)
-    void testFindByIdAsUnauthenticatedWithProductNotFound() {
+    void testFindByIdAsUnauthenticatedWithTypeNotFound() {
         ExceptionResponse output = 
             given()
 				.basePath("/api/v1/product/type")
@@ -141,14 +140,15 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product type was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/type/12546", output.getInstance());
     }
 
     @Test
     @Order(0)
     void testCreateAsUnauthenticated() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, "Lorem ipsum");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, 
+            "loremipsum", "Lorem ipsum");
 
         ExceptionResponse output = 
             given()
@@ -175,7 +175,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     void testUpdateAsUnauthenticated() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(1L, "Lorem ipsum");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(1L, 
+            "loremipsum", "Lorem ipsum");
 
         ExceptionResponse output = 
             given()
@@ -271,19 +272,17 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(11, output.size());
+        assertEquals(3, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
-        assertEquals("Convolvulaceae", outputPosition0.description());
+        assertEquals("board-game", outputPosition0.keyword());
+        assertEquals("Board Games", outputPosition0.description());
 
-        ProductTypeDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals("Scrophulariaceae", outputPosition4.description());
-        
-        ProductTypeDTO outputPosition9 = output.get(9);
-        assertEquals(10L, outputPosition9.id());;
-        assertEquals("Rosaceae", outputPosition9.description());
+        ProductTypeDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals("yugioh-booster-box", outputPosition2.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", outputPosition2.description());
     }
 
     @Test
@@ -303,13 +302,15 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(output);
         assertEquals(3L, output.id());
-        assertEquals("Opegraphaceae", output.description());
+        assertEquals("yugioh-booster-box", output.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", output.description());
     }
 
     @Test
     @Order(110)
     void testCreateAsAdmin() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, "Lorem ipsum");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, 
+            "loremipsum", "Lorem ipsum");
 
         ProductTypeDTO output =
 			given()
@@ -325,6 +326,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(output);
         assertTrue(output.id() > 0);
+        assertEquals("loremipsum", output.keyword());
         assertEquals("Lorem ipsum", output.description());
 
         PRODUCT_TYPE_ID = output.id();
@@ -332,8 +334,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(110)
-    void testCreateAsAdminWithBadProductRequest() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, null);
+    void testCreateAsAdminWithBadTypeRequest() {
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, null, null);
 
         ExceptionResponse output =
 			given()
@@ -351,14 +353,14 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The keyword of product type must not be blank.", output.getDetail());
         assertEquals("/api/v1/product/type", output.getInstance());
     }
 
     @Test
     @Order(120)
     void testUpdatAsAdmin() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, "Dolor sit");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, "dolorsit", "Dolor sit");
 
         ProductTypeDTO output =
 			given()
@@ -375,13 +377,15 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(output);
         assertEquals(PRODUCT_TYPE_ID, output.id());
+        assertEquals("dolorsit", output.keyword());
         assertEquals("Dolor sit", output.description());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, "Dolor sit");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, 
+            "dolosit", "Dolor sit");
 
         ExceptionResponse output =
 			given()
@@ -400,14 +404,15 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-type-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/type/0", output.getInstance());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, "Dolor sit");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, 
+            "dolosit", "Dolor sit");
 
         ExceptionResponse output =
 			given()
@@ -426,40 +431,14 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The ID in the request body must match the value of the product-type-id parameter.", output.getDetail());
         assertEquals("/api/v1/product/type/"+(PRODUCT_TYPE_ID+1), output.getInstance());
     }
 
     @Test
     @Order(120)
-    void testUpdateAsAdminWithParamDTOInvalid() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID, "");
-
-        ExceptionResponse output =
-			given()
-				.spec(specification)
-                    .pathParam("product-type-id", PRODUCT_TYPE_ID)
-					.body(productTypeDTO)
-				.when()
-					.put("/{product-type-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-                                .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/product/type/"+PRODUCT_TYPE_ID, output.getInstance());
-    }
-
-    @Test
-    @Order(120)
     void testUpdateAsAdminWithProductNotFound() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID+1, "Dolor sit");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(PRODUCT_TYPE_ID+1, "dolorsit", "Dolor sit");
 
         ExceptionResponse output =
 			given()
@@ -478,7 +457,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product type was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/type/"+(PRODUCT_TYPE_ID+1), output.getInstance());
     }
 
@@ -501,31 +480,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
+        assertEquals("The product-type-id must be a positive integer value.", output.getDetail());
         assertEquals("/api/v1/product/type/0", output.getInstance());
-    }
-
-    @Test
-    @Order(130)
-    void testDeleteAsAdminWithAssociatedProducts() {
-        ExceptionResponse output =
-			given()
-				.spec(specification)
-                    .pathParam("product-type-id", 1)
-				.when()
-					.delete("/{product-type-id}")
-				.then()
-					.statusCode(HttpStatus.CONFLICT.value())
-						.extract()
-							.body()
-                                .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Conflict", output.getTitle());
-        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus().intValue());
-        assertEquals("Resource cannot be removed due to being associated with other resources", output.getDetail());
-        assertEquals("/api/v1/product/type/1", output.getInstance());
     }
 
     @Test
@@ -547,8 +503,31 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
+        assertEquals("The product type was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/product/type/"+(PRODUCT_TYPE_ID+1), output.getInstance());
+    }
+
+    @Test
+    @Order(130)
+    void testDeleteAsAdminWithAssociatedProducts() {
+        ExceptionResponse output =
+			given()
+				.spec(specification)
+                    .pathParam("product-type-id", 1)
+				.when()
+					.delete("/{product-type-id}")
+				.then()
+					.statusCode(HttpStatus.CONFLICT.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Conflict", output.getTitle());
+        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus().intValue());
+        assertEquals("The product type cannot be removed because it is associated with products.", output.getDetail());
+        assertEquals("/api/v1/product/type/1", output.getInstance());
     }
 
     @Test
@@ -612,19 +591,17 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
                                     .getList(".", ProductTypeDTO.class);
 
         assertNotNull(output);
-        assertEquals(11, output.size());
+        assertEquals(3, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
-        assertEquals("Convolvulaceae", outputPosition0.description());
+        assertEquals("board-game", outputPosition0.keyword());
+        assertEquals("Board Games", outputPosition0.description());
 
-        ProductTypeDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals("Scrophulariaceae", outputPosition4.description());
-        
-        ProductTypeDTO outputPosition9 = output.get(9);
-        assertEquals(10L, outputPosition9.id());;
-        assertEquals("Rosaceae", outputPosition9.description());
+        ProductTypeDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals("yugioh-booster-box", outputPosition2.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", outputPosition2.description());
     }
 
     @Test
@@ -644,13 +621,14 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(output);
         assertEquals(3L, output.id());
-        assertEquals("Opegraphaceae", output.description());
+        assertEquals("yugioh-booster-box", output.keyword());
+        assertEquals("Yu-Gi-Oh! Booster Box", output.description());
     }
 
     @Test
     @Order(210)
     void testCreateAsCustomer() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, "Lorem ipsum");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(null, "loremipsum", "Lorem ipsum");
 
         ExceptionResponse output = 
             given()
@@ -675,7 +653,7 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(210)
     void testUpdateAsCustomer() {
-        ProductTypeDTO productTypeDTO = new ProductTypeDTO(1L, "Dolor sit");
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO(1L, "loremipsum", "Lorem ipsum");
 
         ExceptionResponse output = 
             given()
@@ -720,5 +698,4 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
         assertEquals("The user is not authorized to access this resource", output.getDetail());
         assertEquals("/api/v1/product/type/1", output.getInstance());
     }
-
 }

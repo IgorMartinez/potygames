@@ -11,6 +11,21 @@ public class MockProductType {
         ProductType type = new ProductType();
         type.setId(Long.valueOf(number));
         type.setDescription("Description " + number);
+        type.setKeyword("keyword-" + number);
+        return type;
+    }
+
+    public ProductType mockPreparedEntity(int number) {
+        ProductType type = new ProductType();
+        type.setDescription("Description " + number);
+        type.setKeyword("keyword-" + number);
+        return type;
+    }
+
+    public ProductType mockPreparedEntity(ProductTypeDTO typeDTO) {
+        ProductType type = new ProductType();
+        type.setDescription(typeDTO.description());
+        type.setKeyword(typeDTO.keyword());
         return type;
     }
 
@@ -22,6 +37,6 @@ public class MockProductType {
     }
 
     public ProductTypeDTO mockDTO(int number) {
-        return new ProductTypeDTO(Long.valueOf(number), "Description " + 1);
+        return new ProductTypeDTO(Long.valueOf(number), "keyword-" + number, "Description " + 1);
     }
 }

@@ -2,7 +2,6 @@ package br.com.igormartinez.potygames.integrationtests.controllers;
 
 import static io.restassured.RestAssured.given;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.Order;
@@ -60,42 +59,30 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.idProductType());
-        assertEquals("Wine - Clavet Saint Emilion", outputPosition0.name());
-        assertEquals("Veronica", outputPosition0.altName());
-        assertEquals(new BigDecimal("74.86"), outputPosition0.price());
-        assertEquals(377, outputPosition0.quantity());
+        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Completely based on the famous TV series"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals(1L, outputPosition4.idProductType());
-        assertEquals("Stock - Beef, Brown", outputPosition4.name());
-        assertEquals("Bibi", outputPosition4.altName());
-        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
-        assertEquals(307, outputPosition4.quantity());
-
-        ProductDTO outputPosition9 = output.get(9);
-        assertEquals(10L, outputPosition9.id());
-        assertEquals(7L, outputPosition9.idProductType());
-        assertEquals("Wine - Harrow Estates, Vidal", outputPosition9.name());
-        assertEquals("Fitzgerald", outputPosition9.altName());
-        assertEquals(new BigDecimal("45.87"), outputPosition9.price());
-        assertEquals(287, outputPosition9.quantity());
+        ProductDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(3L, outputPosition5.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Booster Box containing 24"));
     }
 
     @Test
     @Order(0)
-    void testFindAllAsUnauthenticatedPage2Size10DirectionASC() {
+    void testFindAllAsUnauthenticatedPage1Size3DirectionASC() {
         List<ProductDTO> output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
-                    .queryParam("page", 2)
-                    .queryParam("size", 10)
+                    .queryParam("page", 1)
+                    .queryParam("size", 3)
                     .queryParam("direction", "asc")
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.when()
@@ -108,41 +95,29 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(3, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
-        assertEquals(21L, outputPosition0.id());
-        assertEquals(6L, outputPosition0.idProductType());
-        assertEquals("Bread - Focaccia Quarter", outputPosition0.name());
-        assertEquals("Kristin", outputPosition0.altName());
-        assertEquals(new BigDecimal("77.59"), outputPosition0.price());
-        assertEquals(616, outputPosition0.quantity());
+        assertEquals(4, outputPosition0.id());
+        assertEquals(3L, outputPosition0.idProductType());
+        assertEquals("Cyberstorm Access", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Booster Box containing"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(25L, outputPosition4.id());
-        assertEquals(7L, outputPosition4.idProductType());
-        assertEquals("Cheese - Roquefort Pappillon", outputPosition4.name());
-        assertEquals("Clare", outputPosition4.altName());
-        assertEquals(new BigDecimal("25.69"), outputPosition4.price());
-        assertEquals(10, outputPosition4.quantity());
-
-        ProductDTO outputPosition9 = output.get(9);
-        assertEquals(30L, outputPosition9.id());
-        assertEquals(6L, outputPosition9.idProductType());
-        assertEquals("Wine - Pinot Grigio Collavini", outputPosition9.name());
-        assertEquals("Gordan", outputPosition9.altName());
-        assertEquals(new BigDecimal("8.47"), outputPosition9.price());
-        assertEquals(203, outputPosition9.quantity());
+        ProductDTO outputPosition2 = output.get(2);
+        assertEquals(6, outputPosition2.id());
+        assertEquals(3L, outputPosition2.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition2.name());
+        assertTrue(outputPosition2.description().startsWith("Booster Box containing"));
     }
 
     @Test
     @Order(0)
-    void testFindAllAsUnauthenticatedPage1Size12DirectionASC() {
+    void testFindAllAsUnauthenticatedPage0Size12DirectionASC() {
         List<ProductDTO> output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
-                    .queryParam("page", 1)
+                    .queryParam("page", 0)
                     .queryParam("size", 12)
                     .queryParam("direction", "asc")
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
@@ -156,31 +131,19 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(12, output.size());
+        assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
-        assertEquals(13L, outputPosition0.id());
-        assertEquals(8L, outputPosition0.idProductType());
-        assertEquals("Bagel - Everything Presliced", outputPosition0.name());
-        assertEquals("Rancell", outputPosition0.altName());
-        assertEquals(new BigDecimal("50.52"), outputPosition0.price());
-        assertEquals(562, outputPosition0.quantity());
+        assertEquals(1L, outputPosition0.id());
+        assertEquals(1L, outputPosition0.idProductType());
+        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Completely based on the famous TV series"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(17L, outputPosition4.id());
-        assertEquals(8L, outputPosition4.idProductType());
-        assertEquals("Lettuce - Boston Bib - Organic", outputPosition4.name());
-        assertEquals("Melisenda", outputPosition4.altName());
-        assertEquals(new BigDecimal("16.86"), outputPosition4.price());
-        assertEquals(928, outputPosition4.quantity());
-
-        ProductDTO outputPosition11 = output.get(11);
-        assertEquals(24L, outputPosition11.id());
-        assertEquals(10L, outputPosition11.idProductType());
-        assertEquals("Tia Maria", outputPosition11.name());
-        assertEquals("Rosamund", outputPosition11.altName());
-        assertEquals(new BigDecimal("29.79"), outputPosition11.price());
-        assertEquals(65, outputPosition11.quantity());
+        ProductDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(3L, outputPosition5.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Booster Box containing 24"));
     }
 
     @Test
@@ -204,31 +167,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
-        assertEquals(1000L, outputPosition0.id());
-        assertEquals(10L, outputPosition0.idProductType());
-        assertEquals("Ketchup - Tomato", outputPosition0.name());
-        assertEquals("Sandor", outputPosition0.altName());
-        assertEquals(new BigDecimal("57.28"), outputPosition0.price());
-        assertEquals(745, outputPosition0.quantity());
+        assertEquals(6, outputPosition0.id());
+        assertEquals(3L, outputPosition0.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Booster Box containing"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(996L, outputPosition4.id());
-        assertEquals(7L, outputPosition4.idProductType());
-        assertEquals("Mountain Dew", outputPosition4.name());
-        assertEquals("Nevins", outputPosition4.altName());
-        assertEquals(new BigDecimal("91.98"), outputPosition4.price());
-        assertEquals(636, outputPosition4.quantity());
+        ProductDTO outputPosition5 = output.get(5);
+        assertEquals(1L, outputPosition5.id());
+        assertEquals(1L, outputPosition5.idProductType());
+        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Completely based on the famous TV series"));
 
-        ProductDTO outputPosition9 = output.get(9);
-        assertEquals(991L, outputPosition9.id());
-        assertEquals(3L, outputPosition9.idProductType());
-        assertEquals("Pepper - Black, Whole", outputPosition9.name());
-        assertEquals("Aeriela", outputPosition9.altName());
-        assertEquals(new BigDecimal("47.43"), outputPosition9.price());
-        assertEquals(680, outputPosition9.quantity());
     }
 
     @Test
@@ -239,7 +191,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("product-id", 15)
+                    .pathParam("product-id", 3)
 				.when()
 				    .get("/{product-id}")
 				.then()
@@ -249,12 +201,10 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                 .as(ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(15L, output.id());
-        assertEquals(10L, output.idProductType());
-        assertEquals("Bouillion - Fish", output.name());
-        assertEquals("Wilona", output.altName());
-        assertEquals(new BigDecimal("3.98"), output.price());
-        assertEquals(116, output.quantity());
+        assertEquals(3L, output.id());
+        assertEquals(2L, output.idProductType());
+        assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
+        assertTrue(output.description().startsWith("Each Structure Deck: Legend"));
     }
 
     @Test
@@ -311,7 +261,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testCreateAsUnauthenticated() {
         ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ExceptionResponse output = 
             given()
@@ -339,7 +289,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testUpdateAsUnauthenticated() {
         ProductDTO productDTO = new ProductDTO(1L, 1L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ExceptionResponse output = 
             given()
@@ -435,31 +385,19 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.idProductType());
-        assertEquals("Wine - Clavet Saint Emilion", outputPosition0.name());
-        assertEquals("Veronica", outputPosition0.altName());
-        assertEquals(new BigDecimal("74.86"), outputPosition0.price());
-        assertEquals(377, outputPosition0.quantity());
+        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Completely based on the famous TV series"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals(1L, outputPosition4.idProductType());
-        assertEquals("Stock - Beef, Brown", outputPosition4.name());
-        assertEquals("Bibi", outputPosition4.altName());
-        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
-        assertEquals(307, outputPosition4.quantity());
-
-        ProductDTO outputPosition17 = output.get(9);
-        assertEquals(10L, outputPosition17.id());
-        assertEquals(7L, outputPosition17.idProductType());
-        assertEquals("Wine - Harrow Estates, Vidal", outputPosition17.name());
-        assertEquals("Fitzgerald", outputPosition17.altName());
-        assertEquals(new BigDecimal("45.87"), outputPosition17.price());
-        assertEquals(287, outputPosition17.quantity());
+        ProductDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(3L, outputPosition5.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Booster Box containing 24"));
     }
 
     @Test
@@ -468,7 +406,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         ProductDTO output = 
             given()
 				.spec(specification)
-                    .pathParam("product-id", 15)
+                    .pathParam("product-id", 3)
 				.when()
 				    .get("/{product-id}")
 				.then()
@@ -478,19 +416,17 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                 .as(ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(15L, output.id());
-        assertEquals(10L, output.idProductType());
-        assertEquals("Bouillion - Fish", output.name());
-        assertEquals("Wilona", output.altName());
-        assertEquals(new BigDecimal("3.98"), output.price());
-        assertEquals(116, output.quantity());
+        assertEquals(3L, output.id());
+        assertEquals(2L, output.idProductType());
+        assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
+        assertTrue(output.description().startsWith("Each Structure Deck: Legend"));
     }
 
     @Test
     @Order(110)
     void testCreateAsAdmin() {
         ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ProductDTO output =
 			given()
@@ -508,9 +444,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertTrue(output.id() > 0);
         assertEquals(1L, output.idProductType());
         assertEquals("Product name 1", output.name());
-        assertNull(output.altName());
-        assertEquals(new BigDecimal("10.99"), output.price());
-        assertEquals(25, output.quantity());
+        assertNull(output.description());
 
         PRODUCT_ID = output.id();
     }
@@ -519,7 +453,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdminWithBadProductRequest() {
         ProductDTO productDTO = new ProductDTO(null, null, 
-            null, null, null, null);
+            null, null);
 
         ExceptionResponse output =
 			given()
@@ -545,7 +479,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdminWithNotFoundProductType() {
         ProductDTO productDTO = new ProductDTO(null, 15555L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ExceptionResponse output =
 			given()
@@ -571,7 +505,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdatAsAdmin() {
         ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
-            "Product updated name 1", "Alt name 1", new BigDecimal("1.99"), 22);
+            "Product updated name 1", "Description 1");
 
         ProductDTO output =
 			given()
@@ -590,16 +524,14 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals(PRODUCT_ID, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Product updated name 1", output.name());
-        assertEquals("Alt name 1", output.altName());
-        assertEquals(new BigDecimal("1.99"), output.price());
-        assertEquals(22, output.quantity());
+        assertEquals("Description 1", output.description());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
-        ProductDTO productDTO = new ProductDTO(1L, 1L, 
-            "Product name updated", "Alt name", new BigDecimal("1.99"), 20);
+        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
+            "Product updated name 1", "Description 1");
 
         ExceptionResponse output =
 			given()
@@ -625,8 +557,8 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
-        ProductDTO productDTO = new ProductDTO(1L, 1L, 
-            "Product name updated", "Alt name", new BigDecimal("1.99"), 20);
+        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
+            "Product updated name 1", "Description 1");
 
         ExceptionResponse output =
 			given()
@@ -653,7 +585,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithParamDTOInvalid() {
         ProductDTO productDTO = new ProductDTO(1L, null, 
-            null, "Alt name", null, null);
+            null, null);
 
         ExceptionResponse output =
 			given()
@@ -680,7 +612,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithProductTypeNotFound() {
         ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 1024L, 
-            "Product updated name 1", "Alt name 1", new BigDecimal("1.99"), 22);
+            "Product updated name 1", "Product description 1");
 
         ExceptionResponse output =
 			given()
@@ -707,7 +639,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithProductNotFound() {
         ProductDTO productDTO = new ProductDTO(PRODUCT_ID+1, 2L, 
-            "Product updated name 1", "Alt name 1", new BigDecimal("1.99"), 22);
+            "Product updated name 1", "Product description 1");
 
         ExceptionResponse output =
 			given()
@@ -837,31 +769,19 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                     .getList("content", ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(10, output.size());
+        assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.idProductType());
-        assertEquals("Wine - Clavet Saint Emilion", outputPosition0.name());
-        assertEquals("Veronica", outputPosition0.altName());
-        assertEquals(new BigDecimal("74.86"), outputPosition0.price());
-        assertEquals(377, outputPosition0.quantity());
+        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Completely based on the famous TV series"));
 
-        ProductDTO outputPosition4 = output.get(4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals(1L, outputPosition4.idProductType());
-        assertEquals("Stock - Beef, Brown", outputPosition4.name());
-        assertEquals("Bibi", outputPosition4.altName());
-        assertEquals(new BigDecimal("87.91"), outputPosition4.price());
-        assertEquals(307, outputPosition4.quantity());
-
-        ProductDTO outputPosition17 = output.get(9);
-        assertEquals(10L, outputPosition17.id());
-        assertEquals(7L, outputPosition17.idProductType());
-        assertEquals("Wine - Harrow Estates, Vidal", outputPosition17.name());
-        assertEquals("Fitzgerald", outputPosition17.altName());
-        assertEquals(new BigDecimal("45.87"), outputPosition17.price());
-        assertEquals(287, outputPosition17.quantity());
+        ProductDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(3L, outputPosition5.idProductType());
+        assertEquals("Battle of Legends: Armagedon", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Booster Box containing 24"));
     }
 
     @Test
@@ -870,7 +790,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         ProductDTO output = 
             given()
 				.spec(specification)
-                    .pathParam("product-id", 15)
+                    .pathParam("product-id", 3)
 				.when()
 				    .get("/{product-id}")
 				.then()
@@ -880,19 +800,17 @@ public class ProductControllerTest extends AbstractIntegrationTest {
                                 .as(ProductDTO.class);
 
         assertNotNull(output);
-        assertEquals(15L, output.id());
-        assertEquals(10L, output.idProductType());
-        assertEquals("Bouillion - Fish", output.name());
-        assertEquals("Wilona", output.altName());
-        assertEquals(new BigDecimal("3.98"), output.price());
-        assertEquals(116, output.quantity());
+        assertEquals(3L, output.id());
+        assertEquals(2L, output.idProductType());
+        assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
+        assertTrue(output.description().startsWith("Each Structure Deck: Legend"));
     }
 
     @Test
     @Order(210)
     void testCreateAsCustomer() {
         ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ExceptionResponse output = 
             given()
@@ -918,7 +836,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Order(210)
     void testUpdateAsCustomer() {
         ProductDTO productDTO = new ProductDTO(1L, 1L, 
-            "Product name 1", null, new BigDecimal("10.99"), 25);
+            "Product name 1", null);
 
         ExceptionResponse output = 
             given()
