@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductTypeDTO;
 import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
-import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.ProductTypeDTOMapper;
@@ -31,6 +31,23 @@ public class ProductTypeService {
         this.securityContextManager = securityContextManager;
     }
 
+    public ProductType prepareEntity(ProductTypeDTO typeDTO) {
+        if (typeDTO == null)
+            throw new IllegalArgumentException("The ProductTypeDTO argument must not be null.");
+
+        ProductType type = new ProductType();
+
+        if (typeDTO.keyword() == null || typeDTO.keyword().isBlank())
+            throw new RequestValidationException("The keyword of product type must not be blank.");
+        type.setKeyword(typeDTO.keyword());
+
+        if (typeDTO.description() == null || typeDTO.description().isBlank())
+            throw new RequestValidationException("The description of product type must not be blank.");
+        type.setDescription(typeDTO.description());
+
+        return type;
+    }
+
     public List<ProductTypeDTO> findAll() {
         return productTypeRepository.findAll()
             .stream()
@@ -40,57 +57,59 @@ public class ProductTypeService {
 
     public ProductTypeDTO findById(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The product-type-id must be a positive integer value.");
 
         return productTypeRepository.findById(id)
             .map(productTypeDTOMapper)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The product type was not found with the given ID."));
     }
 
     public ProductTypeDTO create(ProductTypeDTO productTypeDTO) {
-        if (productTypeDTO == null 
-            || productTypeDTO.description() == null || productTypeDTO.description().isBlank())
-            throw new RequestObjectIsNullException();
+        if (productTypeDTO == null)
+            throw new RequestValidationException("The request body must not be null.");
 
         if (!securityContextManager.checkAdmin()) 
             throw new UserUnauthorizedException();
 
-        ProductType productType = new ProductType();
-        productType.setDescription(productTypeDTO.description());
+        ProductType productType = prepareEntity(productTypeDTO);
 
         return productTypeDTOMapper.apply(productTypeRepository.save(productType));
     }
 
     public ProductTypeDTO update(Long id, ProductTypeDTO productTypeDTO) {
-        if (id == null || id <= 0
-            ||productTypeDTO == null
-            || productTypeDTO.id() == null || productTypeDTO.id().compareTo(id) != 0
-            || productTypeDTO.description() == null || productTypeDTO.description().isBlank())
-            throw new RequestObjectIsNullException();
+        if (id == null || id <= 0)
+            throw new RequestValidationException("The product-type-id must be a positive integer value.");
+
+        if (productTypeDTO == null)
+            throw new RequestValidationException("The request body must not be null.");
+
+        if (productTypeDTO.id() == null || productTypeDTO.id().compareTo(id) != 0)
+            throw new RequestValidationException("The ID in the request body must match the value of the product-type-id parameter.");
 
         if (!securityContextManager.checkAdmin()) 
             throw new UserUnauthorizedException();
 
         ProductType productType = productTypeRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The product type was not found with the given ID."));
 
-        productType.setDescription(productTypeDTO.description());
+        ProductType preparedProductType = prepareEntity(productTypeDTO);
+        preparedProductType.setId(productType.getId());
 
-        return productTypeDTOMapper.apply(productTypeRepository.save(productType));
+        return productTypeDTOMapper.apply(productTypeRepository.save(preparedProductType));
     }
 
     public void delete(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The product-type-id must be a positive integer value.");
 
         if (!securityContextManager.checkAdmin()) 
             throw new UserUnauthorizedException();
 
-        if (productRepository.countProductsByIdProductType(id) > 0)
-            throw new DeleteAssociationConflictException();
-
         ProductType productType = productTypeRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The product type was not found with the given ID."));
+
+        if (productRepository.countProductsByIdProductType(id) > 0)
+            throw new DeleteAssociationConflictException("The product type cannot be removed because it is associated with products.");
 
         productTypeRepository.delete(productType);
     }

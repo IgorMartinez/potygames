@@ -20,7 +20,7 @@ public class ProductType {
     private Long id;
 
     @Column(name="key_word")
-    private String keyWord;
+    private String keyword;
 
     @Column(name="description")
     private String description;
@@ -54,12 +54,12 @@ public class ProductType {
         this.products = products;
     }
 
-    public String getKeyWord() {
-        return keyWord;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ProductType {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((keyWord == null) ? 0 : keyWord.hashCode());
+        result = prime * result + ((keyword == null) ? 0 : keyword.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((products == null) ? 0 : products.hashCode());
         return result;
@@ -87,10 +87,10 @@ public class ProductType {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (keyWord == null) {
-            if (other.keyWord != null)
+        if (keyword == null) {
+            if (other.keyword != null)
                 return false;
-        } else if (!keyWord.equals(other.keyWord))
+        } else if (!keyword.equals(other.keyword))
             return false;
         if (description == null) {
             if (other.description != null)

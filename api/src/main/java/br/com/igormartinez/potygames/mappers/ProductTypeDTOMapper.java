@@ -14,7 +14,7 @@ public class ProductTypeDTOMapper implements Function<ProductType, ProductTypeDT
     public ProductTypeDTO apply(ProductType type) {
         return new ProductTypeDTO(
             type.getId(), 
-            type.getKeyWord(),
+            type.getKeyword(),
             type.getDescription());
     }
     

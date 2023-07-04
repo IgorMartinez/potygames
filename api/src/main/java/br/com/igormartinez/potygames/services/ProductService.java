@@ -31,12 +31,11 @@ public class ProductService {
         this.securityContextManager = securityContextManager;
     }
 
-    public Product prepareEntity(Product product, ProductDTO productDTO) {
+    public Product prepareEntity(ProductDTO productDTO) {
         if (productDTO == null)
             throw new IllegalArgumentException("The productDTO argument must not be null.");
 
-        if (product == null)
-            product = new Product();
+        Product product = new Product();
 
         if (productDTO.idProductType() == null) 
             throw new RequestValidationException("The product type ID must not be null.");
@@ -78,7 +77,7 @@ public class ProductService {
         if(!securityContextManager.checkAdmin())
             throw new UserUnauthorizedException();
 
-        Product product = prepareEntity(null, productDTO);
+        Product product = prepareEntity(productDTO);
 
         return productDTOMapper.apply(productRepository.save(product));
     }
@@ -100,9 +99,10 @@ public class ProductService {
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
 
-        product = prepareEntity(product, productDTO);
+        Product preparedProduct = prepareEntity(productDTO);
+        preparedProduct.setId(product.getId());
 
-        return productDTOMapper.apply(productRepository.save(product));
+        return productDTOMapper.apply(productRepository.save(preparedProduct));
     }
 
     public void delete(Long id) {
