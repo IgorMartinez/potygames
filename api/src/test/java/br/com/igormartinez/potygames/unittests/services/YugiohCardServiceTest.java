@@ -145,7 +145,7 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, null, null, 
             null, null, null, 
             null, null, null);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
 
@@ -162,7 +162,7 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, null, 
             null, null, null, 
             null, null, null);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.ofNullable(null));
@@ -180,8 +180,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "ERROR", 
             null, null, null, 
             null, null, null);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -199,8 +199,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             null, -1800, null);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -218,8 +218,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             null, 1800, -1200);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -237,8 +237,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             null, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockPendulumMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -256,8 +256,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, -2, 
             null, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockPendulumMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategoryPendulumMonster(1);
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -275,8 +275,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             null, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockLinkMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategoryLinkMonster(1);
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -295,8 +295,8 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             linkArrows, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockLinkMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategoryLinkMonster(1);
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -315,8 +315,8 @@ public class YugiohCardServiceTest {
             null, "Crystal Beast Sapphire Pegasus", 1L, 1L, "WIND", 
             4, "Effect lore text", 3, 
             linkArrows, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Monster");
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -348,8 +348,8 @@ public class YugiohCardServiceTest {
             null, "Crystal Master", 1L, 1L, "DARK", 
             4, "Effect lore text", 5, 
             linkArrows, 1300, 1000);
-        YugiohCardCategory category = cardMocker.mockPendulumMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategoryPendulumMonster(1);
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -381,8 +381,8 @@ public class YugiohCardServiceTest {
             null, "Crystal Beast Onyx Gorilla", 1L, 1L, "EARTH", 
             2, "Effect lore text", null, 
             linkArrows, 2000, 1000);
-        YugiohCardCategory category = cardMocker.mockLinkMonsterCategory(1);
-        YugiohCardType type = cardMocker.mockTypeEntity(1);
+        YugiohCardCategory category = cardMocker.mockCategoryLinkMonster(1);
+        YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
         when(typeRepository.findById(cardDTO.type())).thenReturn(Optional.of(type));
@@ -414,7 +414,7 @@ public class YugiohCardServiceTest {
             null, "Golden Rule", 1L, 1L, "EARTH", 
             2, "Effect lore text", 3, 
             linkArrows, 2000, 1000);
-        YugiohCardCategory category = cardMocker.mockCategoryEntity(1, "Spell");
+        YugiohCardCategory category = cardMocker.mockCategory(1, "Spell");
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
 

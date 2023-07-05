@@ -15,9 +15,9 @@ public class YugiohCardDTOMapper implements Function<YugiohCard, YugiohCardDTO> 
         return new YugiohCardDTO(
             card.getId(), 
             card.getName(),
-            card.getCategory().getId(), 
-            card.getType().getId(), 
-            card.getAttribute().name(),
+            card.getCategory() == null ? null : card.getCategory().getId(), 
+            card.getType() == null ? null : card.getType().getId(), 
+            card.getAttribute() == null ? null : card.getAttribute().name(),
             card.getLevelRankLink(), 
             card.getEffectLoreText(), 
             card.getPendulumScale(), 

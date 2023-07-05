@@ -2,6 +2,7 @@ package br.com.igormartinez.potygames.unittests.mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -26,8 +27,44 @@ public class YugiohMappersTest {
     }
 
     @Test
-    public void testYugiohCardDTOMapper() {
-        YugiohCard card = yugiohCardMocker.mockEntity(1);
+    public void testMapMonsterCard() {
+        YugiohCard card = yugiohCardMocker.mockMonsterEntity(1);
+
+        YugiohCardDTO cardDTO = yugiohCardDTOMapper.apply(card);
+        assertNotNull(cardDTO);
+        assertEquals("Name 1", cardDTO.name());
+        assertEquals(1L, cardDTO.category());
+        assertEquals(1L, cardDTO.type());
+        assertEquals("DIVINE", cardDTO.attribute());
+        assertEquals(1, cardDTO.levelRankLink());
+        assertEquals("Effect lore text 1", cardDTO.effectLoreText());
+        assertNull(cardDTO.pendulumScale());
+        assertNull(cardDTO.linkArrows());
+        assertEquals(1, cardDTO.atk());
+        assertEquals(1, cardDTO.def());
+    }
+
+    @Test
+    public void testMapLinkCard() {
+        YugiohCard card = yugiohCardMocker.mockLinkMonsterEntity(1);
+
+        YugiohCardDTO cardDTO = yugiohCardDTOMapper.apply(card);
+        assertNotNull(cardDTO);
+        assertEquals("Name 1", cardDTO.name());
+        assertEquals(1L, cardDTO.category());
+        assertEquals(1L, cardDTO.type());
+        assertEquals("DIVINE", cardDTO.attribute());
+        assertEquals(1, cardDTO.levelRankLink());
+        assertEquals("Effect lore text 1", cardDTO.effectLoreText());
+        assertNull(cardDTO.pendulumScale());
+        assertTrue(cardDTO.linkArrows().containsAll(Arrays.asList("N", "NE", "E", "SE", "S", "SW", "W", "WN")));
+        assertEquals(1, cardDTO.atk());
+        assertNull(cardDTO.def());
+    }
+
+    @Test
+    public void testMapPendulumCard(){
+        YugiohCard card = yugiohCardMocker.mockPendulumMonsterEntity(1);
 
         YugiohCardDTO cardDTO = yugiohCardDTOMapper.apply(card);
         assertNotNull(cardDTO);
@@ -38,8 +75,26 @@ public class YugiohMappersTest {
         assertEquals(1, cardDTO.levelRankLink());
         assertEquals("Effect lore text 1", cardDTO.effectLoreText());
         assertEquals(1, cardDTO.pendulumScale());
-        assertTrue(Arrays.asList("N", "NE", "E", "SE", "S", "SW", "W", "WN").containsAll(cardDTO.linkArrows()));
+        assertNull(cardDTO.linkArrows());
         assertEquals(1, cardDTO.atk());
         assertEquals(1, cardDTO.def());
+    }
+
+    @Test
+    public void testMapSpellCard(){
+        YugiohCard card = yugiohCardMocker.mockSpellEntity(1);
+
+        YugiohCardDTO cardDTO = yugiohCardDTOMapper.apply(card);
+        assertNotNull(cardDTO);
+        assertEquals("Name 1", cardDTO.name());
+        assertEquals(1L, cardDTO.category());
+        assertNull(cardDTO.type());
+        assertNull(cardDTO.attribute());
+        assertNull(cardDTO.levelRankLink());
+        assertEquals("Effect lore text 1", cardDTO.effectLoreText());
+        assertNull(cardDTO.pendulumScale());
+        assertNull(cardDTO.linkArrows());
+        assertNull(cardDTO.atk());
+        assertNull(cardDTO.def());
     }
 }

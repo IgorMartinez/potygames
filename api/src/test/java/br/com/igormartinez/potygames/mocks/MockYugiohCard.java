@@ -21,8 +21,8 @@ public class MockYugiohCard {
         card.setId(Long.valueOf(number));
         card.setIdYgoprodeck(Long.valueOf(number));
         card.setName("Name " + number);
-        card.setCategory(mockCategoryEntity(number));
-        card.setType(mockTypeEntity(number));
+        card.setCategory(mockCategory(number));
+        card.setType(mockType(number));
         card.setAttribute(YugiohCardAttribute.values()[(number%7)]);
         card.setLevelRankLink(number);
         card.setEffectLoreText("Effect lore text " + number);
@@ -34,13 +34,85 @@ public class MockYugiohCard {
         return card;
     }
 
+    public YugiohCard mockMonsterEntity(int number) {
+        YugiohCard card = new YugiohCard();
+        card.setId(Long.valueOf(number));
+        card.setIdYgoprodeck(Long.valueOf(number));
+        card.setName("Name " + number);
+        card.setCategory(mockCategory(number, "Monster", "Normal", Boolean.TRUE));
+        card.setType(mockType(number));
+        card.setAttribute(YugiohCardAttribute.values()[(number%7)]);
+        card.setLevelRankLink(number);
+        card.setEffectLoreText("Effect lore text " + number);
+        card.setPendulumScale(null);
+        card.setLinkArrows(null);
+        card.setAtk(number);
+        card.setDef(number);
+
+        return card;
+    }
+
+    public YugiohCard mockLinkMonsterEntity(int number) {
+        YugiohCard card = new YugiohCard();
+        card.setId(Long.valueOf(number));
+        card.setIdYgoprodeck(Long.valueOf(number));
+        card.setName("Name " + number);
+        card.setCategory(mockCategoryLinkMonster(number));
+        card.setType(mockType(number));
+        card.setAttribute(YugiohCardAttribute.values()[(number%7)]);
+        card.setLevelRankLink(number);
+        card.setEffectLoreText("Effect lore text " + number);
+        card.setPendulumScale(null);
+        card.setLinkArrows(Arrays.asList("N", "NE", "E", "SE", "S", "SW", "W", "WN"));
+        card.setAtk(number);
+        card.setDef(null);
+
+        return card;
+    }
+
+    public YugiohCard mockPendulumMonsterEntity(int number) {
+        YugiohCard card = new YugiohCard();
+        card.setId(Long.valueOf(number));
+        card.setIdYgoprodeck(Long.valueOf(number));
+        card.setName("Name " + number);
+        card.setCategory(mockCategoryPendulumMonster(number));
+        card.setType(mockType(number));
+        card.setAttribute(YugiohCardAttribute.values()[(number%7)]);
+        card.setLevelRankLink(number);
+        card.setEffectLoreText("Effect lore text " + number);
+        card.setPendulumScale(number);
+        card.setLinkArrows(null);
+        card.setAtk(number);
+        card.setDef(number);
+
+        return card;
+    }
+
+    public YugiohCard mockSpellEntity(int number) {
+        YugiohCard card = new YugiohCard();
+        card.setId(Long.valueOf(number));
+        card.setIdYgoprodeck(Long.valueOf(number));
+        card.setName("Name " + number);
+        card.setCategory(mockCategory(number, "Spell", "Normal", Boolean.TRUE));
+        card.setType(null);
+        card.setAttribute(null);
+        card.setLevelRankLink(null);
+        card.setEffectLoreText("Effect lore text " + number);
+        card.setPendulumScale(null);
+        card.setLinkArrows(null);
+        card.setAtk(null);
+        card.setDef(null);
+
+        return card;
+    }
+
     public YugiohCard mockPrepareEntity(YugiohCardDTO cardDTO) {
         YugiohCard card = new YugiohCard();
         card.setId(null);
         card.setIdYgoprodeck(null);
         card.setName(cardDTO.name());
-        card.setCategory(mockCategoryEntity(cardDTO.category().intValue()));
-        card.setType(mockTypeEntity(cardDTO.type().intValue()));
+        card.setCategory(mockCategory(cardDTO.category().intValue()));
+        card.setType(mockType(cardDTO.type().intValue()));
         card.setAttribute(YugiohCardAttribute.valueOf(cardDTO.attribute()));
         card.setLevelRankLink(cardDTO.levelRankLink());
         card.setEffectLoreText(cardDTO.effectLoreText());
@@ -72,43 +144,48 @@ public class MockYugiohCard {
         return page;
     }
 
-    public YugiohCardCategory mockCategoryEntity(int number) {
-        YugiohCardCategory cardCategory = new YugiohCardCategory();
-        cardCategory.setId(Long.valueOf(number));
-        cardCategory.setCategory("Category " + number);
-        cardCategory.setSubCategory("Subcategory " + number);
-        cardCategory.setMainDeck((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
-        return cardCategory;
+    public YugiohCardCategory mockCategory(int number) {
+        return mockCategory(
+            number, 
+            "Category " + number,
+            "Subcategory " + number,
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    public YugiohCardCategory mockCategoryEntity(int number, String category) {
+    public YugiohCardCategory mockCategoryPendulumMonster(int number) {
+        return mockCategory(
+            number, 
+            "Monster",
+            "Pendulum",
+            Boolean.TRUE);
+    }
+
+    public YugiohCardCategory mockCategoryLinkMonster(int number) {
+        return mockCategory(
+            number, 
+            "Monster",
+            "Link",
+            Boolean.FALSE);
+    }
+
+    public YugiohCardCategory mockCategory(int number, String category) {
+        return mockCategory(
+            number, 
+            category,
+            "Subcategory " + number,
+            (number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+    }
+
+    public YugiohCardCategory mockCategory(int number, String category, String subcategory, Boolean mainDeck) {
         YugiohCardCategory cardCategory = new YugiohCardCategory();
         cardCategory.setId(Long.valueOf(number));
         cardCategory.setCategory(category);
-        cardCategory.setSubCategory("Subcategory " + number);
-        cardCategory.setMainDeck((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+        cardCategory.setSubCategory(subcategory);
+        cardCategory.setMainDeck(mainDeck);
         return cardCategory;
     }
 
-    public YugiohCardCategory mockPendulumMonsterCategory(int number) {
-        YugiohCardCategory cardCategory = new YugiohCardCategory();
-        cardCategory.setId(Long.valueOf(number));
-        cardCategory.setCategory("Monster");
-        cardCategory.setSubCategory("Pendulum");
-        cardCategory.setMainDeck(Boolean.TRUE);
-        return cardCategory;
-    }
-
-    public YugiohCardCategory mockLinkMonsterCategory(int number) {
-        YugiohCardCategory cardCategory = new YugiohCardCategory();
-        cardCategory.setId(Long.valueOf(number));
-        cardCategory.setCategory("Monster");
-        cardCategory.setSubCategory("Link");
-        cardCategory.setMainDeck(Boolean.FALSE);
-        return cardCategory;
-    }
-
-    public YugiohCardType mockTypeEntity(int number) {
+    public YugiohCardType mockType(int number) {
         YugiohCardType cardType = new YugiohCardType();
         cardType.setId(Long.valueOf(number));
         cardType.setDescription("Monster type " + number);
