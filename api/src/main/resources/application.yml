@@ -7,7 +7,7 @@ security:
       expire-length: 3600000
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/potygames
+    url: jdbc:postgresql://localhost:5432/potygames?stringtype=unspecified
     username: postgres
     password: admin123
   jpa:
