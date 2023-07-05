@@ -1,3 +1,6 @@
+# Folders to be ignored
+db/ygoprodeck
+
 # Compiled class file
 *.class
 
