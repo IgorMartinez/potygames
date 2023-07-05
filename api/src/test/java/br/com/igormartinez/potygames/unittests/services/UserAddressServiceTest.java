@@ -100,7 +100,7 @@ public class UserAddressServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findAllByIdUser(1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -234,7 +234,7 @@ public class UserAddressServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findById(1L, 1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -335,7 +335,7 @@ public class UserAddressServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.create(1L, addressDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -533,7 +533,7 @@ public class UserAddressServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.update(1L, 1L, addressDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -637,7 +637,7 @@ public class UserAddressServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L, 1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 

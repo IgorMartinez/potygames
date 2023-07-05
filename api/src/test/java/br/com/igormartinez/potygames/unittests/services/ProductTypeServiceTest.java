@@ -219,7 +219,7 @@ public class ProductTypeServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.create(productTypeDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -315,7 +315,7 @@ public class ProductTypeServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.update(1L, productDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -388,7 +388,7 @@ public class ProductTypeServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 

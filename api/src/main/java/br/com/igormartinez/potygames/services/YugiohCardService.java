@@ -124,7 +124,7 @@ public class YugiohCardService {
 
         return repository.findById(id)
             .map(mapper)
-            .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
+            .orElseThrow(() -> new ResourceNotFoundException("The card was not found with the given ID."));
     }
 
     public YugiohCardDTO create(YugiohCardDTO cardDTO) {
@@ -152,7 +152,7 @@ public class YugiohCardService {
             throw new UserUnauthorizedException();
 
         YugiohCard card = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
+            .orElseThrow(() -> new ResourceNotFoundException("The card was not found with the given ID."));
         
         YugiohCard preparedCard = prepareEntity(cardDTO);
         preparedCard.setId(card.getId());

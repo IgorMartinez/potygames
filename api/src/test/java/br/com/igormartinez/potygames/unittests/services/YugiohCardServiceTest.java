@@ -237,7 +237,7 @@ public class YugiohCardServiceTest {
             null, "Name card", 1L, 1L, "LIGHT", 
             null, null, null, 
             null, 1800, 1200);
-        YugiohCardCategory category = cardMocker.mockCategory(1, "Monster");
+        YugiohCardCategory category = cardMocker.mockCategoryPendulumMonster(1);
         YugiohCardType type = cardMocker.mockType(1);
 
         when(categoryRepository.findById(cardDTO.category())).thenReturn(Optional.of(category));
@@ -666,7 +666,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "The product was not found with the given ID.";
+        String expectedMessage = "The card was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -691,7 +691,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.create(cardDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -810,7 +810,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.update(1L, cardDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -860,7 +860,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.update(1L, cardDTO);
         });
-        String expectedMessage = "The product was not found with the given ID.";
+        String expectedMessage = "The card was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -898,7 +898,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 

@@ -302,7 +302,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
 	}
 
@@ -414,7 +414,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
 	}
 
@@ -597,7 +597,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
@@ -816,7 +816,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 
@@ -933,7 +933,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
 	}
 

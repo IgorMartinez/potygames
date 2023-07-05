@@ -828,7 +828,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/product", output.getInstance());
     }
 
@@ -855,7 +855,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/product/1", output.getInstance());
     }
 
@@ -878,7 +878,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/product/1", output.getInstance());
     }
 

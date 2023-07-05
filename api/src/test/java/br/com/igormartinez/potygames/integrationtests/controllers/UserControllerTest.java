@@ -339,7 +339,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", exceptionResponse.getType());
         assertEquals("Unauthorized", exceptionResponse.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponse.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource", exceptionResponse.getDetail());
+        assertEquals("The user is not authorized to access this resource.", exceptionResponse.getDetail());
         assertEquals("/api/v1/user", exceptionResponse.getInstance());
     }
 
@@ -394,7 +394,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
     }
 
@@ -481,7 +481,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(USER_ID+1)+"/personal-information", output.getInstance());
     }
 
@@ -560,7 +560,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Unauthorized", output.getTitle());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource", output.getDetail());
+        assertEquals("The user is not authorized to access this resource.", output.getDetail());
         assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
     }
 

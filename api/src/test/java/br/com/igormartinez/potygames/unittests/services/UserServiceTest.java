@@ -434,7 +434,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findAll();
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -507,7 +507,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -687,7 +687,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -747,7 +747,7 @@ public class UserServiceTest {
         Exception output = assertThrows(UserUnauthorizedException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The user is not authorized to access this resource";
+        String expectedMessage = "The user is not authorized to access this resource.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
