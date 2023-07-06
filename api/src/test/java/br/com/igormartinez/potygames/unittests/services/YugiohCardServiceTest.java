@@ -920,7 +920,7 @@ public class YugiohCardServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The yugioh card was not found with the given ID.";
+        String expectedMessage = "The card was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 }

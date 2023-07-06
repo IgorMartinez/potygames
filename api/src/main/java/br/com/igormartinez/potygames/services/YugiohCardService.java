@@ -169,7 +169,7 @@ public class YugiohCardService {
             throw new UserUnauthorizedException();
 
         YugiohCard card = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("The yugioh card was not found with the given ID."));
+            .orElseThrow(() -> new ResourceNotFoundException("The card was not found with the given ID."));
 
         repository.delete(card);
     }
