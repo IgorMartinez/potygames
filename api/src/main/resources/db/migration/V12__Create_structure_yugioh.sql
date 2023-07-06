@@ -1,4 +1,5 @@
 CREATE TYPE YUGIOH_CARD_ATTRIBUTE AS ENUM('DARK', 'DIVINE', 'EARTH', 'FIRE', 'LIGHT', 'WATER', 'WIND');
+CREATE CAST(varchar AS yugioh_card_attribute) WITH INOUT AS IMPLICIT;
 
 CREATE TABLE yugioh_card_categories (
     id SERIAL,
