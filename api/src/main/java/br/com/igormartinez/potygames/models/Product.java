@@ -1,12 +1,16 @@
 package br.com.igormartinez.potygames.models;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,6 +30,9 @@ public class Product {
 
     @Column(name = "description")
     private String description;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    private List<InventoryItem> inventoryItems;
 
     public Product() {
     }
@@ -62,6 +69,14 @@ public class Product {
         this.description = description;
     }
 
+    public List<InventoryItem> getInventoryItems() {
+        return inventoryItems;
+    }
+
+    public void setInventoryItems(List<InventoryItem> inventoryItems) {
+        this.inventoryItems = inventoryItems;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -70,6 +85,7 @@ public class Product {
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((inventoryItems == null) ? 0 : inventoryItems.hashCode());
         return result;
     }
 
@@ -102,7 +118,11 @@ public class Product {
                 return false;
         } else if (!description.equals(other.description))
             return false;
+        if (inventoryItems == null) {
+            if (other.inventoryItems != null)
+                return false;
+        } else if (!inventoryItems.equals(other.inventoryItems))
+            return false;
         return true;
     }
-    
 }
