@@ -31,6 +31,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import br.com.igormartinez.potygames.data.dto.v1.YugiohCardDTO;
 import br.com.igormartinez.potygames.enums.YugiohCardAttribute;
+import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -39,6 +40,7 @@ import br.com.igormartinez.potygames.mocks.MockYugiohCard;
 import br.com.igormartinez.potygames.models.YugiohCard;
 import br.com.igormartinez.potygames.models.YugiohCardCategory;
 import br.com.igormartinez.potygames.models.YugiohCardType;
+import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardCategoryRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardTypeRepository;
@@ -59,6 +61,9 @@ public class YugiohCardServiceTest {
     
     @Mock
     private YugiohCardTypeRepository typeRepository;
+
+    @Mock
+    private InventoryItemRepository inventoryItemRepository;
     
     @Mock
     private SecurityContextManager securityContextManager;
@@ -68,7 +73,7 @@ public class YugiohCardServiceTest {
         cardMocker = new MockYugiohCard();
 
         service = new YugiohCardService(
-            repository, categoryRepository, typeRepository, 
+            repository, categoryRepository, typeRepository, inventoryItemRepository,
             new YugiohCardDTOMapper(), securityContextManager);
     }
 
@@ -903,17 +908,7 @@ public class YugiohCardServiceTest {
     }
 
     @Test
-    void testDeleteWithPermission() {
-        YugiohCard card = cardMocker.mockEntity(1);
-
-        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
-        when(repository.findById(1L)).thenReturn(Optional.of(card));
-
-        service.delete(1L);
-    }
-
-    @Test
-    void testDeleteWithProductTypeNotFound() {
+    void testDeleteWithCardNotFound() {
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(1L)).thenReturn(Optional.ofNullable(null));
 
@@ -922,5 +917,31 @@ public class YugiohCardServiceTest {
         });
         String expectedMessage = "The card was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testDeleteWithAssociatedInventoryItems() {
+        YugiohCard card = cardMocker.mockEntity(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(repository.findById(1L)).thenReturn(Optional.of(card));
+        when(inventoryItemRepository.countByIdYugiohCard(1L)).thenReturn(123);
+
+        Exception output = assertThrows(DeleteAssociationConflictException.class, () -> {
+            service.delete(1L);
+        });
+        String expectedMessage = "The card cannot be removed because it is associated with inventory items.";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testDelete() {
+        YugiohCard card = cardMocker.mockEntity(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(repository.findById(1L)).thenReturn(Optional.of(card));
+        when(inventoryItemRepository.countByIdYugiohCard(1L)).thenReturn(0);
+
+        service.delete(1L);
     }
 }

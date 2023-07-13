@@ -957,6 +957,29 @@ public class YugiohCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Order(130)
+    void testDeleteAsAdminWithAssociateInventoryItems() {
+        ExceptionResponse output =
+			given()
+				.spec(specification)
+                    .pathParam("yugioh-card-id", 2061)
+				.when()
+					.delete("/{yugioh-card-id}")
+				.then()
+					.statusCode(HttpStatus.CONFLICT.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Conflict", output.getTitle());
+        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus().intValue());
+        assertEquals("The card cannot be removed because it is associated with inventory items.", output.getDetail());
+        assertEquals("/api/v1/product/yugioh-card/2061", output.getInstance());
+    }
+
+    @Test
     @Order(140)
     void testFindAllAttributesAsAdmin() {
         List<String> output = 

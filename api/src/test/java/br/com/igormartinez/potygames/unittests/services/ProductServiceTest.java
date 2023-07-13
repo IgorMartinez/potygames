@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
+import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -35,6 +36,7 @@ import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
 import br.com.igormartinez.potygames.models.Product;
 import br.com.igormartinez.potygames.models.ProductType;
+import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
 import br.com.igormartinez.potygames.repositories.ProductTypeRepository;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
@@ -56,6 +58,9 @@ public class ProductServiceTest {
     private ProductTypeRepository productTypeRepository;
     
     @Mock
+    private InventoryItemRepository inventoryItemRepository;
+
+    @Mock
     private SecurityContextManager securityContextManager;
 
     @BeforeEach
@@ -66,6 +71,7 @@ public class ProductServiceTest {
         service = new ProductService(
             productRepository, 
             productTypeRepository, 
+            inventoryItemRepository,
             new ProductDTOMapper(), 
             securityContextManager);
     }
@@ -527,16 +533,6 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testDeleteWithPermission() {
-        Product product = productMocker.mockEntity(1);
-
-        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-
-        service.delete(1L);
-    }
-
-    @Test
     void testDeleteWithProductTypeNotFound() {
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
@@ -546,5 +542,31 @@ public class ProductServiceTest {
         });
         String expectedMessage = "The product was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testDeleteWithAssociatedInventoryItems() {
+        Product product = productMocker.mockEntity(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(inventoryItemRepository.countByIdProduct(1L)).thenReturn(11);
+
+        Exception output = assertThrows(DeleteAssociationConflictException.class, () -> {
+            service.delete(1L);
+        });
+        String expectedMessage = "The product cannot be removed because it is associated with inventory items.";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testDelete() {
+        Product product = productMocker.mockEntity(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(inventoryItemRepository.countByIdProduct(1L)).thenReturn(0);
+
+        service.delete(1L);
     }
 }

@@ -710,6 +710,29 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(130)
+    void testDeleteAsAdminWithAssociateInventoryItems() {
+        ExceptionResponse output =
+			given()
+				.spec(specification)
+                    .pathParam("product-id", 1)
+				.when()
+					.delete("/{product-id}")
+				.then()
+					.statusCode(HttpStatus.CONFLICT.value())
+						.extract()
+							.body()
+                                .as(ExceptionResponse.class);
+        
+        assertNotNull(output);
+        assertEquals("about:blank", output.getType());
+        assertEquals("Conflict", output.getTitle());
+        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus().intValue());
+        assertEquals("The product cannot be removed because it is associated with inventory items.", output.getDetail());
+        assertEquals("/api/v1/product/1", output.getInstance());
+    }
+
+    @Test
+    @Order(130)
     void testDeleteAsAdmin() {
 		given()
 			.spec(specification)
