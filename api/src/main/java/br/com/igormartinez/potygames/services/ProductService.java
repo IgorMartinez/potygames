@@ -5,12 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
+import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.ProductDTOMapper;
 import br.com.igormartinez.potygames.models.Product;
 import br.com.igormartinez.potygames.models.ProductType;
+import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
 import br.com.igormartinez.potygames.repositories.ProductTypeRepository;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
@@ -20,13 +22,16 @@ public class ProductService {
     
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final InventoryItemRepository inventoryItemRepository;
     private final ProductDTOMapper productDTOMapper;
     private final SecurityContextManager securityContextManager;
 
     public ProductService(ProductRepository productRepository, ProductTypeRepository productTypeRepository,
-            ProductDTOMapper productDTOMapper, SecurityContextManager securityContextManager) {
+            InventoryItemRepository inventoryItemRepository, ProductDTOMapper productDTOMapper,
+            SecurityContextManager securityContextManager) {
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.inventoryItemRepository = inventoryItemRepository;
         this.productDTOMapper = productDTOMapper;
         this.securityContextManager = securityContextManager;
     }
@@ -116,6 +121,9 @@ public class ProductService {
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."));
         
+        if (inventoryItemRepository.countByIdProduct(id) > 0)
+            throw new DeleteAssociationConflictException("The product cannot be removed because it is associated with inventory items.");
+
         productRepository.delete(product);
     }
 }

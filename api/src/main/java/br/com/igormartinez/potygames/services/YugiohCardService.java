@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.igormartinez.potygames.data.dto.v1.YugiohCardDTO;
 import br.com.igormartinez.potygames.enums.YugiohCardAttribute;
+import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -17,6 +18,7 @@ import br.com.igormartinez.potygames.mappers.YugiohCardDTOMapper;
 import br.com.igormartinez.potygames.models.YugiohCard;
 import br.com.igormartinez.potygames.models.YugiohCardCategory;
 import br.com.igormartinez.potygames.models.YugiohCardType;
+import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardCategoryRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardRepository;
 import br.com.igormartinez.potygames.repositories.YugiohCardTypeRepository;
@@ -30,15 +32,17 @@ public class YugiohCardService {
     private final YugiohCardRepository repository;
     private final YugiohCardCategoryRepository categoryRepository;
     private final YugiohCardTypeRepository typeRepository;
+    private final InventoryItemRepository inventoryItemRepository;
     private final YugiohCardDTOMapper mapper;
     private final SecurityContextManager securityContextManager;
 
-    public YugiohCardService(YugiohCardRepository repository,
-            YugiohCardCategoryRepository categoryRepository, YugiohCardTypeRepository typeRepository,
+    public YugiohCardService(YugiohCardRepository repository, YugiohCardCategoryRepository categoryRepository,
+            YugiohCardTypeRepository typeRepository, InventoryItemRepository inventoryItemRepository,
             YugiohCardDTOMapper mapper, SecurityContextManager securityContextManager) {
         this.repository = repository;
         this.categoryRepository = categoryRepository;
         this.typeRepository = typeRepository;
+        this.inventoryItemRepository = inventoryItemRepository;
         this.mapper = mapper;
         this.securityContextManager = securityContextManager;
     }
@@ -170,6 +174,9 @@ public class YugiohCardService {
 
         YugiohCard card = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("The card was not found with the given ID."));
+
+        if (inventoryItemRepository.countByIdYugiohCard(id) > 0)
+            throw new DeleteAssociationConflictException("The card cannot be removed because it is associated with inventory items.");
 
         repository.delete(card);
     }

@@ -103,6 +103,7 @@ public class ProductController {
             @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
             @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
             @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+            @ApiResponse(description = "Conflict", responseCode = "409", content = @Content),
             @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
         }
     )
