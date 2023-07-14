@@ -1,5 +1,6 @@
 package br.com.igormartinez.potygames.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequestMapping("/api/v1/inventory")
 public class InventoryItemController {
     
+    @Autowired
     InventoryItemService service;
 
     @Operation(
