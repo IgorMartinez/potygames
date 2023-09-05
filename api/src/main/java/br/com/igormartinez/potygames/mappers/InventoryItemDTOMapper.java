@@ -15,7 +15,6 @@ public class InventoryItemDTOMapper implements Function<InventoryItem, Inventory
         return new InventoryItemDTO(
             item.getId(), 
             (item.getProduct() == null) ? null : item.getProduct().getId(), 
-            (item.getYugiohCard() == null) ? null : item.getYugiohCard().getId(), 
             item.getVersion(), 
             item.getCondition(), 
             item.getPrice(), 

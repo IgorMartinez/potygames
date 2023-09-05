@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public record InventoryItemDTO (
     Long id,
     Long product,
-    Long yugiohCard,
     String version,
     String condition,
     BigDecimal price,
