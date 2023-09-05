@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.services.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.media.Content;
 
 @RestController
@@ -33,7 +34,7 @@ public class AuthController {
         }
     )
     @PostMapping("/signin")
-    public Token signin(@RequestBody AccountCredentials accountCredentials) {
+    public Token signin(@RequestBody @Valid AccountCredentials accountCredentials) {
         return service.signin(accountCredentials);
     }
 

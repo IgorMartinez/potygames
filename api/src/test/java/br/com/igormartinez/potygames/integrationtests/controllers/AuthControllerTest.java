@@ -1,6 +1,7 @@
 package br.com.igormartinez.potygames.integrationtests.controllers;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,9 +15,9 @@ import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -54,11 +55,8 @@ public class AuthControllerTest extends AbstractIntegrationTest {
         assertNotNull(token.getExpiration());
         assertNotNull(token.getAccessToken());
         assertNotNull(token.getRefreshToken());
-    }
 
-    @Test
-    @Order(1)
-    void testTokenGeneratedInSignin() {
+        // Verify if the generated token is valid
         UserDTO output = 
             given()
                 .basePath("/api/v1/user")
@@ -80,8 +78,9 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testSigninWithoutAccountCredentials() {
-        ExceptionResponse output = 
+    @Order(0)
+    void testSigninWithoutBody() {
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/signin")
 					.port(TestConfigs.SERVER_PORT)
@@ -92,22 +91,54 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 					.extract()
 					    .body()
-						    .as(ExceptionResponse.class);
+						    .as(APIErrorResponse.class);
 
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/auth/signin", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/auth/signin", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
+    @Order(0)
+    void testSigninWithFieldsNullOrBlank() {
+        AccountCredentials credentials = new AccountCredentials(null, " ");
+
+        APIErrorResponse output = 
+            given()
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+                    .body(credentials)
+				.when()
+				    .post()
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+					.extract()
+					    .body()
+						    .as(APIErrorResponse.class);
+
+        assertNotNull(output);
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/auth/signin", output.instance());
+        assertEquals(2, output.errors().size());
+        assertEquals("The username must be not blank.", output.errors().get("username"));
+        assertEquals("The password must be not blank.", output.errors().get("password"));
+    }
+
+    @Test
+    @Order(0)
     void testSigninWithWrongEmail() {
         AccountCredentials accountCredentials = 
             new AccountCredentials("wrongemail", TestConfigs.USER_ADMIN_PASSWORD);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/signin")
 					.port(TestConfigs.SERVER_PORT)
@@ -119,22 +150,24 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 					.extract()
 					    .body()
-						    .as(ExceptionResponse.class);
+						    .as(APIErrorResponse.class);
 
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("Invalid email or password", output.getDetail());
-        assertEquals("/auth/signin", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("Invalid email or password.", output.detail());
+        assertEquals("/auth/signin", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
+    @Order(0)
     void testSigninWithWrongPassword() {
         AccountCredentials accountCredentials = 
             new AccountCredentials(TestConfigs.USER_ADMIN_USERNAME, "wrongpassword");
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/signin")
 					.port(TestConfigs.SERVER_PORT)
@@ -146,14 +179,15 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 					.extract()
 					    .body()
-						    .as(ExceptionResponse.class);
+						    .as(APIErrorResponse.class);
 
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("Invalid email or password", output.getDetail());
-        assertEquals("/auth/signin", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("Invalid email or password.", output.detail());
+        assertEquals("/auth/signin", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -182,11 +216,8 @@ public class AuthControllerTest extends AbstractIntegrationTest {
         assertNotNull(token.getExpiration());
         assertNotNull(token.getAccessToken());
         assertNotNull(token.getRefreshToken());
-    }
 
-    @Test
-    @Order(101)
-    void testTokenGeneratedInRefresh() {
+        // Test if the generated token is valid
         UserDTO output = 
             given()
                 .basePath("/api/v1/user")
@@ -208,8 +239,9 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     }
     
     @Test
+    @Order(100)
     void testRefreshTokenWithoutHeader() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/refresh")
 					.port(TestConfigs.SERVER_PORT)
@@ -220,19 +252,21 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
                     .extract()
                         .body()
-                            .as(ExceptionResponse.class);
+                            .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Required header 'Authorization' is not present.", output.getDetail());
-        assertEquals("/auth/refresh", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Required header 'Authorization' is not present.", output.detail());
+        assertEquals("/auth/refresh", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
+    @Order(100)
     void testRefreshTokenWithTokenBlank() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/refresh")
 					.port(TestConfigs.SERVER_PORT)
@@ -244,19 +278,21 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
                     .extract()
                         .body()
-                            .as(ExceptionResponse.class);
+                            .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/auth/refresh", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The refresh token must be not blank.", output.detail());
+        assertEquals("/auth/refresh", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
+    @Order(100)
     void testRefreshTokenWithTokenInvalid() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/refresh")
 					.port(TestConfigs.SERVER_PORT)
@@ -268,19 +304,21 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
                     .extract()
                         .body()
-                            .as(ExceptionResponse.class);
+                            .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("Invalid token", output.getDetail());
-        assertEquals("/auth/refresh", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("Invalid refresh token.", output.detail());
+        assertEquals("/auth/refresh", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
+    @Order(100)
     void testRefreshTokenWithTokenExpired() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/auth/refresh")
 					.port(TestConfigs.SERVER_PORT)
@@ -292,13 +330,14 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
                     .extract()
                         .body()
-                            .as(ExceptionResponse.class);
+                            .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("Invalid token", output.getDetail());
-        assertEquals("/auth/refresh", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("Invalid refresh token.", output.detail());
+        assertEquals("/auth/refresh", output.instance());
+        assertNull(output.errors());
     }
 }

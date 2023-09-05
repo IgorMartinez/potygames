@@ -21,7 +21,7 @@ import br.com.igormartinez.potygames.configs.TestConfigs;
 import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
-import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;

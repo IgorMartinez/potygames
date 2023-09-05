@@ -13,6 +13,6 @@ public class TokenCreationErrorException extends RuntimeException {
     }
 
     public TokenCreationErrorException() {
-        super("There was an error while creating the JWT token");
+        super("There was an error while creating the JWT token.");
     }
 }

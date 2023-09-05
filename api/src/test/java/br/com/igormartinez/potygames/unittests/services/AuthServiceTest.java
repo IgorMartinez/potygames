@@ -25,11 +25,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import br.com.igormartinez.potygames.data.security.v1.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.AccountCredentials;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
-import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
 import br.com.igormartinez.potygames.mocks.MockToken;
 import br.com.igormartinez.potygames.mocks.MockUser;
@@ -62,60 +62,7 @@ public class AuthServiceTest {
         
         service = new AuthService(tokenProvider, authenticationManager, userRepository);
     }
-
-    @Test
-    void testSigninWithParamNull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signin(null);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testSigninWithParamUsernameNull() {
-        AccountCredentials accountCredentials = new AccountCredentials(null, "test");
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signin(accountCredentials);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testSigninWithParamUsernameBlank() {
-        AccountCredentials accountCredentials = new AccountCredentials("", "test");
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signin(accountCredentials);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testSigninWithParamPasswordNull() {
-        AccountCredentials accountCredentials = new AccountCredentials("test", null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signin(accountCredentials);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testSigninWithParamPasswordBlank() {
-        AccountCredentials accountCredentials = new AccountCredentials("test", "");
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signin(accountCredentials);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
+    
     @Test
     void testSigninWithUserNotFound() {
         AccountCredentials accountCredentials = new AccountCredentials("test", "test");
@@ -125,7 +72,7 @@ public class AuthServiceTest {
         Exception output = assertThrows(InvalidUsernamePasswordException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Invalid email or password";
+        String expectedMessage = "Invalid email or password.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -141,7 +88,7 @@ public class AuthServiceTest {
         Exception output = assertThrows(InvalidUsernamePasswordException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "Invalid email or password";
+        String expectedMessage = "Invalid email or password.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -159,7 +106,7 @@ public class AuthServiceTest {
         Exception output = assertThrows(TokenCreationErrorException.class, () -> {
             service.signin(accountCredentials);
         });
-        String expectedMessage = "There was an error while creating the JWT token";
+        String expectedMessage = "There was an error while creating the JWT token.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -167,7 +114,7 @@ public class AuthServiceTest {
     void testSigninWithTokenCreationSuccess() {
         AccountCredentials accountCredentials = new AccountCredentials("test", "test");
         User user = mockUser.mockUser(1);
-        Token token = mockToken.mockToken(accountCredentials.getUsername());
+        Token token = mockToken.mockToken(accountCredentials.username());
 
         ZonedDateTime expectedCreatedTime = ZonedDateTime.of(
                 2023, 
@@ -207,19 +154,19 @@ public class AuthServiceTest {
 
     @Test
     void testRefreshWithParamNull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.refresh(null);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The refresh token must be not blank.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     void testRefreshWithParamBlank() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.refresh("");
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The refresh token must be not blank.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -231,19 +178,19 @@ public class AuthServiceTest {
         Exception output = assertThrows(InvalidTokenException.class, () -> {
             service.refresh("mockedRefreshToken");
         });
-        String expectedMessage = "Invalid token";
+        String expectedMessage = "Invalid refresh token.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
-    void testRefreshWithTokenCreationeError() {
+    void testRefreshWithTokenCreationError() {
         when(tokenProvider.refreshToken("mockedRefreshToken"))
             .thenThrow(new JWTCreationException(null, null));
 
         Exception output = assertThrows(TokenCreationErrorException.class, () -> {
             service.refresh("mockedRefreshToken");
         });
-        String expectedMessage = "There was an error while creating the JWT token";
+        String expectedMessage = "There was an error while creating the JWT token.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 

@@ -13,6 +13,6 @@ public class InvalidUsernamePasswordException extends RuntimeException {
     }
 
     public InvalidUsernamePasswordException() {
-        super("Invalid email or password");
+        super("Invalid email or password.");
     }
 }

@@ -1,9 +1,18 @@
 package br.com.igormartinez.potygames.exceptions.handlers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +38,25 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
     // request.getDescription(false) = uri=/auth/signin
     // request.getDescription(false).substring(SUBSTRING_URI) = /auth/signin
     private final int SUBSTRING_URI = 4;
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        MethodArgumentNotValidException ex, HttpHeaders headers, 
+        HttpStatusCode status, WebRequest request) {
+
+        ProblemDetail problemDetail = ex.getBody();
+
+        Map<String, String> errors = new LinkedHashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+            errors.put(error.getObjectName(), error.getDefaultMessage());
+        }
+        problemDetail.setProperty("errors", errors);
+
+        return super.createResponseEntity(problemDetail, headers, HttpStatus.BAD_REQUEST, request);
+    }
 
     @ExceptionHandler({TokenCreationErrorException.class, Exception.class})
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
