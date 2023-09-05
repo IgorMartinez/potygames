@@ -13,11 +13,12 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.com.igormartinez.potygames.security.jwt.JwtTokenProvider;
 import br.com.igormartinez.potygames.exceptions.handlers.CustomSpringSecurityExceptionHandler;
 import br.com.igormartinez.potygames.security.PasswordManager;
-import br.com.igormartinez.potygames.security.jwt.JwtConfigurer;
+import br.com.igormartinez.potygames.security.jwt.JwtTokenFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -61,7 +62,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(customExceptionHandler)
                 .authenticationEntryPoint(customExceptionHandler)
             )
-            .apply(new JwtConfigurer(tokenProvider));
+            .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }

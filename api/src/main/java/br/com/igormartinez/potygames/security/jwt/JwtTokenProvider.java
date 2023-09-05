@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -132,13 +133,34 @@ public class JwtTokenProvider {
             .strip();
     }
 
+    /**
+     * Authenticate a user through the token
+     * @param token
+     * @return  
+     */
     public Authentication getAuthentication(String token) {
         DecodedJWT decodedJWT = decodedToken(token);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()); 
+        try {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());
+
+            // If one of this conditions is false, the authentication cannot be allowed
+            if (!(userDetails.isAccountNonExpired() && userDetails.isAccountNonLocked()
+                && userDetails.isCredentialsNonExpired() && userDetails.isEnabled()))
+                return null;
+
+            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()); 
+        } catch (UsernameNotFoundException ex) {
+            // If the user was not found, somethig go wrong and the authentication cannot be allowed
+            return null;
+        }
     }
 
+    /**
+     * Decode a token
+     * @param token
+     * @return
+     */
     private DecodedJWT decodedToken(String token) {
         Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
         JWTVerifier verifier = JWT.require(alg).build();
@@ -147,6 +169,11 @@ public class JwtTokenProvider {
         return decodedJWT;
     }
 
+    /**
+     * Get the token from an HttpServletRequest 
+     * @param request
+     * @return
+     */
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
@@ -157,6 +184,11 @@ public class JwtTokenProvider {
         return null;
     }
 
+    /**
+     * Validate a token
+     * @param token
+     * @return
+     */
     public boolean validateToken(String token) {
         try {
             DecodedJWT decodedJWT = decodedToken(token);
