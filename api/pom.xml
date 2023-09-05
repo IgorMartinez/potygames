@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
+		<version>3.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.igormartinez</groupId>
@@ -15,11 +15,11 @@
 	<description>Poty Games</description>
 	<properties>
 		<java.version>20</java.version>
-		<java-jwt.version>3.18.3</java-jwt.version>
-		<modelmapper.version>3.1.1</modelmapper.version>
-		<testcontainers.version>1.18.3</testcontainers.version>
+		<java-jwt.version>4.4.0</java-jwt.version>
+		<testcontainers.version>1.19.0</testcontainers.version>
 		<rest-assured.version>5.3.0</rest-assured.version>
 		<springdoc.version>2.1.0</springdoc.version>
+		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
 	</properties>
 	<dependencies>
 		<!-- Spring Dependecies -->
@@ -56,14 +56,14 @@
 			<version>${java-jwt.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>${modelmapper.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
 
 		<!-- Development Dependencies -->
