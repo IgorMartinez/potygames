@@ -14,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
 import br.com.igormartinez.potygames.data.response.APIErrorResponse;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 

@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -38,7 +39,7 @@ public class UserController {
         }
     )
     @PostMapping("/signup")
-    public UserDTO signup(@RequestBody UserRegistrationDTO registrationDTO) {
+    public UserDTO signup(@RequestBody @Valid UserRegistrationDTO registrationDTO) {
         return service.signup(registrationDTO);
     }
     
@@ -101,9 +102,9 @@ public class UserController {
         }
     )
     @PutMapping("/{user-id}/personal-information")
-    public UserPersonalInformationDTO updatePersonalInformation(
+    public UserDTO updatePersonalInformation(
             @PathVariable(value = "user-id") Long id,
-            @RequestBody UserPersonalInformationDTO userDTO) {
+            @RequestBody @Valid UserPersonalInformationDTO userDTO) {
         return service.updatePersonaInformation(id, userDTO);
     }
 }

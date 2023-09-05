@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;

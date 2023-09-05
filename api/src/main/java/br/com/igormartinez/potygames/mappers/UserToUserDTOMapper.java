@@ -4,11 +4,11 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.models.User;
 
 @Service
-public class UserDTOMapper implements Function<User, UserDTO> {
+public class UserToUserDTOMapper implements Function<User, UserDTO> {
 
     @Override
     public UserDTO apply(User user) {

@@ -1,6 +1,7 @@
 package br.com.igormartinez.potygames.integrationtests.controllers;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,13 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -44,7 +45,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     private static LocalDate USER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String USER_DOCUMENT_NUMBER = "023.007.023-00";
     private static String USER_PHONE_NUMBER = "+5500987654321";
-
 
     private static String ADMIN_EMAIL = "rlayzell0@pen.io";
     private static String ADMIN_PASSWORD = "SDNrJOfLg";
@@ -75,7 +75,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
                             .body()
                                 .as(UserDTO.class);
         
-        assertNotNull(customerDTO);
         assertTrue(customerDTO.id() > 0);
         assertEquals(USER_EMAIL, customerDTO.email());
         assertEquals(USER_NAME, customerDTO.name());
@@ -94,7 +93,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     void testSignupWithoutBody() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
@@ -105,14 +104,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                         .extract()
                             .body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/v1/user/signup", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/user/signup", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -127,7 +126,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 USER_DOCUMENT_NUMBER,
                 USER_PHONE_NUMBER);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
@@ -139,14 +138,15 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                         .extract()
                             .body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/signup", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/user/signup", output.instance());
+        assertEquals(1, output.errors().size());
+        assertEquals("The email must be not blank.", output.errors().get("email"));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 USER_DOCUMENT_NUMBER,
                 USER_PHONE_NUMBER);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .basePath("/api/v1/user/signup")
                     .port(TestConfigs.SERVER_PORT)
@@ -173,20 +173,20 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.CONFLICT.value())
                         .extract()
                             .body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Conflict", output.getTitle());
-        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus());
-        assertEquals("Request could not be processed because the resource already exists", output.getDetail());
-        assertEquals("/api/v1/user/signup", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Conflict", output.title());
+        assertEquals(HttpStatus.CONFLICT.value(), output.status());
+        assertEquals("The email is already in use.", output.detail());
+        assertEquals("/api/v1/user/signup", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testFindAllAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -197,20 +197,20 @@ public class UserControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testFindByIdAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -222,20 +222,20 @@ public class UserControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testDeleteAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -247,14 +247,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -268,7 +268,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 "000.000.000-00",
                 "+5511999990000");
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -281,14 +281,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/personal-information", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/personal-information", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -324,7 +324,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(110)
     void testFindAllAsCustomer() {
-        ExceptionResponse exceptionResponse =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                 .when()
@@ -333,14 +333,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .extract()
                     .body()
-                        .as(ExceptionResponse.class);
+                        .as(APIErrorResponse.class);
 
-        assertNotNull(exceptionResponse);
-        assertEquals("about:blank", exceptionResponse.getType());
-        assertEquals("Unauthorized", exceptionResponse.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponse.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", exceptionResponse.getDetail());
-        assertEquals("/api/v1/user", exceptionResponse.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -377,7 +377,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(110)
     void testFindByIdAsCustomerWithOtherUser() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
@@ -388,20 +388,20 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .extract()
                     .body()
-                        .as(ExceptionResponse.class);
+                        .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(USER_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(110)
     void testFindByIdAsCustomerWithIdInvalid() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .pathParam("user-id", 0)
@@ -411,14 +411,135 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                 .extract()
                     .body()
-                        .as(ExceptionResponse.class);
+                        .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/0", output.instance());
+        assertNull(output.errors());
+    }
+
+    @Test
+    @Order(120)
+    void testUpdatePersonalInformationAsCustomerWithBodyEmpty() {
+        APIErrorResponse output = 
+            given()
+                .spec(specification)
+                    .pathParam("user-id", USER_ID)
+                .when()
+                    .put("{user-id}/personal-information")
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                .extract()
+                    .body()
+                        .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/user/"+USER_ID+"/personal-information", output.instance());
+        assertNull(output.errors());
+    }
+
+    @Test
+    @Order(120)
+    void testUpdatePersonalInformationAsCustomerWithFieldsNull() {
+        UserPersonalInformationDTO updateCustomer = 
+            new UserPersonalInformationDTO(
+                null, 
+                "  ", 
+                LocalDate.of(2023,06,14), 
+                "000.000.000-00",
+                "+5511999990000");
+
+        APIErrorResponse output = 
+            given()
+                .spec(specification)
+                    .pathParam("user-id", USER_ID)
+                    .body(updateCustomer)
+                .when()
+                    .put("{user-id}/personal-information")
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                .extract()
+                    .body()
+                        .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/user/"+USER_ID+"/personal-information", output.instance());
+        assertEquals(2, output.errors().size());
+        assertEquals("The id of user must be provided.", output.errors().get("id"));
+        assertEquals("The name must be not blank.", output.errors().get("name"));
+    }
+
+    @Test
+    @Order(120)
+    void testUpdatePersonalInformationAsCustomerWithIdInvalid() {
+        UserPersonalInformationDTO updateCustomer = 
+            new UserPersonalInformationDTO(
+                Long.valueOf(3), 
+                "Test Name Updated", 
+                LocalDate.of(2023,06,14), 
+                "000.000.000-00",
+                "+5511999990000");
+
+        APIErrorResponse output = 
+            given()
+                .spec(specification)
+                    .pathParam("user-id", 0)
+                    .body(updateCustomer)
+                .when()
+                    .put("{user-id}/personal-information")
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                .extract()
+                    .body()
+                        .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/0/personal-information", output.instance());
+        assertNull(output.errors());
+    }
+
+    @Test
+    @Order(120)
+    void testUpdatePersonalInformationAsCustomerWithMismatchDTOIdAndParamId() {
+        UserPersonalInformationDTO updateCustomer = 
+            new UserPersonalInformationDTO(
+                USER_ID, 
+                "Test Name Updated", 
+                LocalDate.of(2023,06,14), 
+                "000.000.000-00",
+                "+5511999990000");
+
+        APIErrorResponse output = 
+            given()
+                .spec(specification)
+                    .pathParam("user-id", USER_ID+1)
+                    .body(updateCustomer)
+                .when()
+                    .put("{user-id}/personal-information")
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                .extract()
+                    .body()
+                        .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID in the request body must match the value of the user-id parameter.", output.detail());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/personal-information", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -432,7 +553,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 "000.000.000-00",
                 "+5511999990000");
 
-        UserPersonalInformationDTO output = 
+        UserDTO output = 
             given()
                 .spec(specification)
                     .pathParam("user-id", USER_ID)
@@ -443,7 +564,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.OK.value())
                 .extract()
                     .body()
-                        .as(UserPersonalInformationDTO.class);
+                        .as(UserDTO.class);
         
         assertNotNull(output);
         assertEquals(USER_ID, output.id());
@@ -464,7 +585,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 "000.000.000-00",
                 "+5511999990000");
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .pathParam("user-id", USER_ID+1)
@@ -475,99 +596,20 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .extract()
                     .body()
-                        .as(ExceptionResponse.class);
+                        .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1)+"/personal-information", output.getInstance());
-    }
-
-    @Test
-    @Order(120)
-    void testUpdatePersonalInformationAsCustomerWithIdInvalid() {
-        UserPersonalInformationDTO updateCustomer = 
-            new UserPersonalInformationDTO(
-                Long.valueOf(3), 
-                "Test Name Updated", 
-                LocalDate.of(2023,06,14), 
-                "000.000.000-00",
-                "+5511999990000");
-
-        ExceptionResponse output = 
-            given()
-                .spec(specification)
-                    .pathParam("user-id", 0)
-                    .body(updateCustomer)
-                .when()
-                    .put("{user-id}/personal-information")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                .extract()
-                    .body()
-                        .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0/personal-information", output.getInstance());
-    }
-
-    @Test
-    @Order(120)
-    void testUpdatePersonalInformationAsCustomerWithBodyEmpty() {
-
-        ExceptionResponse output = 
-            given()
-                .spec(specification)
-                    .pathParam("user-id", USER_ID)
-                .when()
-                    .put("{user-id}/personal-information")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                .extract()
-                    .body()
-                        .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/v1/user/"+USER_ID+"/personal-information", output.getInstance());
-    }
-
-    @Test
-    @Order(130)
-    void testDeleteAsCustomerWithOtherUser() {
-        ExceptionResponse output = 
-            given()
-                .spec(specification)
-                    .pathParam("user-id", USER_ID+1)
-                .when()
-                    .delete("{user-id}")
-                .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                .extract()
-                    .body()
-                        .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(USER_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(USER_ID+1)+"/personal-information", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(130)
     void testDeleteAsCustomerWithIdInvalid() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .pathParam("user-id", -10)
@@ -577,14 +619,37 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                 .extract()
                     .body()
-                        .as(ExceptionResponse.class);
+                        .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/-10", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/-10", output.instance());
+        assertNull(output.errors());
+    }
+
+    @Test
+    @Order(130)
+    void testDeleteAsCustomerWithOtherUser() {
+        APIErrorResponse output = 
+            given()
+                .spec(specification)
+                    .pathParam("user-id", USER_ID+1)
+                .when()
+                    .delete("{user-id}")
+                .then()
+                    .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .extract()
+                    .body()
+                        .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(USER_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -761,7 +826,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 "000.000.000-00",
                 "+5511999991111");
 
-        UserPersonalInformationDTO output = 
+        UserDTO output = 
             given()
                 .spec(specification)
                     .pathParam("user-id", USER_ID)
@@ -772,7 +837,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .statusCode(HttpStatus.OK.value())
                 .extract()
                     .body()
-                        .as(UserPersonalInformationDTO.class);
+                        .as(UserDTO.class);
         
         assertNotNull(output);
         assertEquals(USER_ID, output.id());

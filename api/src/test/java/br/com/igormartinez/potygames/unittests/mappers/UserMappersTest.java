@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
 import br.com.igormartinez.potygames.mappers.UserAddressDTOMapper;
-import br.com.igormartinez.potygames.mappers.UserDTOMapper;
+import br.com.igormartinez.potygames.mappers.UserToUserDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.mocks.MockUserAddress;
 import br.com.igormartinez.potygames.models.User;
@@ -23,7 +23,7 @@ public class UserMappersTest {
     MockUser mockUser;
     MockUserAddress mockUserAddress;
 
-    UserDTOMapper userDTOMapper;
+    UserToUserDTOMapper userToUserDTOMapper;
     UserAddressDTOMapper userAddressDTOMapper;
 
     @BeforeEach
@@ -31,7 +31,7 @@ public class UserMappersTest {
         mockUser = new MockUser();
         mockUserAddress = new MockUserAddress();
         
-        userDTOMapper = new UserDTOMapper();
+        userToUserDTOMapper = new UserToUserDTOMapper();
         userAddressDTOMapper = new UserAddressDTOMapper();
     }
 
@@ -39,7 +39,7 @@ public class UserMappersTest {
     public void testUserDTOMapper() {
         User user = mockUser.mockUser(1);
                 
-        UserDTO userDTO = userDTOMapper.apply(user);
+        UserDTO userDTO = userToUserDTOMapper.apply(user);
         
         assertEquals(1L, userDTO.id());
         assertEquals("user_mail1@test.com", userDTO.email());

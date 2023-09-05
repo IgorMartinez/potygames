@@ -25,15 +25,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
-import br.com.igormartinez.potygames.mappers.UserDTOMapper;
+import br.com.igormartinez.potygames.mappers.UserToUserDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;
@@ -68,7 +68,7 @@ public class UserServiceTest {
         
         service = new UserService(
             userRepository, 
-            new UserDTOMapper(), 
+            new UserToUserDTOMapper(), 
             permissionRepository, 
             passwordManager, 
             securityContextManager);
@@ -115,93 +115,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSignupWithParamNull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(null);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithEmailNull() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                null, "pasword", "name", 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithEmailBlank() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                " ", "pasword", "name", 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithPasswordNull() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", null, "name", 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithPasswordBlank() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "", "name", 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithNameNull() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "password", null, 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testSignupWithNameBlank() {
-        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                "email", "password", "", 
-                null, null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.signup(userRegistrationDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
     public void testSignupWithExistingUser() {
         UserRegistrationDTO mockedUserRegistrationDTO = mockEntity.mockUserRegistrationDTO(1);
 
@@ -210,7 +123,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceAlreadyExistsException.class, () -> {
             service.signup(mockedUserRegistrationDTO);
         });
-        String expectedMessage = "Request could not be processed because the resource already exists";
+        String expectedMessage = "The email is already in use.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -452,28 +365,28 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdWithParamNull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.findById(null);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     public void testFindByIdWithParamZero() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.findById(0L);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     public void testFindByIdWithParamNegative() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.findById(-1231L);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -519,7 +432,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "The resource was not found";
+        String expectedMessage = "The user was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -527,10 +440,10 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdNull() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.updatePersonaInformation(null, userDTO);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -538,10 +451,10 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdZero() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.updatePersonaInformation(0L, userDTO);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -549,32 +462,10 @@ public class UserServiceTest {
     public void testUpdatePersonalInformationWithParamIdNegative() {
         UserPersonalInformationDTO userDTO = mockEntity.mockUserPersonalInformationDTO(1);
 
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.updatePersonaInformation(-555L, userDTO);
         });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTONull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, null);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTOIdNull() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            null, "User name 1",
-            null,null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
     
@@ -584,36 +475,10 @@ public class UserServiceTest {
             2L, "User name 1",
             null,null, null);
 
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTONameNull() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, null,
-            null,null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    public void testUpdatePersonalInformationWithParamUserDTONameBlank() {
-        UserPersonalInformationDTO userDTO = new UserPersonalInformationDTO(
-            1L, "",
-            null,null, null);
-
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
-            service.updatePersonaInformation(1L, userDTO);
-        });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The ID in the request body must match the value of the user-id parameter.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -629,7 +494,7 @@ public class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
-        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
+        UserDTO output = service.updatePersonaInformation(1L, userDTO);
         assertNotNull(output);
         assertEquals(1L, output.id());
         assertEquals("User name updated 1", output.name());
@@ -649,7 +514,7 @@ public class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
-        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
+        UserDTO output = service.updatePersonaInformation(1L, userDTO);
         assertNotNull(output);
         assertEquals(1L, output.id());
         assertEquals("User name updated 1", output.name());
@@ -669,7 +534,7 @@ public class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
-        UserPersonalInformationDTO output = service.updatePersonaInformation(1L, userDTO);
+        UserDTO output = service.updatePersonaInformation(1L, userDTO);
         assertNotNull(output);
         assertEquals(1L, output.id());
         assertEquals("User name updated 1", output.name());
@@ -701,34 +566,34 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.updatePersonaInformation(1L, userDTO);
         });
-        String expectedMessage = "The resource was not found";
+        String expectedMessage = "The user was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     public void testDeleteWithParamNull() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.delete(null);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     public void testDeleteWithParamZero() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.delete(0L);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     public void testDeleteWithParamNegative() {
-        Exception output = assertThrows(RequestObjectIsNullException.class, () -> {
+        Exception output = assertThrows(RequestValidationException.class, () -> {
             service.delete(-1156L);
         });
-        String expectedMessage = "Request object cannot be null";
+        String expectedMessage = "The user-id must be a positive integer value.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
@@ -759,7 +624,7 @@ public class UserServiceTest {
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(1L);
         });
-        String expectedMessage = "The resource was not found";
+        String expectedMessage = "The user was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 }

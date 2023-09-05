@@ -8,15 +8,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserRegistrationDTO;
-import br.com.igormartinez.potygames.data.dto.v1.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
+import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
-import br.com.igormartinez.potygames.mappers.UserDTOMapper;
+import br.com.igormartinez.potygames.mappers.UserToUserDTOMapper;
 import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;
 import br.com.igormartinez.potygames.repositories.PermissionRepository;
@@ -28,14 +28,14 @@ import br.com.igormartinez.potygames.security.SecurityContextManager;
 public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
-    private final UserDTOMapper userDTOMapper;
+    private final UserToUserDTOMapper userDTOMapper;
     private final PermissionRepository permissionRepository;
     private final PasswordManager passwordManager;
     private final SecurityContextManager securityContextManager;
 
     public UserService(
             UserRepository repository, 
-            UserDTOMapper userDTOMapper,
+            UserToUserDTOMapper userDTOMapper,
             PermissionRepository permissionRepository, 
             PasswordManager passwordManager,
             SecurityContextManager securityContextManager) {
@@ -53,14 +53,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO signup(UserRegistrationDTO registrationDTO) {
-        if (registrationDTO == null
-            || registrationDTO.email() == null || registrationDTO.email().isBlank()
-            || registrationDTO.password() == null || registrationDTO.password().isBlank()
-            || registrationDTO.name() == null || registrationDTO.name().isBlank()) 
-            throw new RequestObjectIsNullException();
-
+        
         if (repository.existsByEmail(registrationDTO.email()))
-            throw new ResourceAlreadyExistsException();
+            throw new ResourceAlreadyExistsException("The email is already in use.");
 
         User user = new User();
         user.setEmail(registrationDTO.email());
@@ -99,28 +94,28 @@ public class UserService implements UserDetailsService {
 
     public UserDTO findById(Long id){
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The user-id must be a positive integer value.");
 
         if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         return repository.findById(id)
             .map(userDTOMapper)
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The user was not found with the given ID."));
     }
 
-    public UserPersonalInformationDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
-        if (id == null || id <= 0
-            || userDTO == null
-            || userDTO.id() == null || id.compareTo(userDTO.id()) != 0
-            || userDTO.name() == null || userDTO.name().isBlank())
-                throw new RequestObjectIsNullException();
+    public UserDTO updatePersonaInformation(Long id, UserPersonalInformationDTO userDTO) {
+        if (id == null || id <= 0)
+            throw new RequestValidationException("The user-id must be a positive integer value.");
+
+        if (id != userDTO.id())
+            throw new RequestValidationException("The ID in the request body must match the value of the user-id parameter.");
 
         if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         User user = repository.findById(userDTO.id())
-            .orElseThrow(() -> new ResourceNotFoundException());
+            .orElseThrow(() -> new ResourceNotFoundException("The user was not found with the given ID."));
             
         user.setName(userDTO.name());
         user.setBirthDate(userDTO.birthDate());
@@ -134,23 +129,18 @@ public class UserService implements UserDetailsService {
             : userDTO.phoneNumber());
 
         User updatedUser = repository.save(user);
-        return new UserPersonalInformationDTO(
-                updatedUser.getId(), 
-                updatedUser.getName(), 
-                updatedUser.getBirthDate(), 
-                updatedUser.getDocumentNumber(),
-                updatedUser.getPhoneNumber());
+        return userDTOMapper.apply(updatedUser);
     }
 
     public void delete(Long id) {
         if (id == null || id <= 0)
-            throw new RequestObjectIsNullException();
+            throw new RequestValidationException("The user-id must be a positive integer value.");
 
         if (!securityContextManager.checkSameUserOrAdmin(id))
             throw new UserUnauthorizedException();
 
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("The user was not found with the given ID.");
         
         repository.deleteById(id);
     }
