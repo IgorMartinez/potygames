@@ -18,12 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
-import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.UserAddressCreateDTO;
+import br.com.igormartinez.potygames.data.request.UserAddressUpdateDTO;
 import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
+import br.com.igormartinez.potygames.data.response.UserAddressDTO;
 import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -48,7 +50,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
     @Order(0)
     void testFindAllAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -60,20 +62,20 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/address", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/address", output.instance());
+		assertNull(output.errors());
     }
 
 	@Test
     @Order(0)
     void testFindByIdAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -86,36 +88,27 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/address/1", output.instance());
+		assertNull(output.errors());
     }
 
 	@Test
     @Order(0)
     void testCreateAsUnauthenticated() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null,
-            CUSTOMER_ID, 
-            Boolean.FALSE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida Bueno Siqueira", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "Santo Antônio", 
-            "São Paulo", 
-            "Brasil", 
-            "10001-555"
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            1L, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
 		);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -128,36 +121,27 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/address", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/address", output.instance());
+		assertNull(output.errors());
     }
 
 	@Test
     @Order(0)
     void testUpdateAsUnauthenticated() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			1L,
-            CUSTOMER_ID, 
-            Boolean.FALSE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida Bueno Siqueira", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "Santo Antônio", 
-            "São Paulo", 
-            "Brasil", 
-            "10001-555"
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            1L, 1L, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
 		);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -171,20 +155,20 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/address/1", output.instance());
+		assertNull(output.errors());
     }
 
 	@Test
     @Order(0)
     void testDeleteAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/user")
 					.port(TestConfigs.SERVER_PORT)
@@ -197,14 +181,14 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/user/1/address/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/user/1/address/1", output.instance());
+		assertNull(output.errors());
     }
 
     @Test
@@ -266,6 +250,52 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(110)
+	void testFindAllAsCustomerWithIdUserInvalid() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", 0)
+				.when()
+					.get("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+0+"/address", output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(110)
+	void testFindAllAsCustomerWithOtherUser() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID+1)
+				.when()
+					.get("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.UNAUTHORIZED.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(110)
 	void testFindAllAsCustomerWithSameUserAndNoAddress() {
 		List<UserAddressDTO> output =
 			given()
@@ -284,68 +314,131 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(110)
-	void testFindAllAsCustomerWithOtherUser() {
-		ExceptionResponse output =
+	@Order(120)
+	void testCreateAsCustomerWithoutBody() {
+		APIErrorResponse output =
 			given()
 				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID+1)
+					.pathParam("user-id", CUSTOMER_ID)
 				.when()
-					.get("/{user-id}/address")
-				.then()
-					.statusCode(HttpStatus.UNAUTHORIZED.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
-	}
-
-	@Test
-	@Order(110)
-	void testFindAllAsCustomerWithIdUserInvalid() {
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", 0)
-				.when()
-					.get("/{user-id}/address")
+					.post("/{user-id}/address")
 				.then()
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address", output.instance());
+		assertNull(output.errors());
+	}
 
+	@Test
+	@Order(120)
+	void testCreateAsCustomerWithFieldsNull() {
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            null, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.body(addressDTO)
+				.when()
+					.post("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address", output.instance());
+        assertEquals(1, output.errors().size());
+        assertEquals("The id of user must be provided.", output.errors().get("idUser"));
+	}
+
+	@Test
+	@Order(120)
+	void testCreateAsCustomerWithParamIdUserInvalid() {
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            1L, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", 0)
+					.body(addressDTO)
+				.when()
+					.post("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+0+"/address", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+0+"/address", output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(120)
+	void testCreateAsCustomerWithMismatchIdUserAndDTO() {
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            CUSTOMER_ID+1, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.body(addressDTO)
+				.when()
+					.post("/{user-id}/address")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertNotNull(output);
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID in the request body must match the value of the user-id parameter.", output.detail());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address", output.instance());
 	}
 
 	@Test
 	@Order(120)
 	void testCreateAsCustomerWithSameUser() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null,
-            CUSTOMER_ID, 
-            Boolean.FALSE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida Bueno Siqueira", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "Santo Antônio", 
-            "São Paulo", 
-            "Brasil", 
-            "10001-555"
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            CUSTOMER_ID, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
 		);
 
 		UserAddressDTO output =
@@ -361,7 +454,6 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 							.body()
 								.as(UserAddressDTO.class);
 		
-		assertNotNull(output);
 		assertTrue(output.id() > 0);
 		assertEquals(CUSTOMER_ID, output.idUser());
 		assertFalse(output.favorite());
@@ -382,23 +474,14 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(120)
 	void testCreateAsCustomerWithOtherUser() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null,
-            CUSTOMER_ID+1, 
-            Boolean.FALSE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida Bueno Siqueira", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "Santo Antônio", 
-            "São Paulo", 
-            "Brasil", 
-            "10001-555"
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            CUSTOMER_ID+1, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            null, "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
 		);
 
-		ExceptionResponse output =
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID+1)
@@ -409,71 +492,14 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.getInstance());
-	}
-
-	@Test
-	@Order(120)
-	void testCreateAsCustomerWithIdUserInvalid() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null, null, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", 0)
-					.body(addressDTO)
-				.when()
-					.post("/{user-id}/address")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+0+"/address", output.getInstance());
-	}
-
-	@Test
-	@Order(120)
-	void testCreateAsCustomerWithMismatchIdUserAndDTO() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null, CUSTOMER_ID+1, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.body(addressDTO)
-				.when()
-					.post("/{user-id}/address")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address", output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
@@ -513,21 +539,198 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(130)
+	void testUpdateAsCustomerWithoutBody() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID), output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(130)
+	void testUpdateAsCustomerWithFieldsNull() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            null, 0L, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID), output.instance());
+        assertEquals(2, output.errors().size());
+        assertEquals("The id of user address must be provided.", output.errors().get("id"));
+        assertEquals("The id of user must be a positive number.", output.errors().get("idUser"));
+	}
+
+	@Test
+	@Order(130)
+	void testUpdateAsCustomerWithParamIdUserInvalid() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", 0)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+0+"/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(130)
+	void testUpdateAsCustomerWithParamIdAddressInvalid() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", 0)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The address-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(130)
+	void testUpdateAsCustomerWithMismatchIdUserAndDTO() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID+1)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID of user in the request body must match the value of the user-id parameter.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(130)
+	void testUpdateAsCustomerWithMismatchIdAddressAndDTO() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
+		);
+
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID+1)
+					.body(addressDTO)
+				.when()
+					.put("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID in the request body must match the value of the address-id parameter.", output.detail());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(130)
 	void testUpdateAsCustomerWithSameUser() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID,
-            CUSTOMER_ID, 
-            Boolean.TRUE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida João", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "São Francisco", 
-            "São Paulo", 
-            "Brasil", 
-            "10101-555"
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
 		);
 
 		UserAddressDTO output =
@@ -563,23 +766,14 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(130)
 	void testUpdateAsCustomerWithOtherUser() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID,
-            CUSTOMER_ID+1, 
-            Boolean.TRUE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida João", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "São Francisco", 
-            "São Paulo", 
-            "Brasil", 
-            "10101-555"
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID+1, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
 		);
 
-		ExceptionResponse output =
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID+1)
@@ -591,156 +785,27 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
-	}
-
-	@Test
-	@Order(130)
-	void testUpdateAsCustomerWithIdUserInvalid() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null, null, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", 0)
-					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
-					.body(addressDTO)
-				.when()
-					.put("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+0+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
-	}
-
-	@Test
-	@Order(130)
-	void testUpdateAsCustomerWithIdAddressInvalid() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null, null, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.pathParam("address-id", 0)
-					.body(addressDTO)
-				.when()
-					.put("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
-	}
-
-	@Test
-	@Order(130)
-	void testUpdateAsCustomerWithMismatchIdAddressAndDTO() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID+1, null, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
-					.body(addressDTO)
-				.when()
-					.put("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
-	}
-
-	@Test
-	@Order(130)
-	void testUpdateAsCustomerWithMismatchIdUserAndDTO() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID, CUSTOMER_ID+1, null, null, 
-			null, null, null, null, null, 
-			null, null, null, null);
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
-					.body(addressDTO)
-				.when()
-					.put("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
 	}
 	
 	@Test
 	@Order(130)
-	void testUpdateAsCustomerWithIdAddressWrong() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID+1,
-            CUSTOMER_ID, 
-            Boolean.TRUE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida João", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "São Francisco", 
-            "São Paulo", 
-            "Brasil", 
-            "10101-555"
+	void testUpdateAsCustomerWithAddressNotFound() {
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID+1, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
 		);
 
-		ExceptionResponse output =
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID)
@@ -752,20 +817,67 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The address was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(140)
+	void testFindByIdAsCustomerWithParamIdUserInvalid() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", 0)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+				.when()
+					.get("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(140)
+	void testFindByIdAsCustomerWithParamIdAddressInvalid() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", 0)
+				.when()
+					.get("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The address-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
 	@Order(140)
 	void testFindByIdAsCustomerWithSameUser() {
-
 		UserAddressDTO output =
 			given()
 				.spec(specification)
@@ -798,8 +910,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(140)
 	void testFindByIdAsCustomerWithOtherUser() {
-
-		ExceptionResponse output =
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID+1)
@@ -810,71 +921,20 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
 	@Order(140)
-	void testFindByIdAsCustomerWithIdUserInvalid() {
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", 0)
-					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
-				.when()
-					.get("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
-	}
-
-	@Test
-	@Order(140)
-	void testFindByIdAsCustomerWithIdAddressInvalid() {
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.pathParam("address-id", 0)
-				.when()
-					.get("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
-	}
-
-	@Test
-	@Order(140)
-	void testFindByIdAsCustomerWithIdAddressWrong() {
-
-		ExceptionResponse output =
+	void testFindByIdAsCustomerWithAddressNotFound() {
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID)
@@ -885,20 +945,67 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The address was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(150)
+	void testDeleteAsCustomerWithIdUserInvalid() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", 0)
+					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
+				.when()
+					.delete("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The user-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
+	}
+
+	@Test
+	@Order(150)
+	void testDeleteAsCustomerWithParamIdAddressInvalid() {
+		APIErrorResponse output =
+			given()
+				.spec(specification)
+					.pathParam("user-id", CUSTOMER_ID)
+					.pathParam("address-id", 0)
+				.when()
+					.delete("/{user-id}/address/{address-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+								.as(APIErrorResponse.class);
+		
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The address-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
 	@Order(150)
 	void testDeleteAsCustomerWithSameUser() {
-
 		given()
 			.spec(specification)
 				.pathParam("user-id", CUSTOMER_ID)
@@ -915,8 +1022,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(150)
 	void testDeleteAsCustomerWithOtherUser() {
-
-		ExceptionResponse output =
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID+1)
@@ -927,71 +1033,20 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID+1)+"/address/"+CUSTOMER_ADDRESS_ID, output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
 	@Order(150)
-	void testDeleteAsCustomerWithIdUserInvalid() {
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", 0)
-					.pathParam("address-id", CUSTOMER_ADDRESS_ID)
-				.when()
-					.delete("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/0/address/"+CUSTOMER_ADDRESS_ID, output.getInstance());
-	}
-
-	@Test
-	@Order(150)
-	void testDeleteAsCustomerWithIdAddressInvalid() {
-
-		ExceptionResponse output =
-			given()
-				.spec(specification)
-					.pathParam("user-id", CUSTOMER_ID)
-					.pathParam("address-id", 0)
-				.when()
-					.delete("/{user-id}/address/{address-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-								.as(ExceptionResponse.class);
-		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Request object cannot be null", output.getDetail());
-        assertEquals("/api/v1/user/"+CUSTOMER_ID+"/address/0", output.getInstance());
-	}
-
-	@Test
-	@Order(150)
-	void testDeleteAsCustomerWithIdAddressWrong() {
-
-		ExceptionResponse output =
+	void testDeleteAsCustomerWithAddressNotFound() {
+		APIErrorResponse output =
 			given()
 				.spec(specification)
 					.pathParam("user-id", CUSTOMER_ID)
@@ -1002,14 +1057,14 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-								.as(ExceptionResponse.class);
+								.as(APIErrorResponse.class);
 		
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The resource was not found", output.getDetail());
-        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The address was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/user/"+(CUSTOMER_ID)+"/address/"+(CUSTOMER_ADDRESS_ID+1), output.instance());
+		assertNull(output.errors());
 	}
 
 	@Test
@@ -1045,20 +1100,11 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(210)
 	void testCreateAsAdmin() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			null,
-            CUSTOMER_ID, 
-            Boolean.FALSE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida Bueno Siqueira", 
-            "5684", 
-            "House", 
-            "São Afonso", 
-            "Santo Antônio", 
-            "São Paulo", 
-            "Brasil", 
-            "10001-555"
+		UserAddressCreateDTO addressDTO = new UserAddressCreateDTO(
+            CUSTOMER_ID, Boolean.FALSE, Boolean.FALSE, 
+            "Home", "Avenida Bueno Siqueira", "5684", 
+            "House", "São Afonso", "Santo Antônio", 
+            "São Paulo", "Brasil", "10001-555"
 		);
 
 		UserAddressDTO output =
@@ -1162,20 +1208,11 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
 	@Order(240)
 	void testUpdateAsAdmin() {
-		UserAddressDTO addressDTO = new UserAddressDTO(
-			CUSTOMER_ADDRESS_ID,
-            CUSTOMER_ID, 
-            Boolean.TRUE, 
-            Boolean.FALSE, 
-            "Home", 
-            "Avenida João", 
-            "5684", 
-            null, 
-            "São Afonso", 
-            "São Francisco", 
-            "São Paulo", 
-            "Brasil", 
-            "10101-555"
+		UserAddressUpdateDTO addressDTO = new UserAddressUpdateDTO(
+            CUSTOMER_ADDRESS_ID, CUSTOMER_ID, Boolean.TRUE, Boolean.FALSE, 
+            "Home", "Avenida João", "5684", 
+            null, "São Afonso", "São Francisco", 
+            "São Paulo", "Brasil", "10101-555"
 		);
 
 		UserAddressDTO output =

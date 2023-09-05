@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
+import br.com.igormartinez.potygames.data.response.UserAddressDTO;
 import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.enums.PermissionType;
-import br.com.igormartinez.potygames.mappers.UserAddressDTOMapper;
+import br.com.igormartinez.potygames.mappers.UserAddressToUserAddressDTOMapper;
 import br.com.igormartinez.potygames.mappers.UserToUserDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.mocks.MockUserAddress;
@@ -24,7 +24,7 @@ public class UserMappersTest {
     MockUserAddress mockUserAddress;
 
     UserToUserDTOMapper userToUserDTOMapper;
-    UserAddressDTOMapper userAddressDTOMapper;
+    UserAddressToUserAddressDTOMapper userAddressDTOMapper;
 
     @BeforeEach
     public void setup() {
@@ -32,7 +32,7 @@ public class UserMappersTest {
         mockUserAddress = new MockUserAddress();
         
         userToUserDTOMapper = new UserToUserDTOMapper();
-        userAddressDTOMapper = new UserAddressDTOMapper();
+        userAddressDTOMapper = new UserAddressToUserAddressDTOMapper();
     }
 
     @Test

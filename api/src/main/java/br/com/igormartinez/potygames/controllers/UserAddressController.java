@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.igormartinez.potygames.data.dto.v1.UserAddressDTO;
+import br.com.igormartinez.potygames.data.request.UserAddressCreateDTO;
+import br.com.igormartinez.potygames.data.request.UserAddressUpdateDTO;
+import br.com.igormartinez.potygames.data.response.UserAddressDTO;
 import br.com.igormartinez.potygames.services.UserAddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/user/{user-id}/address")
@@ -73,7 +76,7 @@ public class UserAddressController {
     @PostMapping
     public UserAddressDTO createAddress(
         @PathVariable(value = "user-id") Long idUser,
-        @RequestBody UserAddressDTO userAddressDTO) {
+        @RequestBody @Valid UserAddressCreateDTO userAddressDTO) {
         return service.create(idUser, userAddressDTO);
     }
 
@@ -92,7 +95,7 @@ public class UserAddressController {
     public UserAddressDTO updateAddress(
         @PathVariable(value = "user-id") Long idUser,
         @PathVariable(value = "address-id") Long idAddress,
-        @RequestBody UserAddressDTO userAddressDTO) {
+        @RequestBody @Valid UserAddressUpdateDTO userAddressDTO) {
         return service.update(idUser, idAddress, userAddressDTO);
     }
 
