@@ -90,7 +90,7 @@ public class InventoryItemTest {
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.prepareEntity(itemDTO);
         });
-        String expectedMessage = "A product or yugioh card must be provided.";
+        String expectedMessage = "A product must be provided.";
         assertTrue(output.getMessage().contains(expectedMessage));  
     }
 
@@ -181,7 +181,7 @@ public class InventoryItemTest {
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
-        assertNull(outputPosition0.product());
+        assertEquals(1L, outputPosition0.product());
         assertEquals("Version 1", outputPosition0.version());
         assertEquals("Condition 1", outputPosition0.condition());
         assertEquals(new BigDecimal("1.99"), outputPosition0.price());
@@ -189,7 +189,7 @@ public class InventoryItemTest {
 
         InventoryItemDTO outputPosition4 = output.get(4);
         assertEquals(5L, outputPosition4.id());
-        assertNull(outputPosition4.product());
+        assertEquals(5L, outputPosition4.product());
         assertEquals("Version 5", outputPosition4.version());
         assertEquals("Condition 5", outputPosition4.condition());
         assertEquals(new BigDecimal("5.99"), outputPosition4.price());
@@ -223,7 +223,7 @@ public class InventoryItemTest {
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(91L, outputPosition0.id());
-        assertNull(outputPosition0.product());
+        assertEquals(91L, outputPosition0.product());
         assertEquals("Version 91", outputPosition0.version());
         assertEquals("Condition 91", outputPosition0.condition());
         assertEquals(new BigDecimal("91.99"), outputPosition0.price());
