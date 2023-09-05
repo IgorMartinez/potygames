@@ -23,10 +23,6 @@ public class InventoryItem {
     @JoinColumn(name = "id_product")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "id_yugioh_card")
-    private YugiohCard yugiohCard;
-
     @Column(name = "version")
     private String version;
 
@@ -56,14 +52,6 @@ public class InventoryItem {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public YugiohCard getYugiohCard() {
-        return yugiohCard;
-    }
-
-    public void setYugiohCard(YugiohCard yugiohCard) {
-        this.yugiohCard = yugiohCard;
     }
 
     public String getVersion() {
@@ -104,7 +92,6 @@ public class InventoryItem {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((product == null) ? 0 : product.hashCode());
-        result = prime * result + ((yugiohCard == null) ? 0 : yugiohCard.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result + ((condition == null) ? 0 : condition.hashCode());
         result = prime * result + ((price == null) ? 0 : price.hashCode());
@@ -130,11 +117,6 @@ public class InventoryItem {
             if (other.product != null)
                 return false;
         } else if (!product.equals(other.product))
-            return false;
-        if (yugiohCard == null) {
-            if (other.yugiohCard != null)
-                return false;
-        } else if (!yugiohCard.equals(other.yugiohCard))
             return false;
         if (version == null) {
             if (other.version != null)

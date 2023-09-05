@@ -35,13 +35,10 @@ import br.com.igormartinez.potygames.mappers.InventoryItemDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockInventoryItem;
 import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
-import br.com.igormartinez.potygames.mocks.MockYugiohCard;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.models.Product;
-import br.com.igormartinez.potygames.models.YugiohCard;
 import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
-import br.com.igormartinez.potygames.repositories.YugiohCardRepository;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
 import br.com.igormartinez.potygames.services.InventoryItemService;
 
@@ -50,7 +47,6 @@ import br.com.igormartinez.potygames.services.InventoryItemService;
 public class InventoryItemTest {
 
     private MockProduct productMocker;
-    private MockYugiohCard yugiohCardMocker;
     private MockInventoryItem mocker;
     private InventoryItemService service;
 
@@ -59,9 +55,6 @@ public class InventoryItemTest {
     
     @Mock
     private ProductRepository productRepository;
-    
-    @Mock
-    private YugiohCardRepository yugiohCardRepository;
 
     @Mock
     private SecurityContextManager securityContextManager;
@@ -69,13 +62,11 @@ public class InventoryItemTest {
     @BeforeEach
     void setup() {
         productMocker = new MockProduct(new MockProductType());
-        yugiohCardMocker = new MockYugiohCard();
-        mocker = new MockInventoryItem(productMocker, yugiohCardMocker);
+        mocker = new MockInventoryItem(productMocker);
 
         service = new InventoryItemService(
             repository,
             productRepository,
-            yugiohCardRepository,
             new InventoryItemDTOMapper(),
             securityContextManager
         );
@@ -91,9 +82,9 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testPrepareEntityWithProductAndYugiohCardNull() {
+    void testPrepareEntityWithProductNull() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, null, null, 
+            null, null, null, 
             null, null, null);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
@@ -104,22 +95,9 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testPrepareEntityWithProductAndYugiohCardNotNull() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, 1L, null, 
-            null, null, null);
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "Only product or yugioh card must be provided, not both.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
     void testPrepareEntityWithProductNotFound() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, null, 
+            null, 1L, null, 
             null, null, null);
 
         when(productRepository.findById(itemDTO.product())).thenReturn(Optional.ofNullable(null));
@@ -132,24 +110,9 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testPrepareEntityWithYugiohCardNotFound() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 1L, null, 
-            null, null, null);
-
-        when(yugiohCardRepository.findById(itemDTO.yugiohCard())).thenReturn(Optional.ofNullable(null));
-
-        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "The yugioh card was not found with the given ID.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
     void testPrepareEntityWithPriceNegative() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("-1.99"), null);
 
         Product product = productMocker.mockEntity(1);
@@ -166,7 +129,7 @@ public class InventoryItemTest {
     @Test
     void testPrepareEntityWithQuantityNegative() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), -5);
 
         Product product = productMocker.mockEntity(1);
@@ -181,9 +144,9 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testPrepareEntityWithProduct() {
+    void testPrepareEntity() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
 
         Product product = productMocker.mockEntity(1);
@@ -193,31 +156,10 @@ public class InventoryItemTest {
         InventoryItem output = service.prepareEntity(itemDTO);
         assertNull(output.getId());
         assertEquals(1L, output.getProduct().getId());
-        assertNull(output.getYugiohCard());
         assertEquals("V2023-AB", output.getVersion());
         assertEquals("New", output.getCondition());
         assertEquals(new BigDecimal("1.99"), output.getPrice());
         assertEquals(5, output.getQuantity());
-    }
-
-    @Test
-    void testPrepareEntityWithYugiohCard() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 1L, " ", 
-            " ", null, null);
-
-        YugiohCard card = yugiohCardMocker.mockEntity(1);
-
-        when(yugiohCardRepository.findById(itemDTO.yugiohCard())).thenReturn(Optional.of(card));
-
-        InventoryItem output = service.prepareEntity(itemDTO);
-        assertNull(output.getId());
-        assertNull(output.getId());
-        assertEquals(1L, output.getYugiohCard().getId());
-        assertNull(output.getVersion());
-        assertNull(output.getCondition());
-        assertNull(output.getPrice());
-        assertNull(output.getQuantity());
     }
 
     @Test
@@ -240,7 +182,6 @@ public class InventoryItemTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertNull(outputPosition0.product());
-        assertEquals(1L, outputPosition0.yugiohCard());
         assertEquals("Version 1", outputPosition0.version());
         assertEquals("Condition 1", outputPosition0.condition());
         assertEquals(new BigDecimal("1.99"), outputPosition0.price());
@@ -249,7 +190,6 @@ public class InventoryItemTest {
         InventoryItemDTO outputPosition4 = output.get(4);
         assertEquals(5L, outputPosition4.id());
         assertNull(outputPosition4.product());
-        assertEquals(5L, outputPosition4.yugiohCard());
         assertEquals("Version 5", outputPosition4.version());
         assertEquals("Condition 5", outputPosition4.condition());
         assertEquals(new BigDecimal("5.99"), outputPosition4.price());
@@ -258,7 +198,6 @@ public class InventoryItemTest {
         InventoryItemDTO outputPosition9 = output.get(9);
         assertEquals(10L, outputPosition9.id());
         assertEquals(10L, outputPosition9.product());
-        assertNull(outputPosition9.yugiohCard());
         assertEquals("Version 10", outputPosition9.version());
         assertEquals("Condition 10", outputPosition9.condition());
         assertEquals(new BigDecimal("10.99"), outputPosition9.price());
@@ -285,7 +224,6 @@ public class InventoryItemTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(91L, outputPosition0.id());
         assertNull(outputPosition0.product());
-        assertEquals(91L, outputPosition0.yugiohCard());
         assertEquals("Version 91", outputPosition0.version());
         assertEquals("Condition 91", outputPosition0.condition());
         assertEquals(new BigDecimal("91.99"), outputPosition0.price());
@@ -294,7 +232,6 @@ public class InventoryItemTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(94L, outputPosition3.id());
         assertEquals(94L, outputPosition3.product());
-        assertNull(outputPosition3.yugiohCard());
         assertEquals("Version 94", outputPosition3.version());
         assertEquals("Condition 94", outputPosition3.condition());
         assertEquals(new BigDecimal("94.99"), outputPosition3.price());
@@ -330,14 +267,13 @@ public class InventoryItemTest {
 
     @Test
     void testFindByIdWithItemFound() {
-        InventoryItem item = mocker.mockEntityWithProduct(1);
+        InventoryItem item = mocker.mockEntity(1);
 
         when(repository.findById(1L)).thenReturn(Optional.of(item));
 
         InventoryItemDTO output = service.findById(1L);
         assertEquals(1L, output.id());
         assertEquals(1L, output.product());
-        assertNull(output.yugiohCard());
         assertEquals("Version 1", output.version());
         assertEquals("Condition 1", output.condition());
         assertEquals(new BigDecimal("1.99"), output.price());
@@ -367,7 +303,7 @@ public class InventoryItemTest {
     @Test
     void testCreateWithoutPermission() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
@@ -384,7 +320,7 @@ public class InventoryItemTest {
         InventoryItemService spyService = Mockito.spy(service);
 
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
         InventoryItem item = mocker.mockEntity(itemDTO);
 
@@ -396,7 +332,6 @@ public class InventoryItemTest {
         InventoryItemDTO output = spyService.create(itemDTO);
         assertNull(output.id());
         assertEquals(1L, output.product());
-        assertNull(output.yugiohCard());
         assertEquals("V2023-AB", output.version());
         assertEquals("New", output.condition());
         assertEquals(new BigDecimal("1.99"), output.price());
@@ -448,7 +383,7 @@ public class InventoryItemTest {
     @Test
     void testUpdateWithParamDTOIdNull() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, "V2023-AB", 
+            null, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
@@ -461,7 +396,7 @@ public class InventoryItemTest {
     @Test
     void testUpdateWithParamDTOIdMismatchParamId() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            2L, 1L, null, "V2023-AB", 
+            2L, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
@@ -489,9 +424,9 @@ public class InventoryItemTest {
         InventoryItemService spyService = Mockito.spy(service);
         
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            1L, 1L, null, "V2023-AB", 
+            1L, 1L, "V2023-AB", 
             "New", new BigDecimal("1.99"), 5);
-        InventoryItem item = mocker.mockEntityWithProduct(1);
+        InventoryItem item = mocker.mockEntity(1);
         InventoryItem itemUpdated = mocker.mockEntity(itemDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
@@ -503,7 +438,6 @@ public class InventoryItemTest {
         InventoryItemDTO output = spyService.update(1L, itemDTO);
         assertEquals(1L, output.id());
         assertEquals(1L, output.product());
-        assertNull(output.yugiohCard());
         assertEquals("V2023-AB", output.version());
         assertEquals("New", output.condition());
         assertEquals(new BigDecimal("1.99"), output.price());
@@ -576,7 +510,7 @@ public class InventoryItemTest {
 
     @Test
     void testDeleteWithItemFound() {
-        InventoryItem item = mocker.mockEntityWithProduct(1);
+        InventoryItem item = mocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(1L)).thenReturn(Optional.of(item));

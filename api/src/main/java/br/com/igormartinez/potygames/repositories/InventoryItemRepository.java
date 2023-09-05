@@ -11,7 +11,4 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
     
     @Query("SELECT COUNT(i) FROM InventoryItem i WHERE i.product.id = :idProduct")
     int countByIdProduct(long idProduct);
-
-    @Query("SELECT COUNT(i) FROM InventoryItem i WHERE i.yugiohCard.id = :idYugiohCard")
-    int countByIdYugiohCard(long idYugiohCard);
 }

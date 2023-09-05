@@ -11,27 +11,19 @@ import org.springframework.data.domain.Pageable;
 import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.models.Product;
-import br.com.igormartinez.potygames.models.YugiohCard;
 
 public class MockInventoryItem {
 
     private final MockProduct productMocker;
-    private final MockYugiohCard yugiohCardMocker;
 
-    public MockInventoryItem(MockProduct productMocker, MockYugiohCard yugiohCardMocker) {
+    public MockInventoryItem(MockProduct productMocker) {
         this.productMocker = productMocker;
-        this.yugiohCardMocker = yugiohCardMocker;
     }
 
-    private InventoryItem mockEntity(int number, Product product, YugiohCard yugiohCard) {
+    private InventoryItem mockEntity(int number, Product product) {
         InventoryItem item = new InventoryItem();
         item.setId(Long.valueOf(number));
-
-        if (product != null) 
-            item.setProduct(product);
-        else if (yugiohCard != null)
-            item.setYugiohCard(yugiohCard);
-        
+        item.setProduct(product);
         item.setVersion("Version " + number);
         item.setCondition("Condition " + number);
         item.setPrice(new BigDecimal(number + ".99"));
@@ -40,24 +32,14 @@ public class MockInventoryItem {
         return item;
     }
 
-    public InventoryItem mockEntityWithProduct(int number) {
-        return mockEntity(number, productMocker.mockEntity(number), null);
-    }
-
-    public InventoryItem mockEntityWithYugiohCard(int number) {
-        return mockEntity(number, null, yugiohCardMocker.mockEntity(number));
+    public InventoryItem mockEntity(int number) {
+        return mockEntity(number, productMocker.mockEntity(number));
     }
 
     public InventoryItem mockEntity(InventoryItemDTO itemDTO) {
         InventoryItem item = new InventoryItem();
         item.setId(itemDTO.id());
-
-        if (itemDTO.product() != null) 
-            item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
-        
-        if (itemDTO.yugiohCard() != null)
-            item.setYugiohCard(yugiohCardMocker.mockEntity(itemDTO.yugiohCard().intValue()));
-        
+        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
         item.setVersion(itemDTO.version());
         item.setCondition(itemDTO.condition());
         item.setPrice(itemDTO.price());
@@ -69,11 +51,7 @@ public class MockInventoryItem {
     public List<InventoryItem> mockEntityList(int startNumber, int endNumber) {
         List<InventoryItem> list = new ArrayList<>();
         for (int i=startNumber; i<=endNumber; i++) {
-            list.add(
-                i%2 == 0
-                ? mockEntityWithProduct(i)
-                : mockEntityWithYugiohCard(i)
-            );
+            list.add(mockEntity(i));
         }
         return list;
     }
@@ -93,18 +71,6 @@ public class MockInventoryItem {
     public InventoryItemDTO mockDTOWithProduct(int number) {
         return new InventoryItemDTO(
             Long.valueOf(number), 
-            Long.valueOf(number), 
-            null, 
-            "Version " + number, 
-            "Condition " + number, 
-            new BigDecimal(number + ".99"), 
-            number);
-    }
-
-    public InventoryItemDTO mockDTOWithYugiohCard(int number) {
-        return new InventoryItemDTO(
-            Long.valueOf(number), 
-            null, 
             Long.valueOf(number), 
             "Version " + number, 
             "Condition " + number, 

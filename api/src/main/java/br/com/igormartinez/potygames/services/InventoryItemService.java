@@ -12,7 +12,6 @@ import br.com.igormartinez.potygames.mappers.InventoryItemDTOMapper;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
-import br.com.igormartinez.potygames.repositories.YugiohCardRepository;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
 
 @Service
@@ -20,16 +19,13 @@ public class InventoryItemService {
     
     private final InventoryItemRepository repository;
     private final ProductRepository productRepository;
-    private final YugiohCardRepository yugiohCardRepository;
     private final InventoryItemDTOMapper mapper;
     private final SecurityContextManager securityContextManager;
 
     public InventoryItemService(InventoryItemRepository repository, ProductRepository productRepository,
-            YugiohCardRepository yugiohCardRepository, InventoryItemDTOMapper mapper,
-            SecurityContextManager securityContextManager) {
+            InventoryItemDTOMapper mapper, SecurityContextManager securityContextManager) {
         this.repository = repository;
         this.productRepository = productRepository;
-        this.yugiohCardRepository = yugiohCardRepository;
         this.mapper = mapper;
         this.securityContextManager = securityContextManager;
     }
@@ -40,23 +36,13 @@ public class InventoryItemService {
 
         InventoryItem item = new InventoryItem();
 
-        if (itemDTO.product() == null && itemDTO.yugiohCard() == null)
-            throw new RequestValidationException("A product or yugioh card must be provided.");
-
-        if (itemDTO.product() != null && itemDTO.yugiohCard() != null)
-            throw new RequestValidationException("Only product or yugioh card must be provided, not both.");
+        if (itemDTO.product() == null)
+            throw new RequestValidationException("A product must be provided.");
 
         if (itemDTO.product() != null) {
             item.setProduct(
                 productRepository.findById(itemDTO.product())
                     .orElseThrow(() -> new ResourceNotFoundException("The product was not found with the given ID."))
-            );
-        }
-        
-        if (itemDTO.yugiohCard() != null) {
-            item.setYugiohCard(
-                yugiohCardRepository.findById(itemDTO.yugiohCard())
-                    .orElseThrow(() -> new ResourceNotFoundException("The yugioh card was not found with the given ID."))
             );
         }
 

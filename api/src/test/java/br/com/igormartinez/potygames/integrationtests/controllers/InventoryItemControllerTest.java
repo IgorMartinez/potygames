@@ -64,7 +64,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.product());
-        assertNull(outputPosition0.yugiohCard());
         assertEquals("CRU6WKLQA", outputPosition0.version());
         assertEquals("Sealed", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
@@ -73,7 +72,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(4L, outputPosition3.id());
         assertNull(outputPosition3.product());
-        assertEquals(2060L, outputPosition3.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition3.version());
         assertEquals("NM", outputPosition3.condition());
         assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
@@ -82,7 +80,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition6 = output.get(6);
         assertEquals(7L, outputPosition6.id());
         assertNull(outputPosition6.product());
-        assertEquals(2024L, outputPosition6.yugiohCard());
         assertEquals("IGAS-PT047", outputPosition6.version());
         assertEquals("NM", outputPosition6.condition());
         assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
@@ -115,7 +112,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(4L, outputPosition0.id());
         assertNull(outputPosition0.product());
-        assertEquals(2060L, outputPosition0.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition0.version());
         assertEquals("NM", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("0.35")));
@@ -124,7 +120,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition2 = output.get(2);
         assertEquals(6L, outputPosition2.id());
         assertNull(outputPosition2.product());
-        assertEquals(2068L, outputPosition2.yugiohCard());
         assertEquals("SCDB-PT036", outputPosition2.version());
         assertEquals("NM", outputPosition2.condition());
         assertEquals(0, outputPosition2.price().compareTo(new BigDecimal("0.14")));
@@ -157,7 +152,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.product());
-        assertNull(outputPosition0.yugiohCard());
         assertEquals("CRU6WKLQA", outputPosition0.version());
         assertEquals("Sealed", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
@@ -166,7 +160,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(4L, outputPosition3.id());
         assertNull(outputPosition3.product());
-        assertEquals(2060L, outputPosition3.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition3.version());
         assertEquals("NM", outputPosition3.condition());
         assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
@@ -175,7 +168,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition6 = output.get(6);
         assertEquals(7L, outputPosition6.id());
         assertNull(outputPosition6.product());
-        assertEquals(2024L, outputPosition6.yugiohCard());
         assertEquals("IGAS-PT047", outputPosition6.version());
         assertEquals("NM", outputPosition6.condition());
         assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
@@ -208,7 +200,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(7L, outputPosition0.id());
         assertNull(outputPosition0.product());
-        assertEquals(2024L, outputPosition0.yugiohCard());
         assertEquals("IGAS-PT047", outputPosition0.version());
         assertEquals("NM", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("10")));
@@ -217,7 +208,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(4L, outputPosition3.id());
         assertNull(outputPosition3.product());
-        assertEquals(2060L, outputPosition3.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition3.version());
         assertEquals("NM", outputPosition3.condition());
         assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
@@ -226,7 +216,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition6 = output.get(6);
         assertEquals(1L, outputPosition6.id());
         assertEquals(1L, outputPosition6.product());
-        assertNull(outputPosition6.yugiohCard());
         assertEquals("CRU6WKLQA", outputPosition6.version());
         assertEquals("Sealed", outputPosition6.condition());
         assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("190.65")));
@@ -252,7 +241,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         
         assertEquals(2L, output.id());
         assertNull(output.product());
-        assertEquals(2061L, output.yugiohCard());
         assertEquals("SDCB-PT007", output.version());
         assertEquals("NM", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
@@ -313,7 +301,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testCreateAsUnauthenticated() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, null, 
+            null, null, 
             null, null, null, null);
 
         ExceptionResponse output = 
@@ -342,7 +330,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testUpdateAsUnauthenticated() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, null, 
+            null, null, 
             null, null, null, null);
 
         ExceptionResponse output = 
@@ -444,7 +432,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.product());
-        assertNull(outputPosition0.yugiohCard());
         assertEquals("CRU6WKLQA", outputPosition0.version());
         assertEquals("Sealed", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
@@ -453,7 +440,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(4L, outputPosition3.id());
         assertNull(outputPosition3.product());
-        assertEquals(2060L, outputPosition3.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition3.version());
         assertEquals("NM", outputPosition3.condition());
         assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
@@ -462,7 +448,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition6 = output.get(6);
         assertEquals(7L, outputPosition6.id());
         assertNull(outputPosition6.product());
-        assertEquals(2024L, outputPosition6.yugiohCard());
         assertEquals("IGAS-PT047", outputPosition6.version());
         assertEquals("NM", outputPosition6.condition());
         assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
@@ -486,7 +471,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         
         assertEquals(2L, output.id());
         assertNull(output.product());
-        assertEquals(2061L, output.yugiohCard());
         assertEquals("SDCB-PT007", output.version());
         assertEquals("NM", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
@@ -497,7 +481,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdmin() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 2062L, 
+            null, 2062L, 
             "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
 
         InventoryItemDTO output =
@@ -514,7 +498,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         
         assertTrue(output.id() > 0);
         assertNull(output.product());
-        assertEquals(2062L, output.yugiohCard());
         assertEquals("SDCB-PT004", output.version());
         assertEquals("M", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.50")));
@@ -549,7 +532,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdminWithBadItemRequest() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, 2062L, 
+            null, 1L, 
             "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
         
         ExceptionResponse output =
@@ -576,7 +559,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdminWithItemNotFound() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 555555L, 
+            null, 555555L, 
             "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
         
         ExceptionResponse output =
@@ -603,7 +586,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdmin() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, null, 2055L, 
+            INVENTORY_ITEM_ID, 2055L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
 
         InventoryItemDTO output =
@@ -621,7 +604,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         
         assertEquals(INVENTORY_ITEM_ID, output.id());
         assertNull(output.product());
-        assertEquals(2055L, output.yugiohCard());
         assertEquals("SDCB-PT005", output.version());
         assertEquals("NM", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.43")));
@@ -634,7 +616,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, null, 2055L, 
+            INVENTORY_ITEM_ID, 2055L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -662,7 +644,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, null, 2055L, 
+            INVENTORY_ITEM_ID, 2055L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -690,7 +672,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithBadItemRequest() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, null, null, 
+            INVENTORY_ITEM_ID, null,  
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -718,7 +700,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithItemNotFound() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, 55555L, null, 
+            INVENTORY_ITEM_ID, 55555L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -854,7 +836,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
         assertEquals(1L, outputPosition0.product());
-        assertNull(outputPosition0.yugiohCard());
         assertEquals("CRU6WKLQA", outputPosition0.version());
         assertEquals("Sealed", outputPosition0.condition());
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
@@ -863,7 +844,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition3 = output.get(3);
         assertEquals(4L, outputPosition3.id());
         assertNull(outputPosition3.product());
-        assertEquals(2060L, outputPosition3.yugiohCard());
         assertEquals("SDCB-PT001", outputPosition3.version());
         assertEquals("NM", outputPosition3.condition());
         assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
@@ -872,7 +852,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO outputPosition6 = output.get(6);
         assertEquals(7L, outputPosition6.id());
         assertNull(outputPosition6.product());
-        assertEquals(2024L, outputPosition6.yugiohCard());
         assertEquals("IGAS-PT047", outputPosition6.version());
         assertEquals("NM", outputPosition6.condition());
         assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
@@ -896,7 +875,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         
         assertEquals(2L, output.id());
         assertNull(output.product());
-        assertEquals(2061L, output.yugiohCard());
         assertEquals("SDCB-PT007", output.version());
         assertEquals("NM", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
@@ -907,7 +885,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(201)
     void testCreateAsCustomer() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, null, 
+            null, null,  
             null, null, null, null);
 
         ExceptionResponse output = 
@@ -934,7 +912,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(201)
     void testUpdateAsCustomer() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            1L, null, null, 
+            1L, null,  
             null, null, null, null);
 
         ExceptionResponse output = 
