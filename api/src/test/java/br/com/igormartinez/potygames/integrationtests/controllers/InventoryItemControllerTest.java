@@ -3,7 +3,6 @@ package br.com.igormartinez.potygames.integrationtests.controllers;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.TestMethodOrder;
@@ -43,7 +42,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     
     @Test
     @Order(0)
-    void testFindAllAsUnauthenticatedWithoutQueryParams() {
+    void testFindAllAsUnauthenticated() {
         List<InventoryItemDTO> output = 
             given()
 				.basePath("/api/v1/inventory")
@@ -59,7 +58,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                     .getList("content", InventoryItemDTO.class);
 
         
-        assertEquals(7, output.size());
+        assertEquals(2, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -69,157 +68,13 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition3 = output.get(3);
-        assertEquals(4L, outputPosition3.id());
-        assertNull(outputPosition3.product());
-        assertEquals("SDCB-PT001", outputPosition3.version());
-        assertEquals("NM", outputPosition3.condition());
-        assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition3.quantity());
-
-        InventoryItemDTO outputPosition6 = output.get(6);
-        assertEquals(7L, outputPosition6.id());
-        assertNull(outputPosition6.product());
-        assertEquals("IGAS-PT047", outputPosition6.version());
-        assertEquals("NM", outputPosition6.condition());
-        assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
-        assertEquals(1, outputPosition6.quantity());
-    }
-
-    @Test
-    @Order(0)
-    void testFindAllAsUnauthenticatedWithPage1Size3DirectionASC() {
-        List<InventoryItemDTO> output = 
-            given()
-				.basePath("/api/v1/inventory")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .queryParam("page", 1)
-                    .queryParam("size", 3)
-                    .queryParam("direction", "asc")
-				.when()
-				    .get()
-				.then()
-					.statusCode(HttpStatus.OK.value())
-						.extract()
-							.body()
-								.jsonPath()
-                                    .getList("content", InventoryItemDTO.class);
-
-        
-        assertEquals(3, output.size());
-
-        InventoryItemDTO outputPosition0 = output.get(0);
-        assertEquals(4L, outputPosition0.id());
-        assertNull(outputPosition0.product());
-        assertEquals("SDCB-PT001", outputPosition0.version());
-        assertEquals("NM", outputPosition0.condition());
-        assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition0.quantity());
-
-        InventoryItemDTO outputPosition2 = output.get(2);
-        assertEquals(6L, outputPosition2.id());
-        assertNull(outputPosition2.product());
-        assertEquals("SCDB-PT036", outputPosition2.version());
-        assertEquals("NM", outputPosition2.condition());
-        assertEquals(0, outputPosition2.price().compareTo(new BigDecimal("0.14")));
-        assertEquals(3, outputPosition2.quantity());
-    }
-
-    @Test
-    @Order(0)
-    void testFindAllAsUnauthenticatedWithPage0Size12DirectionASC() {
-        List<InventoryItemDTO> output = 
-            given()
-				.basePath("/api/v1/inventory")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .queryParam("page", 0)
-                    .queryParam("size", 12)
-                    .queryParam("direction", "asc")
-				.when()
-				    .get()
-				.then()
-					.statusCode(HttpStatus.OK.value())
-						.extract()
-							.body()
-								.jsonPath()
-                                    .getList("content", InventoryItemDTO.class);
-
-        
-        assertEquals(7, output.size());
-
-        InventoryItemDTO outputPosition0 = output.get(0);
-        assertEquals(1L, outputPosition0.id());
-        assertEquals(1L, outputPosition0.product());
-        assertEquals("CRU6WKLQA", outputPosition0.version());
-        assertEquals("Sealed", outputPosition0.condition());
-        assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
-        assertEquals(3, outputPosition0.quantity());
-
-        InventoryItemDTO outputPosition3 = output.get(3);
-        assertEquals(4L, outputPosition3.id());
-        assertNull(outputPosition3.product());
-        assertEquals("SDCB-PT001", outputPosition3.version());
-        assertEquals("NM", outputPosition3.condition());
-        assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition3.quantity());
-
-        InventoryItemDTO outputPosition6 = output.get(6);
-        assertEquals(7L, outputPosition6.id());
-        assertNull(outputPosition6.product());
-        assertEquals("IGAS-PT047", outputPosition6.version());
-        assertEquals("NM", outputPosition6.condition());
-        assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
-        assertEquals(1, outputPosition6.quantity());
-    }
-
-    @Test
-    @Order(0)
-    void testFindAllAsUnauthenticatedWithPage0Size12DirectionDESC() {
-        List<InventoryItemDTO> output = 
-            given()
-				.basePath("/api/v1/inventory")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .queryParam("page", 0)
-                    .queryParam("size", 12)
-                    .queryParam("direction", "desc")
-				.when()
-				    .get()
-				.then()
-					.statusCode(HttpStatus.OK.value())
-						.extract()
-							.body()
-								.jsonPath()
-                                    .getList("content", InventoryItemDTO.class);
-
-        
-        assertEquals(7, output.size());
-
-        InventoryItemDTO outputPosition0 = output.get(0);
-        assertEquals(7L, outputPosition0.id());
-        assertNull(outputPosition0.product());
-        assertEquals("IGAS-PT047", outputPosition0.version());
-        assertEquals("NM", outputPosition0.condition());
-        assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("10")));
-        assertEquals(1, outputPosition0.quantity());
-
-        InventoryItemDTO outputPosition3 = output.get(3);
-        assertEquals(4L, outputPosition3.id());
-        assertNull(outputPosition3.product());
-        assertEquals("SDCB-PT001", outputPosition3.version());
-        assertEquals("NM", outputPosition3.condition());
-        assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition3.quantity());
-
-        InventoryItemDTO outputPosition6 = output.get(6);
-        assertEquals(1L, outputPosition6.id());
-        assertEquals(1L, outputPosition6.product());
-        assertEquals("CRU6WKLQA", outputPosition6.version());
-        assertEquals("Sealed", outputPosition6.condition());
-        assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("190.65")));
-        assertEquals(3, outputPosition6.quantity());
+        InventoryItemDTO outputPosition1 = output.get(1);
+        assertEquals(2L, outputPosition1.id());
+        assertEquals(2L, outputPosition1.product());
+        assertEquals("HLXKCCTW7", outputPosition1.version());
+        assertEquals("Used", outputPosition1.condition());
+        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
+        assertEquals(1, outputPosition1.quantity());
     }
 
     @Test
@@ -230,7 +85,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
 					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-                    .pathParam("inventory-item-id", 2)
+                    .pathParam("inventory-item-id", 1)
 				.when()
 				    .get("/{inventory-item-id}")
 				.then()
@@ -239,11 +94,11 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(InventoryItemDTO.class);
         
-        assertEquals(2L, output.id());
-        assertNull(output.product());
-        assertEquals("SDCB-PT007", output.version());
-        assertEquals("NM", output.condition());
-        assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
+        assertEquals(1L, output.id());
+        assertEquals(1L, output.product());
+        assertEquals("CRU6WKLQA", output.version());
+        assertEquals("Sealed", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, output.quantity());
     }
 
@@ -426,8 +281,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", InventoryItemDTO.class);
 
-        
-        assertEquals(7, output.size());
+        assertEquals(2, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -437,21 +291,13 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition3 = output.get(3);
-        assertEquals(4L, outputPosition3.id());
-        assertNull(outputPosition3.product());
-        assertEquals("SDCB-PT001", outputPosition3.version());
-        assertEquals("NM", outputPosition3.condition());
-        assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition3.quantity());
-
-        InventoryItemDTO outputPosition6 = output.get(6);
-        assertEquals(7L, outputPosition6.id());
-        assertNull(outputPosition6.product());
-        assertEquals("IGAS-PT047", outputPosition6.version());
-        assertEquals("NM", outputPosition6.condition());
-        assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
-        assertEquals(1, outputPosition6.quantity());
+        InventoryItemDTO outputPosition1 = output.get(1);
+        assertEquals(2L, outputPosition1.id());
+        assertEquals(2L, outputPosition1.product());
+        assertEquals("HLXKCCTW7", outputPosition1.version());
+        assertEquals("Used", outputPosition1.condition());
+        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
+        assertEquals(1, outputPosition1.quantity());
     }
 
     @Test
@@ -460,7 +306,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO output =
             given()
                 .spec(specification)
-                    .pathParam("inventory-item-id", 2)
+                    .pathParam("inventory-item-id", 1)
 				.when()
 				    .get("/{inventory-item-id}")
 				.then()
@@ -469,11 +315,11 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(InventoryItemDTO.class);
         
-        assertEquals(2L, output.id());
-        assertNull(output.product());
-        assertEquals("SDCB-PT007", output.version());
-        assertEquals("NM", output.condition());
-        assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
+        assertEquals(1L, output.id());
+        assertEquals(1L, output.product());
+        assertEquals("CRU6WKLQA", output.version());
+        assertEquals("Sealed", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, output.quantity());
     }
 
@@ -481,8 +327,8 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(110)
     void testCreateAsAdmin() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 2062L, 
-            "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
+            null, 1L, 
+            "BRA2002R9", "Used", new BigDecimal("180.55"), 2);
 
         InventoryItemDTO output =
             given()
@@ -497,11 +343,11 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                 .as(InventoryItemDTO.class);
         
         assertTrue(output.id() > 0);
-        assertNull(output.product());
-        assertEquals("SDCB-PT004", output.version());
-        assertEquals("M", output.condition());
-        assertEquals(0, output.price().compareTo(new BigDecimal("0.50")));
-        assertEquals(3, output.quantity());
+        assertEquals(1L, output.product());
+        assertEquals("BRA2002R9", output.version());
+        assertEquals("Used", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("180.55")));
+        assertEquals(2, output.quantity());
 
         INVENTORY_ITEM_ID = output.id();
     }
@@ -533,7 +379,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     void testCreateAsAdminWithBadItemRequest() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
             null, 1L, 
-            "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
+            "SDCB-PT004", "M", new BigDecimal("-0.50"), 3);
         
         ExceptionResponse output =
             given()
@@ -551,7 +397,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Only product or yugioh card must be provided, not both.", output.getDetail());
+        assertEquals("The price must be null, zero or positive.", output.getDetail());
         assertEquals("/api/v1/inventory", output.getInstance());
     }
 
@@ -578,7 +424,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Not Found", output.getTitle());
         assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The yugioh card was not found with the given ID.", output.getDetail());
+        assertEquals("The product was not found with the given ID.", output.getDetail());
         assertEquals("/api/v1/inventory", output.getInstance());
     }
 
@@ -586,7 +432,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdmin() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, 2055L, 
+            INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
 
         InventoryItemDTO output =
@@ -603,7 +449,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                 .as(InventoryItemDTO.class);
         
         assertEquals(INVENTORY_ITEM_ID, output.id());
-        assertNull(output.product());
+        assertEquals(2L, output.product());
         assertEquals("SDCB-PT005", output.version());
         assertEquals("NM", output.condition());
         assertEquals(0, output.price().compareTo(new BigDecimal("0.43")));
@@ -616,7 +462,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, 2055L, 
+            INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -644,7 +490,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, 2055L, 
+            INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
         ExceptionResponse output =
@@ -692,7 +538,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals("about:blank", output.getType());
         assertEquals("Bad Request", output.getTitle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("A product or yugioh card must be provided.", output.getDetail());
+        assertEquals("A product must be provided.", output.getDetail());
         assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.getInstance());
     }
 
@@ -831,7 +677,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                     .getList("content", InventoryItemDTO.class);
 
         
-        assertEquals(7, output.size());
+        assertEquals(2, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -841,21 +687,13 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition3 = output.get(3);
-        assertEquals(4L, outputPosition3.id());
-        assertNull(outputPosition3.product());
-        assertEquals("SDCB-PT001", outputPosition3.version());
-        assertEquals("NM", outputPosition3.condition());
-        assertEquals(0, outputPosition3.price().compareTo(new BigDecimal("0.35")));
-        assertEquals(3, outputPosition3.quantity());
-
-        InventoryItemDTO outputPosition6 = output.get(6);
-        assertEquals(7L, outputPosition6.id());
-        assertNull(outputPosition6.product());
-        assertEquals("IGAS-PT047", outputPosition6.version());
-        assertEquals("NM", outputPosition6.condition());
-        assertEquals(0, outputPosition6.price().compareTo(new BigDecimal("10")));
-        assertEquals(1, outputPosition6.quantity());
+        InventoryItemDTO outputPosition1 = output.get(1);
+        assertEquals(2L, outputPosition1.id());
+        assertEquals(2L, outputPosition1.product());
+        assertEquals("HLXKCCTW7", outputPosition1.version());
+        assertEquals("Used", outputPosition1.condition());
+        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
+        assertEquals(1, outputPosition1.quantity());
     }
 
     @Test
@@ -864,7 +702,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         InventoryItemDTO output =
             given()
                 .spec(specification)
-                    .pathParam("inventory-item-id", 2)
+                    .pathParam("inventory-item-id", 1)
 				.when()
 				    .get("/{inventory-item-id}")
 				.then()
@@ -873,11 +711,11 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(InventoryItemDTO.class);
         
-        assertEquals(2L, output.id());
-        assertNull(output.product());
-        assertEquals("SDCB-PT007", output.version());
-        assertEquals("NM", output.condition());
-        assertEquals(0, output.price().compareTo(new BigDecimal("0.38")));
+        assertEquals(1L, output.id());
+        assertEquals(1L, output.product());
+        assertEquals("CRU6WKLQA", output.version());
+        assertEquals("Sealed", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, output.quantity());
     }
 
