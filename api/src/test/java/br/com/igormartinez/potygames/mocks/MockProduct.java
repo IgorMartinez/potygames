@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
+import br.com.igormartinez.potygames.data.request.ProductCreateDTO;
+import br.com.igormartinez.potygames.data.request.ProductUpdateDTO;
+import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.models.Product;
 
 public class MockProduct {
@@ -28,7 +30,17 @@ public class MockProduct {
         return product;
     }
 
-    public Product mockEntity(ProductDTO productDTO) {
+    public Product mockEntity(int number, ProductCreateDTO productDTO) {
+        Product product = new Product();
+        product.setId(Long.valueOf(number));
+        product.setType(mockProductType.mockEntity(productDTO.idProductType().intValue()));
+        product.setName(productDTO.name());
+        product.setDescription(productDTO.description());
+
+        return product;
+    }
+
+    public Product mockEntity(ProductUpdateDTO productDTO) {
         Product product = new Product();
         product.setId(productDTO.id());
         product.setType(mockProductType.mockEntity(productDTO.idProductType().intValue()));
@@ -60,6 +72,22 @@ public class MockProduct {
             Long.valueOf(number), 
             "Product name " + number, 
             "Product description " + number);
+    }
+
+    public ProductCreateDTO mockCreateDTO(int number) {
+        return new ProductCreateDTO(
+            Long.valueOf(number), 
+            "Product name " + number, 
+            "Product description " + number);
+    }
+
+    public ProductUpdateDTO mockUpdateDTO(int number) {
+        return new ProductUpdateDTO(
+            Long.valueOf(number), 
+            Long.valueOf(number), 
+            "Product name " + number, 
+            "Product description " + number);
+
     }
 
     public List<ProductDTO> mockDTOList(int number) {

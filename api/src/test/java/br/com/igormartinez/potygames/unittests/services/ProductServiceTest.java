@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -16,9 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,16 +26,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
+import br.com.igormartinez.potygames.data.request.ProductCreateDTO;
+import br.com.igormartinez.potygames.data.request.ProductUpdateDTO;
+import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
-import br.com.igormartinez.potygames.mappers.ProductDTOMapper;
+import br.com.igormartinez.potygames.mappers.ProductToProductDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
 import br.com.igormartinez.potygames.models.Product;
-import br.com.igormartinez.potygames.models.ProductType;
 import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
 import br.com.igormartinez.potygames.repositories.ProductTypeRepository;
@@ -46,10 +47,9 @@ import br.com.igormartinez.potygames.services.ProductService;
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
-    
+
     private ProductService service;
     private MockProduct productMocker;
-    private MockProductType productTypeMocker;
     
     @Mock
     private ProductRepository productRepository;
@@ -65,100 +65,14 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setup() {
-        productTypeMocker = new MockProductType();
-        productMocker = new MockProduct(productTypeMocker);
+        productMocker = new MockProduct(new MockProductType());
 
         service = new ProductService(
             productRepository, 
             productTypeRepository, 
             inventoryItemRepository,
-            new ProductDTOMapper(), 
+            new ProductToProductDTOMapper(), 
             securityContextManager);
-    }
-
-    @Test
-    void testPrepareEntityWithProductDTONull() {
-        Exception output = assertThrows(IllegalArgumentException.class, () -> {
-            service.prepareEntity(null);
-        });
-        String expectedMessage = "The productDTO argument must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testPrepareEntityWithProductTypeIdNull() {
-        ProductDTO productDTO = new ProductDTO(
-            null, null, null, null);
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(productDTO);
-        });
-        String expectedMessage = "The product type ID must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testPrepareEntityWithProductTypeNotFound() {
-        ProductDTO productDTO = new ProductDTO(
-            null, 0L, null, null);
-
-        when(productTypeRepository.findById(0L)).thenReturn(Optional.ofNullable(null));
-
-        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
-            service.prepareEntity(productDTO);
-        });
-        String expectedMessage = "The product type was not found with the given ID.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testPrepareEntityWithNameNull() {
-        ProductType type = productTypeMocker.mockEntity(1);
-
-        ProductDTO productDTO = new ProductDTO(
-            null, 1L, null, null);
-
-        when(productTypeRepository.findById(1L)).thenReturn(Optional.of(type));
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(productDTO);
-        });
-        String expectedMessage = "The product name must not be blank.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testPrepareEntityWithNameBlank() {
-        ProductType type = productTypeMocker.mockEntity(1);
-
-        ProductDTO productDTO = new ProductDTO(
-            null, 1L, "  ", null);
-
-        when(productTypeRepository.findById(1L)).thenReturn(Optional.of(type));
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(productDTO);
-        });
-        String expectedMessage = "The product name must not be blank.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testPrepareEntity() {
-        ProductType type = productTypeMocker.mockEntity(1);
-        ProductDTO productDTO = new ProductDTO(
-            null, 1L, 
-            "Product name 1", "Product description 1");
-
-        when(productTypeRepository.findById(1L)).thenReturn(Optional.of(type));
-
-        Product output = service.prepareEntity(productDTO);
-        assertNotNull(output);
-        assertNull(output.getId());
-        assertEquals(1L, output.getType().getId());
-        assertEquals("Description 1", output.getType().getDescription());
-        assertEquals("Product name 1", output.getName());
-        assertEquals("Product description 1", output.getDescription());
     }
 
     @Test
@@ -334,19 +248,8 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testCreateWithParamDTONull() {
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.create(null);
-        });
-        String expectedMessage = "The request body must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
     void testCreateWithoutPermission() {
-        ProductDTO productDTO = new ProductDTO(
-            null, 1L, 
-            "Product name 1", "Product description 1");
+        ProductCreateDTO productDTO = productMocker.mockCreateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -359,27 +262,48 @@ public class ProductServiceTest {
 
     @Test
     void testCreateWithPermission() {
-        ProductService spyService = Mockito.spy(service);
-
-        ProductDTO productDTO = productMocker.mockDTO(1);
-        Product product = productMocker.mockEntity(productDTO);
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(1L,"Product name 1","Product description 1");
+        Product product = productMocker.mockEntity(1, productDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
-        doReturn(product).when(spyService).
-            prepareEntity(ArgumentMatchers.any(ProductDTO.class));
-        when(productRepository.save(product)).thenReturn(product);
+        when(productTypeRepository.findById(productDTO.idProductType())).thenReturn(Optional.of(product.getType()));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        ProductDTO output = spyService.create(productDTO);
-        assertNotNull(output);
+        // Check the code after the save
+        ProductDTO output = service.create(productDTO);
         assertEquals(1L, output.id());
         assertEquals(1L, output.idProductType());
         assertEquals("Product name 1", output.name());
         assertEquals("Product description 1", output.description());
+
+        // Check the arguments before save
+        ArgumentCaptor<Product> argumentCaptor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(argumentCaptor.capture());
+        Product capturedObject = argumentCaptor.getValue();
+        assertNull(capturedObject.getId());
+        assertEquals(1L, capturedObject.getType().getId());
+        assertEquals("Product name 1", capturedObject.getName());
+        assertEquals("Product description 1", capturedObject.getDescription());
+    }
+
+    @Test
+    void testCreateWithProductTypeNotFound() {
+        ProductCreateDTO productDTO = productMocker.mockCreateDTO(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productTypeRepository.findById(productDTO.idProductType())).thenReturn(Optional.ofNullable(null));
+
+        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
+            service.create(productDTO);
+        });
+        String expectedMessage = "The product type was not found with the given ID.";
+        assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     void testUpdateWithParamIdNull() {
-        ProductDTO productDTO = productMocker.mockDTO(1);
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(null, productDTO);
@@ -390,7 +314,7 @@ public class ProductServiceTest {
 
     @Test
     void testUpdateWithParamIdZero() {
-        ProductDTO productDTO = productMocker.mockDTO(1);
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(0L, productDTO);
@@ -401,7 +325,7 @@ public class ProductServiceTest {
 
     @Test
     void testUpdateWithParamIdNegative() {
-        ProductDTO productDTO = productMocker.mockDTO(1);
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(-10L, productDTO);
@@ -411,33 +335,11 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testUpdateWithParamDTONull() {
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, null);
-        });
-        String expectedMessage = "The request body must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testUpdateWithParamDTOIdNull() {
-        ProductDTO productDTO = new ProductDTO(
-            null, null, null, null);
+    void testUpdateWithMismatchParamIdAndParamDTOId() {
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, productDTO);
-        });
-        String expectedMessage = "The ID in the request body must match the value of the product-id parameter.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testUpdateWithParamDTOIdMismatchParamId() {
-        ProductDTO productDTO = new ProductDTO(
-            2L, null, null, null);
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, productDTO);
+            service.update(2L, productDTO);
         });
         String expectedMessage = "The ID in the request body must match the value of the product-id parameter.";
         assertTrue(output.getMessage().contains(expectedMessage));
@@ -445,7 +347,7 @@ public class ProductServiceTest {
 
     @Test
     void testUpdateWithoutPermission() {
-        ProductDTO productDTO = productMocker.mockDTO(1);
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -458,33 +360,55 @@ public class ProductServiceTest {
 
     @Test
     void testUpdateWithPermission() {
-        ProductService spyService = Mockito.spy(service);
-        
-        ProductDTO productDTO = new ProductDTO(
+        ProductUpdateDTO productDTO = new ProductUpdateDTO(
             1L, 2L, "Product name updated 1", 
             "Product description updated 1");
         Product product = productMocker.mockEntity(1);
         Product productUpdated = productMocker.mockEntity(productDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productTypeRepository.findById(productDTO.idProductType())).thenReturn(Optional.of(productUpdated.getType()));
         when(productRepository.findById(productDTO.id())).thenReturn(Optional.of(product));
-        doReturn(productUpdated).when(spyService).
-            prepareEntity(ArgumentMatchers.any(ProductDTO.class));
-        when(productRepository.save(productUpdated)).thenReturn(productUpdated);
+        when(productRepository.save(product)).thenReturn(productUpdated);
 
-        ProductDTO output = spyService.update(1L, productDTO);
-        assertNotNull(output);
+        // Check code after save
+        ProductDTO output = service.update(1L, productDTO);
         assertEquals(1L, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Product name updated 1", output.name());
         assertEquals("Product description updated 1", output.description());
+
+        // Check arguments before save
+        ArgumentCaptor<Product> argumentCaptor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(argumentCaptor.capture());
+        Product capturedObject = argumentCaptor.getValue();
+        assertEquals(1L, capturedObject.getId());
+        assertEquals(2L, capturedObject.getType().getId());
+        assertEquals("Product name updated 1", capturedObject.getName());
+        assertEquals("Product description updated 1", capturedObject.getDescription());
+    }
+
+    @Test
+    void testUpdateWithProductTypeNotFound() {
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productTypeRepository.findById(productDTO.idProductType())).thenReturn(Optional.ofNullable(null));
+
+        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
+            service.update(1L, productDTO);
+        });
+        String expectedMessage = "The product type was not found with the given ID.";
+        assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     void testUpdateWithProductNotFound() {
-        ProductDTO productDTO = productMocker.mockDTO(1);
+        ProductUpdateDTO productDTO = productMocker.mockUpdateDTO(1);
+        Product product = productMocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productTypeRepository.findById(productDTO.idProductType())).thenReturn(Optional.of(product.getType()));
         when(productRepository.findById(productDTO.id())).thenReturn(Optional.ofNullable(null));
 
         Exception output = assertThrows(ResourceNotFoundException.class, () -> {

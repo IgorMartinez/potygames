@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
+import br.com.igormartinez.potygames.data.request.ProductCreateDTO;
+import br.com.igormartinez.potygames.data.request.ProductUpdateDTO;
+import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/product")
@@ -73,7 +76,7 @@ public class ProductController {
         }
     )
     @PostMapping
-    public ProductDTO create(@RequestBody ProductDTO product) {
+    public ProductDTO create(@RequestBody @Valid ProductCreateDTO product) {
         return service.create(product);
     }
 
@@ -91,7 +94,7 @@ public class ProductController {
     @PutMapping("/{product-id}")
     public ProductDTO update(
         @PathVariable(value = "product-id") Long id,
-        @RequestBody ProductDTO product) {
+        @RequestBody @Valid ProductUpdateDTO product) {
         return service.update(id, product);
     }
 

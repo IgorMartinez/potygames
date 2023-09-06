@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,10 +17,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
-import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.ProductCreateDTO;
+import br.com.igormartinez.potygames.data.request.ProductUpdateDTO;
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
+import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -58,7 +59,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -94,7 +94,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(3, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -130,7 +129,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -166,7 +164,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -200,7 +197,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(3L, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
@@ -210,7 +206,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     void testFindByIdAsUnauthenticatedWithParamIdInvalid() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
@@ -222,20 +218,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The product-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/product/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The product-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/product/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testFindByIdAsUnauthenticatedWithProductNotFound() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
@@ -247,23 +243,23 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/product/12546", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/product/12546", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testCreateAsUnauthenticated() {
-        ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null);
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(1L, "Lorem Ipsum", "Lorem ipsum dolor sit.");
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
@@ -275,23 +271,23 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/product", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/product", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testUpdateAsUnauthenticated() {
-        ProductDTO productDTO = new ProductDTO(1L, 1L, 
-            "Product name 1", null);
+        ProductUpdateDTO productDTO 
+            = new ProductUpdateDTO(1L, 1L, "Lorem Ipsum", "Lorem ipsum dolor sit.");
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
@@ -304,20 +300,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/product/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testDeleteAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/product")
 					.port(TestConfigs.SERVER_PORT)
@@ -329,14 +325,14 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/product/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -364,8 +360,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/product")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 
@@ -384,7 +378,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -415,7 +408,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(3L, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
@@ -425,8 +417,8 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(110)
     void testCreateAsAdmin() {
-        ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null);
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(1L, "Lorem Ipsum", null);
 
         ProductDTO output =
 			given()
@@ -440,10 +432,9 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductDTO.class);
 
-        assertNotNull(output);
         assertTrue(output.id() > 0);
         assertEquals(1L, output.idProductType());
-        assertEquals("Product name 1", output.name());
+        assertEquals("Lorem Ipsum", output.name());
         assertNull(output.description());
 
         PRODUCT_ID = output.id();
@@ -451,37 +442,61 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(110)
-    void testCreateAsAdminWithBadProductRequest() {
-        ProductDTO productDTO = new ProductDTO(null, null, 
-            null, null);
-
-        ExceptionResponse output =
+    void testCreateAsAdminWithoutBody() {
+        APIErrorResponse output =
 			given()
 				.spec(specification)
-					.body(productDTO)
 				.when()
 					.post()
 				.then()
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The product type ID must not be null.", output.getDetail());
-        assertEquals("/api/v1/product", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/product", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(110)
-    void testCreateAsAdminWithNotFoundProductType() {
-        ProductDTO productDTO = new ProductDTO(null, 15555L, 
-            "Product name 1", null);
+    void testCreateAsAdminWithFieldsNullOrBlank() {
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(null, " ", null);
 
-        ExceptionResponse output =
+        APIErrorResponse output =
+			given()
+				.spec(specification)
+                    .body(productDTO)
+				.when()
+					.post()
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+                                .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/product", output.instance());
+        assertEquals(2, output.errors().size());
+        assertEquals("The id of product type must be provided.", output.errors().get("idProductType"));
+        assertEquals("The name must not be blank.", output.errors().get("name"));
+    }
+
+    @Test
+    @Order(110)
+    void testCreateAsAdminWithProductTypeNotFound() {
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(55555L, "Lorem Ipsum", null);
+
+        APIErrorResponse output =
 			given()
 				.spec(specification)
 					.body(productDTO)
@@ -491,21 +506,22 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product type was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/product", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product type was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/product", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdatAsAdmin() {
-        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
-            "Product updated name 1", "Description 1");
+        ProductUpdateDTO productDTO 
+            = new ProductUpdateDTO(PRODUCT_ID, 2L, 
+                "Product updated name 1", "Description 1");
 
         ProductDTO output =
 			given()
@@ -520,7 +536,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(PRODUCT_ID, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Product updated name 1", output.name());
@@ -530,10 +545,11 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
-        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
-            "Product updated name 1", "Description 1");
+        ProductUpdateDTO productDTO 
+            = new ProductUpdateDTO(PRODUCT_ID, 2L, 
+                "Product updated name 1", "Description 1");
 
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", 0)
@@ -544,26 +560,27 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The product-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/product/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The product-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/product/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
-        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 2L, 
-            "Product updated name 1", "Description 1");
+        ProductUpdateDTO productDTO 
+            = new ProductUpdateDTO(PRODUCT_ID, 2L, 
+                "Product updated name 1", "Description 1");
 
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
-                    .pathParam("product-id", 1024)
+                    .pathParam("product-id", PRODUCT_ID+33)
 					.body(productDTO)
 				.when()
 					.put("/{product-id}")
@@ -571,50 +588,23 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The ID in the request body must match the value of the product-id parameter.", output.getDetail());
-        assertEquals("/api/v1/product/1024", output.getInstance());
-    }
-
-    @Test
-    @Order(120)
-    void testUpdateAsAdminWithParamDTOInvalid() {
-        ProductDTO productDTO = new ProductDTO(1L, null, 
-            null, null);
-
-        ExceptionResponse output =
-			given()
-				.spec(specification)
-                    .pathParam("product-id", 1)
-					.body(productDTO)
-				.when()
-					.put("/{product-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-                                .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The product type ID must not be null.", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID in the request body must match the value of the product-id parameter.", output.detail());
+        assertEquals("/api/v1/product/"+(PRODUCT_ID+33), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithProductTypeNotFound() {
-        ProductDTO productDTO = new ProductDTO(PRODUCT_ID, 1024L, 
+        ProductUpdateDTO productDTO = new ProductUpdateDTO(PRODUCT_ID, 666666L, 
             "Product updated name 1", "Product description 1");
 
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", PRODUCT_ID)
@@ -625,23 +615,23 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product type was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/product/"+PRODUCT_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product type was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/product/"+PRODUCT_ID, output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithProductNotFound() {
-        ProductDTO productDTO = new ProductDTO(PRODUCT_ID+1, 2L, 
+        ProductUpdateDTO productDTO = new ProductUpdateDTO(PRODUCT_ID+1, 2L, 
             "Product updated name 1", "Product description 1");
 
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", PRODUCT_ID+1)
@@ -652,20 +642,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(130)
     void testDeleteAsAdminWithParamIdInvalid() {
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", 0)
@@ -675,20 +665,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The product-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/product/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The product-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/product/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(130)
     void testDeleteAsAdminWithProductNotFound() {
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", PRODUCT_ID+1)
@@ -698,20 +688,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/product/"+(PRODUCT_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(130)
     void testDeleteAsAdminWithAssociateInventoryItems() {
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("product-id", 1)
@@ -721,14 +711,14 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.CONFLICT.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Conflict", output.getTitle());
-        assertEquals(HttpStatus.CONFLICT.value(), output.getStatus().intValue());
-        assertEquals("The product cannot be removed because it is associated with inventory items.", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Conflict", output.title());
+        assertEquals(HttpStatus.CONFLICT.value(), output.status());
+        assertEquals("The product cannot be removed because it is associated with inventory items.", output.detail());
+        assertEquals("/api/v1/product/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -791,7 +781,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(6, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
@@ -822,7 +811,6 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductDTO.class);
 
-        assertNotNull(output);
         assertEquals(3L, output.id());
         assertEquals(2L, output.idProductType());
         assertEquals("Structure Deck: Legend of the Crystal Beasts", output.name());
@@ -832,10 +820,10 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(210)
     void testCreateAsCustomer() {
-        ProductDTO productDTO = new ProductDTO(null, 1L, 
-            "Product name 1", null);
+        ProductCreateDTO productDTO 
+            = new ProductCreateDTO(1L, "Product name 1", null);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.spec(specification)
                     .body(productDTO)
@@ -845,23 +833,23 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/product", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/product", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(210)
     void testUpdateAsCustomer() {
-        ProductDTO productDTO = new ProductDTO(1L, 1L, 
+        ProductUpdateDTO productDTO = new ProductUpdateDTO(1L, 1L, 
             "Product name 1", null);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.spec(specification)
                     .pathParam("product-id", 1)
@@ -872,20 +860,20 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/product/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(210)
     void testDeleteAsCustomer() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.spec(specification)
                     .pathParam("product-id", 1)
@@ -895,14 +883,14 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/product/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/product/1", output.instance());
+        assertNull(output.errors());
     }
 
 }

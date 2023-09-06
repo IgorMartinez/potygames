@@ -267,7 +267,7 @@ public class ProductTypeServiceTest {
         ArgumentCaptor<ProductType> argumentCaptor = ArgumentCaptor.forClass(ProductType.class);
         verify(productTypeRepository).save(argumentCaptor.capture());
         ProductType capturedObject = argumentCaptor.getValue();
-        assertEquals(1L, output.id());
+        assertEquals(1L, capturedObject.getId());
         assertEquals("keyword-updated", capturedObject.getKeyword());
         assertEquals("Some description updated", capturedObject.getDescription());
     }
