@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemCreateDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemUpdateDTO;
+import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.services.InventoryItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -73,7 +76,7 @@ public class InventoryItemController {
         }
     )
     @PostMapping
-    public InventoryItemDTO create(@RequestBody InventoryItemDTO item) {
+    public InventoryItemDTO create(@RequestBody @Valid InventoryItemCreateDTO item) {
         return service.create(item);
     }
 
@@ -91,7 +94,7 @@ public class InventoryItemController {
     @PutMapping("/{inventory-item-id}")
     public InventoryItemDTO update(
         @PathVariable(value = "inventory-item-id") Long id,
-        @RequestBody InventoryItemDTO item) {
+        @RequestBody @Valid InventoryItemUpdateDTO item) {
         return service.update(id, item);
     }
 

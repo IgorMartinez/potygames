@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemCreateDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemUpdateDTO;
+import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.models.Product;
 
@@ -28,6 +30,30 @@ public class MockInventoryItem {
         item.setCondition("Condition " + number);
         item.setPrice(new BigDecimal(number + ".99"));
         item.setQuantity(number);
+
+        return item;
+    }
+
+    public InventoryItem mockEntity(int number, InventoryItemCreateDTO itemDTO) {
+        InventoryItem item = new InventoryItem();
+        item.setId(Long.valueOf(number));
+        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
+        item.setVersion(itemDTO.version());
+        item.setCondition(itemDTO.condition());
+        item.setPrice(itemDTO.price());
+        item.setQuantity(itemDTO.quantity());
+
+        return item;
+    }
+
+    public InventoryItem mockEntity(InventoryItemUpdateDTO itemDTO) {
+        InventoryItem item = new InventoryItem();
+        item.setId(itemDTO.id());
+        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
+        item.setVersion(itemDTO.version());
+        item.setCondition(itemDTO.condition());
+        item.setPrice(itemDTO.price());
+        item.setQuantity(itemDTO.quantity());
 
         return item;
     }
@@ -70,6 +96,25 @@ public class MockInventoryItem {
 
     public InventoryItemDTO mockDTOWithProduct(int number) {
         return new InventoryItemDTO(
+            Long.valueOf(number), 
+            Long.valueOf(number), 
+            "Version " + number, 
+            "Condition " + number, 
+            new BigDecimal(number + ".99"), 
+            number);
+    }
+
+    public InventoryItemCreateDTO mockCreateDTO(int number) {
+        return new InventoryItemCreateDTO(
+            Long.valueOf(number), 
+            "Version " + number, 
+            "Condition " + number, 
+            new BigDecimal(number + ".99"), 
+            number);
+    }
+
+    public InventoryItemUpdateDTO mockUpdateDTO(int number) {
+        return new InventoryItemUpdateDTO(
             Long.valueOf(number), 
             Long.valueOf(number), 
             "Version " + number, 

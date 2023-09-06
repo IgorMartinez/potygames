@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
-import br.com.igormartinez.potygames.mappers.InventoryItemDTOMapper;
+import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
+import br.com.igormartinez.potygames.mappers.InventoryItemToInventoryItemDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockInventoryItem;
 import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
@@ -17,12 +17,12 @@ import br.com.igormartinez.potygames.models.InventoryItem;
 public class InventoryItemMapperTest {
 
     private MockInventoryItem mocker;
-    private InventoryItemDTOMapper mapper;
+    private InventoryItemToInventoryItemDTOMapper mapper;
 
     @BeforeEach
     public void setup() {
         mocker = new MockInventoryItem(new MockProduct(new MockProductType()));
-        mapper = new InventoryItemDTOMapper();
+        mapper = new InventoryItemToInventoryItemDTOMapper();
     }
 
     @Test

@@ -3,6 +3,7 @@ package br.com.igormartinez.potygames.integrationtests.controllers;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.TestMethodOrder;
@@ -17,15 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.igormartinez.potygames.configs.TestConfigs;
-import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.InventoryItemCreateDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemUpdateDTO;
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
+import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
-import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.filter.log.LogDetail;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -105,7 +105,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     void testFindByIdAsUnauthenticatedWithParamInvalid() {
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
@@ -117,20 +117,20 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The inventory-item-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/inventory/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The inventory-item-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/inventory/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testFindByIdAsUnauthenticatedWithItemNotFound() {
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
@@ -142,24 +142,23 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The inventory item was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/inventory/45425", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The inventory item was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/inventory/45425", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testCreateAsUnauthenticated() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 
-            null, null, null, null);
+        InventoryItemCreateDTO itemDTO = new InventoryItemCreateDTO(
+            null, null, null, null, null);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
@@ -171,24 +170,23 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/inventory", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/inventory", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testUpdateAsUnauthenticated() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, 
-            null, null, null, null);
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
+            null, null, null, null, null, null);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
@@ -201,20 +199,20 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/inventory/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/inventory/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(0)
     void testDeleteAsUnauthenticated() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
 				.basePath("/api/v1/inventory")
 					.port(TestConfigs.SERVER_PORT)
@@ -226,14 +224,14 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.FORBIDDEN.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
 
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Forbidden", output.getTitle());
-        assertEquals(HttpStatus.FORBIDDEN.value(), output.getStatus().intValue());
-        assertEquals("Authentication required", output.getDetail());
-        assertEquals("/api/v1/inventory/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Forbidden", output.title());
+        assertEquals(HttpStatus.FORBIDDEN.value(), output.status());
+        assertEquals("Authentication required", output.detail());
+        assertEquals("/api/v1/inventory/1", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -261,8 +259,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/inventory")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 
@@ -326,9 +322,8 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(110)
     void testCreateAsAdmin() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, 
-            "BRA2002R9", "Used", new BigDecimal("180.55"), 2);
+        InventoryItemCreateDTO itemDTO = new InventoryItemCreateDTO(
+            1L, "BRA2002R9", "Used", new BigDecimal("180.55"), 2);
 
         InventoryItemDTO output =
             given()
@@ -355,7 +350,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(110)
     void testCreateAsAdminWithoutBody() {
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
 				.when()
@@ -364,24 +359,23 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("Failed to read request", output.getDetail());
-        assertEquals("/api/v1/inventory", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/inventory", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(110)
-    void testCreateAsAdminWithBadItemRequest() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, 
-            "SDCB-PT004", "M", new BigDecimal("-0.50"), 3);
+    void testCreateAsAdminWithFieldsValidationError() {
+        InventoryItemCreateDTO itemDTO = new InventoryItemCreateDTO(
+            -10L, " ", "M", new BigDecimal("-0.50"), null);
         
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -391,24 +385,27 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The price must be null, zero or positive.", output.getDetail());
-        assertEquals("/api/v1/inventory", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/inventory", output.instance());
+        assertEquals(4, output.errors().size());
+        assertEquals("The id of product must be a positive number.", output.errors().get("product"));
+        assertEquals("The version must be not blank.", output.errors().get("version"));
+        assertEquals("The price must be null, zero or positive.", output.errors().get("price"));
+        assertEquals("The quantity must be provided.", output.errors().get("quantity"));
     }
 
     @Test
     @Order(110)
     void testCreateAsAdminWithItemNotFound() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 555555L, 
-            "SDCB-PT004", "M", new BigDecimal("0.50"), 3);
+        InventoryItemCreateDTO itemDTO = new InventoryItemCreateDTO(
+            555555L, "BRA2002R9", "Used", new BigDecimal("180.55"), 2);
         
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -418,20 +415,21 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/inventory", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/inventory", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdmin() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
             INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
 
@@ -460,12 +458,66 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(120)
+    void testUpdateAsAdminWithoutBody() {
+        APIErrorResponse output =
+            given()
+                .spec(specification)
+                    .pathParam("inventory-item-id", INVENTORY_ITEM_ID)
+				.when()
+				    .put("/{inventory-item-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+                                .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Failed to read request", output.detail());
+        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.instance());
+        assertNull(output.errors());
+    }
+
+    @Test
+    @Order(120)
+    void testUpdateAsAdminWithFieldsValidationError() {
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
+            null, 2L, 
+            null, "NM", new BigDecimal("0.43"), 4);
+        
+        APIErrorResponse output =
+            given()
+                .spec(specification)
+                    .body(itemDTO)
+                    .pathParam("inventory-item-id", INVENTORY_ITEM_ID)
+				.when()
+				    .put("/{inventory-item-id}")
+				.then()
+					.statusCode(HttpStatus.BAD_REQUEST.value())
+						.extract()
+							.body()
+                                .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("Invalid request content.", output.detail());
+        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.instance());
+        assertEquals(2, output.errors().size());
+        assertEquals("The id must be provided.", output.errors().get("id"));
+        assertEquals("The version must be not blank.", output.errors().get("version"));
+
+    }
+
+    @Test
+    @Order(120)
     void testUpdateAsAdminWithParamIdInvalid() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
             INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -476,24 +528,24 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The inventory-item-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/inventory/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The inventory-item-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/inventory/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithMismatchDTOIdAndParamId() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
             INVENTORY_ITEM_ID, 2L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -504,52 +556,53 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
         assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The ID in the request body must match the value of the inventory-item-id parameter.", output.getDetail());
-        assertEquals("/api/v1/inventory/"+(INVENTORY_ITEM_ID+1), output.getInstance());
-    }
-
-    @Test
-    @Order(120)
-    void testUpdateAsAdminWithBadItemRequest() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            INVENTORY_ITEM_ID, null,  
-            "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
-        
-        ExceptionResponse output =
-            given()
-                .spec(specification)
-                    .body(itemDTO)
-                    .pathParam("inventory-item-id", INVENTORY_ITEM_ID)
-				.when()
-				    .put("/{inventory-item-id}")
-				.then()
-					.statusCode(HttpStatus.BAD_REQUEST.value())
-						.extract()
-							.body()
-                                .as(ExceptionResponse.class);
-        
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("A product must be provided.", output.getDetail());
-        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The ID in the request body must match the value of the inventory-item-id parameter.", output.detail());
+        assertEquals("/api/v1/inventory/"+(INVENTORY_ITEM_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(120)
     void testUpdateAsAdminWithItemNotFound() {
         InventoryItemDTO itemDTO = new InventoryItemDTO(
+            INVENTORY_ITEM_ID+1, 55555L, 
+            "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
+        
+        APIErrorResponse output =
+            given()
+                .spec(specification)
+                    .body(itemDTO)
+                    .pathParam("inventory-item-id", INVENTORY_ITEM_ID+1)
+				.when()
+				    .put("/{inventory-item-id}")
+				.then()
+					.statusCode(HttpStatus.NOT_FOUND.value())
+						.extract()
+							.body()
+                                .as(APIErrorResponse.class);
+        
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The inventory item was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/inventory/"+(INVENTORY_ITEM_ID+1), output.instance());
+        assertNull(output.errors());
+    }    
+
+    @Test
+    @Order(120)
+    void testUpdateAsAdminWithProductNotFound() {
+        InventoryItemDTO itemDTO = new InventoryItemDTO(
             INVENTORY_ITEM_ID, 55555L, 
             "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
         
-        ExceptionResponse output =
+        APIErrorResponse output =
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -560,14 +613,14 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The product was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The product was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.instance());
+        assertNull(output.errors());
     }    
     
     @Test
@@ -588,7 +641,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(130)
     void testDeleteAsAdminWithParamIdInvalid() {
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("inventory-item-id", 0)
@@ -598,20 +651,20 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.BAD_REQUEST.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Bad Request", output.getTitle());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), output.getStatus().intValue());
-        assertEquals("The inventory-item-id must be a positive integer value.", output.getDetail());
-        assertEquals("/api/v1/inventory/0", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Bad Request", output.title());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
+        assertEquals("The inventory-item-id must be a positive integer value.", output.detail());
+        assertEquals("/api/v1/inventory/0", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(130)
     void testDeleteAsAdminWithProductNotFound() {
-        ExceptionResponse output =
+        APIErrorResponse output =
 			given()
 				.spec(specification)
                     .pathParam("inventory-item-id", INVENTORY_ITEM_ID+1)
@@ -621,14 +674,14 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.NOT_FOUND.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Not Found", output.getTitle());
-        assertEquals(HttpStatus.NOT_FOUND.value(), output.getStatus().intValue());
-        assertEquals("The inventory item was not found with the given ID.", output.getDetail());
-        assertEquals("/api/v1/inventory/"+(INVENTORY_ITEM_ID+1), output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Not Found", output.title());
+        assertEquals(HttpStatus.NOT_FOUND.value(), output.status());
+        assertEquals("The inventory item was not found with the given ID.", output.detail());
+        assertEquals("/api/v1/inventory/"+(INVENTORY_ITEM_ID+1), output.instance());
+        assertNull(output.errors());
     }
 
     @Test
@@ -656,8 +709,6 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/inventory")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 
@@ -722,11 +773,10 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(201)
     void testCreateAsCustomer() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null,  
-            null, null, null, null);
+        InventoryItemCreateDTO itemDTO = new InventoryItemCreateDTO(
+            1L, "BRA2002R9", "Used", new BigDecimal("180.55"), 2);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .body(itemDTO)
@@ -736,27 +786,27 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/inventory", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/inventory", output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(201)
     void testUpdateAsCustomer() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            1L, null,  
-            null, null, null, null);
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
+            INVENTORY_ITEM_ID, 2L, 
+            "SDCB-PT005", "NM", new BigDecimal("0.43"), 4);
 
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
-                    .pathParam("inventory-item-id", 1)
+                    .pathParam("inventory-item-id", INVENTORY_ITEM_ID)
                     .body(itemDTO)
 				.when()
 				    .put("/{inventory-item-id}")
@@ -764,20 +814,20 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/inventory/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/inventory/"+INVENTORY_ITEM_ID, output.instance());
+        assertNull(output.errors());
     }
 
     @Test
     @Order(201)
     void testDeleteAsCustomer() {
-        ExceptionResponse output = 
+        APIErrorResponse output = 
             given()
                 .spec(specification)
                     .pathParam("inventory-item-id", 1)
@@ -787,14 +837,14 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 					.statusCode(HttpStatus.UNAUTHORIZED.value())
 						.extract()
 							.body()
-                                .as(ExceptionResponse.class);
+                                .as(APIErrorResponse.class);
         
-        assertNotNull(output);
-        assertEquals("about:blank", output.getType());
-        assertEquals("Unauthorized", output.getTitle());
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.getStatus().intValue());
-        assertEquals("The user is not authorized to access this resource.", output.getDetail());
-        assertEquals("/api/v1/inventory/1", output.getInstance());
+        assertEquals("about:blank", output.type());
+        assertEquals("Unauthorized", output.title());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
+        assertEquals("The user is not authorized to access this resource.", output.detail());
+        assertEquals("/api/v1/inventory/1", output.instance());
+        assertNull(output.errors());
     }
 
 }

@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -17,9 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,16 +27,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-import br.com.igormartinez.potygames.data.dto.v1.InventoryItemDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemCreateDTO;
+import br.com.igormartinez.potygames.data.request.InventoryItemUpdateDTO;
+import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
-import br.com.igormartinez.potygames.mappers.InventoryItemDTOMapper;
+import br.com.igormartinez.potygames.mappers.InventoryItemToInventoryItemDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockInventoryItem;
 import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
 import br.com.igormartinez.potygames.models.InventoryItem;
-import br.com.igormartinez.potygames.models.Product;
 import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
 import br.com.igormartinez.potygames.security.SecurityContextManager;
@@ -44,7 +45,7 @@ import br.com.igormartinez.potygames.services.InventoryItemService;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class InventoryItemTest {
+public class InventoryItemServiceTest {
 
     private MockProduct productMocker;
     private MockInventoryItem mocker;
@@ -67,99 +68,9 @@ public class InventoryItemTest {
         service = new InventoryItemService(
             repository,
             productRepository,
-            new InventoryItemDTOMapper(),
+            new InventoryItemToInventoryItemDTOMapper(),
             securityContextManager
         );
-    }
-
-    @Test
-    void testPrepareEntityWithArgNull() {
-        Exception output = assertThrows(IllegalArgumentException.class, () -> {
-            service.prepareEntity(null);
-        });
-        String expectedMessage = "The itemDTO argument must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
-    void testPrepareEntityWithProductNull() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, null, null, 
-            null, null, null);
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "A product must be provided.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
-    void testPrepareEntityWithProductNotFound() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, null, 
-            null, null, null);
-
-        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.ofNullable(null));
-
-        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "The product was not found with the given ID.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
-    void testPrepareEntityWithPriceNegative() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("-1.99"), null);
-
-        Product product = productMocker.mockEntity(1);
-
-        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(product));
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "The price must be null, zero or positive.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
-    void testPrepareEntityWithQuantityNegative() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), -5);
-
-        Product product = productMocker.mockEntity(1);
-
-        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(product));
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.prepareEntity(itemDTO);
-        });
-        String expectedMessage = "The quantity must be null, zero or positive.";
-        assertTrue(output.getMessage().contains(expectedMessage));  
-    }
-
-    @Test
-    void testPrepareEntity() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
-
-        Product product = productMocker.mockEntity(1);
-
-        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(product));
-
-        InventoryItem output = service.prepareEntity(itemDTO);
-        assertNull(output.getId());
-        assertEquals(1L, output.getProduct().getId());
-        assertEquals("V2023-AB", output.getVersion());
-        assertEquals("New", output.getCondition());
-        assertEquals(new BigDecimal("1.99"), output.getPrice());
-        assertEquals(5, output.getQuantity());
     }
 
     @Test
@@ -292,19 +203,8 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testCreateWithParamDTONull() {
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.create(null);
-        });
-        String expectedMessage = "The request body must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
     void testCreateWithoutPermission() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
+        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -317,30 +217,51 @@ public class InventoryItemTest {
 
     @Test
     void testCreateWithPermission() {
-        InventoryItemService spyService = Mockito.spy(service);
-
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
-        InventoryItem item = mocker.mockEntity(itemDTO);
+        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
+        InventoryItem item = mocker.mockEntity(1, itemDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
-        doReturn(item).when(spyService).
-            prepareEntity(ArgumentMatchers.any(InventoryItemDTO.class));
-        when(repository.save(item)).thenReturn(item);
+        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(item.getProduct()));
+        when(repository.save(any(InventoryItem.class))).thenReturn(item);
 
-        InventoryItemDTO output = spyService.create(itemDTO);
-        assertNull(output.id());
+        // Check code after save
+        InventoryItemDTO output = service.create(itemDTO);
+        assertEquals(1L, output.id());
         assertEquals(1L, output.product());
-        assertEquals("V2023-AB", output.version());
-        assertEquals("New", output.condition());
-        assertEquals(new BigDecimal("1.99"), output.price());
-        assertEquals(5, output.quantity());
+        assertEquals("Version 1", output.version());
+        assertEquals("Condition 1", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("1.99")));
+        assertEquals(1, output.quantity());
+
+        // Check code before save
+        ArgumentCaptor<InventoryItem> argumentCaptor = ArgumentCaptor.forClass(InventoryItem.class);
+        verify(repository).save(argumentCaptor.capture());
+        InventoryItem capturedObject = argumentCaptor.getValue();
+        assertNull(capturedObject.getId());
+        assertEquals(1L, capturedObject.getProduct().getId());
+        assertEquals("Version 1", capturedObject.getVersion());
+        assertEquals("Condition 1", capturedObject.getCondition());
+        assertEquals(0, capturedObject.getPrice().compareTo(new BigDecimal("1.99")));
+        assertEquals(1, capturedObject.getQuantity());
+    }
+
+    @Test
+    void testCreateWithProductNotFound() {
+        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.ofNullable(null));
+
+        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
+            service.create(itemDTO);
+        });
+        String expectedMessage = "The product was not found with the given ID.";
+        assertTrue(output.getMessage().contains(expectedMessage));
     }
 
     @Test
     void testUpdateWithParamIdNull() {
-        InventoryItemDTO itemDTO = mocker.mockDTOWithProduct(1);
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(null, itemDTO);
@@ -351,7 +272,7 @@ public class InventoryItemTest {
 
     @Test
     void testUpdateWithParamIdZero() {
-        InventoryItemDTO itemDTO = mocker.mockDTOWithProduct(1);
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(0L, itemDTO);
@@ -362,7 +283,7 @@ public class InventoryItemTest {
 
     @Test
     void testUpdateWithParamIdNegative() {
-        InventoryItemDTO itemDTO = mocker.mockDTOWithProduct(1);
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(-10L, itemDTO);
@@ -372,35 +293,11 @@ public class InventoryItemTest {
     }
 
     @Test
-    void testUpdateWithParamDTONull() {
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, null);
-        });
-        String expectedMessage = "The request body must not be null.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testUpdateWithParamDTOIdNull() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            null, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
+    void testUpdateWithMismatchParamIdAndDTOId() {
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, itemDTO);
-        });
-        String expectedMessage = "The ID in the request body must match the value of the inventory-item-id parameter.";
-        assertTrue(output.getMessage().contains(expectedMessage));
-    }
-
-    @Test
-    void testUpdateWithParamDTOIdMismatchParamId() {
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            2L, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
-
-        Exception output = assertThrows(RequestValidationException.class, () -> {
-            service.update(1L, itemDTO);
+            service.update(2L, itemDTO);
         });
         String expectedMessage = "The ID in the request body must match the value of the inventory-item-id parameter.";
         assertTrue(output.getMessage().contains(expectedMessage));
@@ -408,7 +305,7 @@ public class InventoryItemTest {
 
     @Test
     void testUpdateWithoutPermission() {
-        InventoryItemDTO itemDTO = mocker.mockDTOWithProduct(1);
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -421,32 +318,41 @@ public class InventoryItemTest {
 
     @Test
     void testUpdateWithPermission() {
-        InventoryItemService spyService = Mockito.spy(service);
-        
-        InventoryItemDTO itemDTO = new InventoryItemDTO(
-            1L, 1L, "V2023-AB", 
-            "New", new BigDecimal("1.99"), 5);
+        InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
+            1L, 1L, "Version updated", "Condition updated", 
+            new BigDecimal("55.1"), 5);
         InventoryItem item = mocker.mockEntity(1);
         InventoryItem itemUpdated = mocker.mockEntity(itemDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(itemDTO.id())).thenReturn(Optional.of(item));
-        doReturn(itemUpdated).when(spyService).
-            prepareEntity(ArgumentMatchers.any(InventoryItemDTO.class));
-        when(repository.save(itemUpdated)).thenReturn(itemUpdated);
+        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(itemUpdated.getProduct()));
+        when(repository.save(item)).thenReturn(itemUpdated);
 
-        InventoryItemDTO output = spyService.update(1L, itemDTO);
+        // Check code after save
+        InventoryItemDTO output = service.update(1L, itemDTO);
         assertEquals(1L, output.id());
         assertEquals(1L, output.product());
-        assertEquals("V2023-AB", output.version());
-        assertEquals("New", output.condition());
-        assertEquals(new BigDecimal("1.99"), output.price());
+        assertEquals("Version updated", output.version());
+        assertEquals("Condition updated", output.condition());
+        assertEquals(0, output.price().compareTo(new BigDecimal("55.10")));
         assertEquals(5, output.quantity());
+
+        // Check code before save
+        ArgumentCaptor<InventoryItem> argumentCaptor = ArgumentCaptor.forClass(InventoryItem.class);
+        verify(repository).save(argumentCaptor.capture());
+        InventoryItem capturedObject = argumentCaptor.getValue();
+        assertEquals(1L, capturedObject.getId());
+        assertEquals(1L, capturedObject.getProduct().getId());
+        assertEquals("Version updated", capturedObject.getVersion());
+        assertEquals("Condition updated", capturedObject.getCondition());
+        assertEquals(0, capturedObject.getPrice().compareTo(new BigDecimal("55.10")));
+        assertEquals(5, capturedObject.getQuantity());
     }
 
     @Test
-    void testUpdateWithProductNotFound() {
-        InventoryItemDTO itemDTO = mocker.mockDTOWithProduct(1);
+    void testUpdateWithItemNotFound() {
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(itemDTO.id())).thenReturn(Optional.ofNullable(null));
@@ -455,6 +361,22 @@ public class InventoryItemTest {
             service.update(1L, itemDTO);
         });
         String expectedMessage = "The inventory item was not found with the given ID.";
+        assertTrue(output.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void testUpdateWithProductNotFound() {
+        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItem item = mocker.mockEntity(1);
+
+        when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
+        when(repository.findById(itemDTO.id())).thenReturn(Optional.of(item));
+        when(productRepository.findById(itemDTO.product())).thenReturn(Optional.ofNullable(null));
+
+        Exception output = assertThrows(ResourceNotFoundException.class, () -> {
+            service.update(1L, itemDTO);
+        });
+        String expectedMessage = "The product was not found with the given ID.";
         assertTrue(output.getMessage().contains(expectedMessage));
     }
 
