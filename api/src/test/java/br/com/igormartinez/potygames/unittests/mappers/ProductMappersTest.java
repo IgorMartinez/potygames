@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import br.com.igormartinez.potygames.data.dto.v1.ProductDTO;
-import br.com.igormartinez.potygames.data.dto.v1.ProductTypeDTO;
+import br.com.igormartinez.potygames.data.response.ProductTypeDTO;
 import br.com.igormartinez.potygames.mappers.ProductDTOMapper;
-import br.com.igormartinez.potygames.mappers.ProductTypeDTOMapper;
+import br.com.igormartinez.potygames.mappers.ProductTypeToProductTypeDTOMapper;
 import br.com.igormartinez.potygames.mocks.MockProduct;
 import br.com.igormartinez.potygames.mocks.MockProductType;
 import br.com.igormartinez.potygames.models.Product;
@@ -21,12 +21,12 @@ public class ProductMappersTest {
     private ProductDTOMapper productDTOMapper;
 
     private MockProductType productTypeMocker;
-    private ProductTypeDTOMapper productTypeDTOMapper;
+    private ProductTypeToProductTypeDTOMapper productTypeDTOMapper;
 
     @BeforeEach
     public void setup() {
         productTypeMocker = new MockProductType();
-        productTypeDTOMapper = new ProductTypeDTOMapper();
+        productTypeDTOMapper = new ProductTypeToProductTypeDTOMapper();
 
         productMocker = new MockProduct(productTypeMocker);
         productDTOMapper = new ProductDTOMapper();

@@ -1,4 +1,4 @@
-package br.com.igormartinez.potygames.data.dto.v1;
+package br.com.igormartinez.potygames.data.response;
 
 public record ProductTypeDTO(
     Long id,
