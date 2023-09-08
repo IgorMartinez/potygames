@@ -150,7 +150,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     void testSignupWithUserAlreadyExists() {
         UserRegistrationDTO user = 
             new UserRegistrationDTO(
-                "rlayzell0@pen.io", 
+                TestConfigs.USER_ADMIN_EMAIL, 
                 USER_PASSWORD, 
                 USER_NAME, 
                 USER_BIRTH_DATE, 
@@ -730,7 +730,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .jsonPath()
                             .getList(".", UserDTO.class);
 
-		assertEquals(1002, output.size());
+		assertEquals(3, output.size());
 
         UserDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -747,19 +747,19 @@ public class UserControllerTest extends AbstractIntegrationTest {
         assertTrue(List.of(PermissionType.ADMIN.getValue(), PermissionType.CUSTOMER.getValue())
             .containsAll(outputPosition0.permissions()));
 
-        UserDTO outputPosition1002 = output.get(1002);
-        assertEquals(USER_ID, outputPosition1002.id());
-        assertEquals(USER_EMAIL, outputPosition1002.email());
-        assertEquals(USER_NAME, outputPosition1002.name());
-        assertEquals(USER_BIRTH_DATE, outputPosition1002.birthDate());
-        assertEquals(USER_DOCUMENT_NUMBER, outputPosition1002.documentNumber());
-        assertEquals(USER_PHONE_NUMBER, outputPosition1002.phoneNumber());
-        assertTrue(outputPosition1002.accountNonExpired());
-        assertTrue(outputPosition1002.accountNonLocked());
-        assertTrue(outputPosition1002.credentialsNonExpired());
-        assertTrue(outputPosition1002.enabled());
-        assertEquals(1, outputPosition1002.permissions().size());
-        assertEquals(PermissionType.CUSTOMER.getValue(), outputPosition1002.permissions().get(0));
+        UserDTO outputPosition2 = output.get(2);
+        assertEquals(USER_ID, outputPosition2.id());
+        assertEquals(USER_EMAIL, outputPosition2.email());
+        assertEquals(USER_NAME, outputPosition2.name());
+        assertEquals(USER_BIRTH_DATE, outputPosition2.birthDate());
+        assertEquals(USER_DOCUMENT_NUMBER, outputPosition2.documentNumber());
+        assertEquals(USER_PHONE_NUMBER, outputPosition2.phoneNumber());
+        assertTrue(outputPosition2.accountNonExpired());
+        assertTrue(outputPosition2.accountNonLocked());
+        assertTrue(outputPosition2.credentialsNonExpired());
+        assertTrue(outputPosition2.enabled());
+        assertEquals(1, outputPosition2.permissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), outputPosition2.permissions().get(0));
     }
 
     @Test
