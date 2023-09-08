@@ -3,7 +3,7 @@ cors:
 security:
   jwt:
     token:
-      secret-key: A1B4106364D1CDC2AA8A839F9EDBCF510DEEDA19E6255483CF1D928F64F318F4
+      secret-key: ${JWT_SECRET_KEY:my-secret-key}
       expire-length: 3600000
 spring:
   datasource:
@@ -17,3 +17,5 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+  flyway:
+    locations: classpath:/db/migration
