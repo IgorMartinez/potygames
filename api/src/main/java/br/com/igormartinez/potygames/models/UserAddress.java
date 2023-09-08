@@ -55,7 +55,7 @@ public class UserAddress implements Serializable {
     @Column(name = "country")
     private String country;
 
-    @Column(name = "zip_code", length = 8)
+    @Column(name = "zip_code")
     private String zipCode;
 
     public UserAddress() {}
