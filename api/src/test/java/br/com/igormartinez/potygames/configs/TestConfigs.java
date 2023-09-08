@@ -11,12 +11,12 @@ public class TestConfigs {
     public static final String ORIGIN_LOCALHOST = "http://localhost:8080";
     public static final String ORIGIN_NOTALLOWED = "https://www.google.com/";
 
-    public static final String USER_ADMIN_USERNAME = "rlayzell0@pen.io";
-    public static final String USER_ADMIN_PASSWORD = "SDNrJOfLg";
+    public static final String USER_ADMIN_EMAIL = "admin@potygames.com";
+    public static final String USER_ADMIN_PASSWORD = "admin123";
 
-    public static final String USER_CUSTOMER_USERNAME = "fragge1@blinklist.com";
-    public static final String USER_CUSTOMER_PASSWORD = "ZkIfFOo";
+    public static final String USER_CUSTOMER_EMAIL = "customer@potygames.com";
+    public static final String USER_CUSTOMER_PASSWORD = "customer123";
 
-    public static final String EXPIRED_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJybGF5emVsbDBAcGVuLmlvIiwicm9sZXMiOlsiQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwiZXhwIjoxNjg2NzU5MTY4LCJpYXQiOjE2ODY3NTU1Njh9.M3tjvRmTnPut4hkPpH_pYjYzMoJ9YydY1Qre2pOj5-Q";
-    public static final String EXPIRED_REFRESH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJybGF5emVsbDBAcGVuLmlvIiwicm9sZXMiOlsiQURNSU4iXSwiZXhwIjoxNjg2NzY2MzY4LCJpYXQiOjE2ODY3NTU1Njh9.VFvaE1yhdp3jB16d_UiVcKdph6okQtg6gJe9x7aNQWY";
+    public static final String EXPIRED_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJBRE1JTiIsIkNVU1RPTUVSIl0sImlhdCI6MTY5NDE4Mjg2MCwiZXhwIjoxNjk0MTg2NDYwLCJzdWIiOiJhZG1pbkBwb3R5Z2FtZXMuY29tIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIn0.HB7guyUfhqizQ_dYtbF2ptcV11xnHzXfw1vZPdO84qc";
+    public static final String EXPIRED_REFRESH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJBRE1JTiIsIkNVU1RPTUVSIl0sImlhdCI6MTY5NDE4Mjg2MCwiZXhwIjoxNjk0MTkzNjYwLCJzdWIiOiJhZG1pbkBwb3R5Z2FtZXMuY29tIn0.E33CXAOmcLjbPmy50hPZRxTzuRDdew1n4iY0QV794tI";
 }
