@@ -1,5 +1,3 @@
--- Data generated via Mockaroo
-
 INSERT INTO users (email, password, name, birth_date, document_number, phone_number, account_non_expired, account_non_locked, credentials_non_expired, enabled)
 VALUES 
 ('admin@potygames.com', '298d73912421e7b91fc667bb3e1064df407e1e166b930bfc343a85a3f019cfb4434a99e9ea36e196', 'Admin', '1966-06-11', '000.000.000-00', '+5500000000000', true, true, true, true),
