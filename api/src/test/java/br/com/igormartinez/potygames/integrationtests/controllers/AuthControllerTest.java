@@ -30,7 +30,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testSignin() {
         AccountCredentials accountCredentials = 
-            new AccountCredentials(TestConfigs.USER_ADMIN_USERNAME, TestConfigs.USER_ADMIN_PASSWORD);
+            new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, TestConfigs.USER_ADMIN_PASSWORD);
 
         token = 
             given()
@@ -46,9 +46,8 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					    .body()
 						    .as(Token.class);
 
-        assertNotNull(token);
         assertNotNull(token.getUsername());
-        assertEquals(TestConfigs.USER_ADMIN_USERNAME, token.getUsername());
+        assertEquals(TestConfigs.USER_ADMIN_EMAIL, token.getUsername());
         assertNotNull(token.getAuthenticated());
         assertTrue(token.getAuthenticated());
         assertNotNull(token.getCreated());
@@ -72,9 +71,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                     .body()
                         .as(UserDTO.class);
         
-        assertNotNull(output);
-        assertNotNull(output.email());
-        assertEquals(TestConfigs.USER_ADMIN_USERNAME, output.email());
+        assertEquals(TestConfigs.USER_ADMIN_EMAIL, output.email());
     }
 
     @Test
@@ -93,7 +90,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					    .body()
 						    .as(APIErrorResponse.class);
 
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Bad Request", output.title());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
@@ -121,7 +117,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					    .body()
 						    .as(APIErrorResponse.class);
 
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Bad Request", output.title());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
@@ -152,7 +147,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					    .body()
 						    .as(APIErrorResponse.class);
 
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Unauthorized", output.title());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
@@ -165,7 +159,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     @Order(0)
     void testSigninWithWrongPassword() {
         AccountCredentials accountCredentials = 
-            new AccountCredentials(TestConfigs.USER_ADMIN_USERNAME, "wrongpassword");
+            new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, "wrongpassword");
 
         APIErrorResponse output = 
             given()
@@ -181,7 +175,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
 					    .body()
 						    .as(APIErrorResponse.class);
 
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Unauthorized", output.title());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
@@ -207,9 +200,8 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                         .body()
                             .as(Token.class);
         
-        assertNotNull(token);
         assertNotNull(token.getUsername());
-        assertEquals(TestConfigs.USER_ADMIN_USERNAME, token.getUsername());
+        assertEquals(TestConfigs.USER_ADMIN_EMAIL, token.getUsername());
         assertNotNull(token.getAuthenticated());
         assertTrue(token.getAuthenticated());
         assertNotNull(token.getCreated());
@@ -233,9 +225,7 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                     .body()
                         .as(UserDTO.class);
         
-        assertNotNull(output);
-        assertNotNull(output.email());
-        assertEquals(TestConfigs.USER_ADMIN_USERNAME, output.email());
+        assertEquals(TestConfigs.USER_ADMIN_EMAIL, output.email());
     }
     
     @Test
@@ -254,7 +244,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                         .body()
                             .as(APIErrorResponse.class);
         
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Bad Request", output.title());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
@@ -280,7 +269,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                         .body()
                             .as(APIErrorResponse.class);
         
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Bad Request", output.title());
         assertEquals(HttpStatus.BAD_REQUEST.value(), output.status());
@@ -306,7 +294,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                         .body()
                             .as(APIErrorResponse.class);
         
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Unauthorized", output.title());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());
@@ -332,7 +319,6 @@ public class AuthControllerTest extends AbstractIntegrationTest {
                         .body()
                             .as(APIErrorResponse.class);
         
-        assertNotNull(output);
         assertEquals("about:blank", output.type());
         assertEquals("Unauthorized", output.title());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), output.status());

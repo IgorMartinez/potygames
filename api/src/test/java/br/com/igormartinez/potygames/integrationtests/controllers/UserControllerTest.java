@@ -3,7 +3,6 @@ package br.com.igormartinez.potygames.integrationtests.controllers;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,9 +44,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     private static LocalDate USER_BIRTH_DATE = LocalDate.of(1996,7,23);
     private static String USER_DOCUMENT_NUMBER = "023.007.023-00";
     private static String USER_PHONE_NUMBER = "+5500987654321";
-
-    private static String ADMIN_EMAIL = "rlayzell0@pen.io";
-    private static String ADMIN_PASSWORD = "SDNrJOfLg";
 
     @Test
     @Order(0)
@@ -566,7 +562,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .body()
                         .as(UserDTO.class);
         
-        assertNotNull(output);
         assertEquals(USER_ID, output.id());
         assertEquals("Test Name Updated", output.name());
         assertEquals(LocalDate.of(2023,06,14), output.birthDate());
@@ -694,7 +689,8 @@ public class UserControllerTest extends AbstractIntegrationTest {
                                 .as(UserDTO.class)
 									.id();
 
-        AccountCredentials accountCredentials = new AccountCredentials(ADMIN_EMAIL, ADMIN_PASSWORD);
+        AccountCredentials accountCredentials 
+            = new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, TestConfigs.USER_ADMIN_PASSWORD);
 
         String accessToken = 
 			given()
@@ -716,8 +712,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 
@@ -736,53 +730,36 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .jsonPath()
                             .getList(".", UserDTO.class);
 
-        assertNotNull(output);
-		assertEquals(11, output.size());
+		assertEquals(1002, output.size());
 
         UserDTO outputPosition0 = output.get(0);
-        assertNotNull(output);
         assertEquals(1L, outputPosition0.id());
-        assertEquals("rlayzell0@pen.io", outputPosition0.email());
-        assertEquals("Rey Layzell", outputPosition0.name());
+        assertEquals("admin@potygames.com", outputPosition0.email());
+        assertEquals("Admin", outputPosition0.name());
         assertEquals(LocalDate.of(1966,6,11), outputPosition0.birthDate());
-        assertEquals("755.507.583-29", outputPosition0.documentNumber());
-        assertEquals("+5545940815815", outputPosition0.phoneNumber());
+        assertEquals("000.000.000-00", outputPosition0.documentNumber());
+        assertEquals("+5500000000000", outputPosition0.phoneNumber());
         assertTrue(outputPosition0.accountNonExpired());
         assertTrue(outputPosition0.accountNonLocked());
         assertTrue(outputPosition0.credentialsNonExpired());
         assertTrue(outputPosition0.enabled());
-        assertEquals(1, outputPosition0.permissions().size());
-        assertEquals(PermissionType.ADMIN.getValue(), outputPosition0.permissions().get(0));
+        assertEquals(2, outputPosition0.permissions().size());
+        assertTrue(List.of(PermissionType.ADMIN.getValue(), PermissionType.CUSTOMER.getValue())
+            .containsAll(outputPosition0.permissions()));
 
-        UserDTO outputPosition4 = output.get(4);
-        assertNotNull(outputPosition4);
-        assertEquals(5L, outputPosition4.id());
-        assertEquals("vhorbart4@hexun.com", outputPosition4.email());
-        assertEquals("Vallie Horbart", outputPosition4.name());
-        assertEquals(LocalDate.of(2000,9,4), outputPosition4.birthDate());
-        assertEquals("103.467.163-55", outputPosition4.documentNumber());
-        assertEquals("+5565901976027", outputPosition4.phoneNumber());
-        assertFalse(outputPosition4.accountNonExpired());
-        assertFalse(outputPosition4.accountNonLocked());
-        assertTrue(outputPosition4.credentialsNonExpired());
-        assertFalse(outputPosition4.enabled());
-        assertEquals(1, outputPosition4.permissions().size());
-        assertEquals(PermissionType.CUSTOMER.getValue(), outputPosition4.permissions().get(0));
-
-        UserDTO outputPosition10 = output.get(10);
-        assertNotNull(outputPosition10);
-        assertEquals(USER_ID, outputPosition10.id());
-        assertEquals(USER_EMAIL, outputPosition10.email());
-        assertEquals(USER_NAME, outputPosition10.name());
-        assertEquals(USER_BIRTH_DATE, outputPosition10.birthDate());
-        assertEquals(USER_DOCUMENT_NUMBER, outputPosition10.documentNumber());
-        assertEquals(USER_PHONE_NUMBER, outputPosition10.phoneNumber());
-        assertTrue(outputPosition10.accountNonExpired());
-        assertTrue(outputPosition10.accountNonLocked());
-        assertTrue(outputPosition10.credentialsNonExpired());
-        assertTrue(outputPosition10.enabled());
-        assertEquals(1, outputPosition10.permissions().size());
-        assertEquals(PermissionType.CUSTOMER.getValue(), outputPosition10.permissions().get(0));
+        UserDTO outputPosition1002 = output.get(1002);
+        assertEquals(USER_ID, outputPosition1002.id());
+        assertEquals(USER_EMAIL, outputPosition1002.email());
+        assertEquals(USER_NAME, outputPosition1002.name());
+        assertEquals(USER_BIRTH_DATE, outputPosition1002.birthDate());
+        assertEquals(USER_DOCUMENT_NUMBER, outputPosition1002.documentNumber());
+        assertEquals(USER_PHONE_NUMBER, outputPosition1002.phoneNumber());
+        assertTrue(outputPosition1002.accountNonExpired());
+        assertTrue(outputPosition1002.accountNonLocked());
+        assertTrue(outputPosition1002.credentialsNonExpired());
+        assertTrue(outputPosition1002.enabled());
+        assertEquals(1, outputPosition1002.permissions().size());
+        assertEquals(PermissionType.CUSTOMER.getValue(), outputPosition1002.permissions().get(0));
     }
 
     @Test
@@ -800,7 +777,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .body()
                         .as(UserDTO.class);
         
-        assertNotNull(output);
         assertEquals(USER_ID, output.id());
         assertEquals(USER_EMAIL, output.email());
         assertEquals(USER_NAME, output.name());
@@ -839,7 +815,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
                     .body()
                         .as(UserDTO.class);
         
-        assertNotNull(output);
         assertEquals(USER_ID, output.id());
         assertEquals("Test Name Updated", output.name());
         assertEquals(LocalDate.of(2023,06,14), output.birthDate());
