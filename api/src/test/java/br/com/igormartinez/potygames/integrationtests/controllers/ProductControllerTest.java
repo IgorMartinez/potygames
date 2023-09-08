@@ -35,10 +35,6 @@ import io.restassured.specification.RequestSpecification;
 public class ProductControllerTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
-    private static String ADMIN_EMAIL = "rlayzell0@pen.io";
-    private static String ADMIN_PASSWORD = "SDNrJOfLg";
-    private static String CUSTOMER_EMAIL = "fragge1@blinklist.com";
-    private static String CUSTOMER_PASSWORD = "ZkIfFOo";
 
     private static Long PRODUCT_ID;
 
@@ -338,7 +334,8 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(100)
     void authenticationAsAdmin() {
-        AccountCredentials accountCredentials = new AccountCredentials(ADMIN_EMAIL, ADMIN_PASSWORD);
+        AccountCredentials accountCredentials 
+            = new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, TestConfigs.USER_ADMIN_PASSWORD);
 
         String accessToken = 
 			given()
@@ -739,7 +736,8 @@ public class ProductControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(200)
     void authenticationAsCustomer() {
-        AccountCredentials accountCredentials = new AccountCredentials(CUSTOMER_EMAIL, CUSTOMER_PASSWORD);
+        AccountCredentials accountCredentials 
+            = new AccountCredentials(TestConfigs.USER_CUSTOMER_EMAIL, TestConfigs.USER_CUSTOMER_PASSWORD);
 
         String accessToken = 
 			given()

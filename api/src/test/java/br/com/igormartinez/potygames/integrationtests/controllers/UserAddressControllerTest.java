@@ -39,9 +39,6 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
 
-    private static String ADMIN_EMAIL = "rlayzell0@pen.io";
-    private static String ADMIN_PASSWORD = "SDNrJOfLg";
-
 	private static String CUSTOMER_EMAIL = "useraddresscontroler@customer.test";
 	private static String CUSTOMER_PASSWORD = "securedpassword";
 	private static Long CUSTOMER_ID; // defined in signupAndAuthentication() 
@@ -1070,7 +1067,8 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	@Test
     @Order(200)
     void authenticationAsAdmin() {
-        AccountCredentials accountCredentials = new AccountCredentials(ADMIN_EMAIL, ADMIN_PASSWORD);
+        AccountCredentials accountCredentials 
+			= new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, TestConfigs.USER_ADMIN_PASSWORD);
 
         String accessToken = 
 			given()

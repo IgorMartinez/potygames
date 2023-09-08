@@ -33,10 +33,6 @@ import io.restassured.specification.RequestSpecification;
 public class ProductTypeControllerTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
-    private static String ADMIN_EMAIL = "rlayzell0@pen.io";
-    private static String ADMIN_PASSWORD = "SDNrJOfLg";
-    private static String CUSTOMER_EMAIL = "fragge1@blinklist.com";
-    private static String CUSTOMER_PASSWORD = "ZkIfFOo";
 
     private static Long PRODUCT_TYPE_ID;
  
@@ -87,7 +83,6 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductTypeDTO.class);
 
-        assertNotNull(output);
         assertEquals(3L, output.id());
         assertEquals("yugioh-booster-box", output.keyword());
         assertEquals("Yu-Gi-Oh! Booster Box", output.description());
@@ -229,7 +224,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(100)
     void authenticationAsAdmin() {
-        AccountCredentials accountCredentials = new AccountCredentials(ADMIN_EMAIL, ADMIN_PASSWORD);
+        AccountCredentials accountCredentials 
+            = new AccountCredentials(TestConfigs.USER_ADMIN_EMAIL, TestConfigs.USER_ADMIN_PASSWORD);
 
         String accessToken = 
 			given()
@@ -269,7 +265,6 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList(".", ProductTypeDTO.class);
 
-        assertNotNull(output);
         assertEquals(3, output.size());
 
         ProductTypeDTO outputPosition0 = output.get(0);
@@ -298,7 +293,6 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductTypeDTO.class);
 
-        assertNotNull(output);
         assertEquals(3L, output.id());
         assertEquals("yugioh-booster-box", output.keyword());
         assertEquals("Yu-Gi-Oh! Booster Box", output.description());
@@ -322,7 +316,6 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
 							.body()
                                 .as(ProductTypeDTO.class);
 
-        assertNotNull(output);
         assertTrue(output.id() > 0);
         assertEquals("loremipsum", output.keyword());
         assertEquals("Lorem ipsum", output.description());
@@ -625,7 +618,8 @@ public class ProductTypeControllerTest extends AbstractIntegrationTest {
     @Test
     @Order(200)
     void authenticationAsCustomer() {
-        AccountCredentials accountCredentials = new AccountCredentials(CUSTOMER_EMAIL, CUSTOMER_PASSWORD);
+        AccountCredentials accountCredentials 
+            = new AccountCredentials(TestConfigs.USER_CUSTOMER_EMAIL, TestConfigs.USER_CUSTOMER_PASSWORD);
 
         String accessToken = 
 			given()
