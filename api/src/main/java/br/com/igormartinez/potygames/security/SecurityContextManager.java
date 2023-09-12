@@ -23,6 +23,14 @@ public class SecurityContextManager {
     }
 
     /**
+     * Get the authenticated user.
+     * @return User
+     */
+    public User getUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    /**
      * Verify if the user of authorization token from request is ADMIN
      * @return boolean - true if user is admin
      */
