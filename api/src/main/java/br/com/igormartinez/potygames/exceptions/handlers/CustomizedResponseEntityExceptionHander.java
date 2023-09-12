@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import br.com.igormartinez.potygames.data.response.APIErrorResponse;
 import br.com.igormartinez.potygames.exceptions.DeleteAssociationConflictException;
 import br.com.igormartinez.potygames.exceptions.ExceptionResponse;
 import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
@@ -28,6 +29,7 @@ import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
+import jakarta.validation.ConstraintViolationException;
 import br.com.igormartinez.potygames.exceptions.InvalidUsernamePasswordException;
 
 @ControllerAdvice
@@ -97,6 +99,21 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
                 HttpStatus.BAD_REQUEST.value(), 
                 ex.getMessage(), 
                 request.getDescription(false).substring(SUBSTRING_URI));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public final ResponseEntity<APIErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+        
+        APIErrorResponse exceptionResponse = 
+            new APIErrorResponse(
+                "about:blank",
+                "Bad Request", 
+                HttpStatus.BAD_REQUEST.value(), 
+                ex.getConstraintViolations().iterator().next().getMessage(), 
+                request.getDescription(false).substring(SUBSTRING_URI),
+                null);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
