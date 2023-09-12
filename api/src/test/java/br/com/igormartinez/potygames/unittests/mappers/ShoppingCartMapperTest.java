@@ -62,12 +62,12 @@ public class ShoppingCartMapperTest {
         entity.setItem(null);
 
         ShoppingCartItemResponseDTO dto = mapper.apply(entity);
-        assertEquals(1L, dto.idInventoryItem());
+        assertNull(dto.idInventoryItem());
         assertNull(dto.name());
         assertNull(dto.version());
         assertNull(dto.condition());
         assertNull(dto.price());
-        assertEquals(1, dto.quantity());
+        assertNull(dto.quantity());
     }
 
     @Test

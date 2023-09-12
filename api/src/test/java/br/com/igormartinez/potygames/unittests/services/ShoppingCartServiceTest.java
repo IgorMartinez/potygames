@@ -202,7 +202,7 @@ public class ShoppingCartServiceTest {
 
         // Check result after save
         ShoppingCartItemResponseDTO output = service.addItemToCart(idUser, requestDTO);
-        assertEquals(9L, output.idInventoryItem());
+        assertEquals(2L, output.idInventoryItem());
         assertEquals("Product name 2", output.name());
         assertEquals("Version 2", output.version());
         assertEquals("Condition 2", output.condition());
