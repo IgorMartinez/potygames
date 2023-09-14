@@ -72,6 +72,9 @@ public class User implements UserDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserAddress> addresses;
 
+    @OneToMany(fetch =  FetchType.LAZY, mappedBy = "user")
+    private List<Order> orders;
+
     public User() { }
 
     public List<String> getPermissionDescriptionList() {
@@ -220,6 +223,14 @@ public class User implements UserDetails {
         this.addresses = addresses;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -237,6 +248,7 @@ public class User implements UserDetails {
         result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
         result = prime * result + ((permissions == null) ? 0 : permissions.hashCode());
         result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
+        result = prime * result + ((orders == null) ? 0 : orders.hashCode());
         return result;
     }
 
@@ -313,6 +325,11 @@ public class User implements UserDetails {
             if (other.addresses != null)
                 return false;
         } else if (!addresses.equals(other.addresses))
+            return false;
+        if (orders == null) {
+            if (other.orders != null)
+                return false;
+        } else if (!orders.equals(other.orders))
             return false;
         return true;
     }

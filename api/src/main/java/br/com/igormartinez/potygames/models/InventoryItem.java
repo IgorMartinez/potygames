@@ -1,14 +1,17 @@
 package br.com.igormartinez.potygames.models;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -34,6 +37,9 @@ public class InventoryItem {
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
+    List<OrderItem> orderItems;
 
     public InventoryItem() {
     }
@@ -86,6 +92,14 @@ public class InventoryItem {
         this.quantity = quantity;
     }
 
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -96,6 +110,7 @@ public class InventoryItem {
         result = prime * result + ((condition == null) ? 0 : condition.hashCode());
         result = prime * result + ((price == null) ? 0 : price.hashCode());
         result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+        result = prime * result + ((orderItems == null) ? 0 : orderItems.hashCode());
         return result;
     }
 
@@ -137,6 +152,11 @@ public class InventoryItem {
             if (other.quantity != null)
                 return false;
         } else if (!quantity.equals(other.quantity))
+            return false;
+        if (orderItems == null) {
+            if (other.orderItems != null)
+                return false;
+        } else if (!orderItems.equals(other.orderItems))
             return false;
         return true;
     }
