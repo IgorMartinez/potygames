@@ -26,6 +26,7 @@ import br.com.igormartinez.potygames.exceptions.InvalidTokenException;
 import br.com.igormartinez.potygames.exceptions.RequestObjectIsNullException;
 import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
+import br.com.igormartinez.potygames.exceptions.ResourceInsufficientException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.TokenCreationErrorException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
@@ -136,6 +137,7 @@ public class CustomizedResponseEntityExceptionHander extends ResponseEntityExcep
 
     @ExceptionHandler({
         ResourceAlreadyExistsException.class,
+        ResourceInsufficientException.class,
         DeleteAssociationConflictException.class})
     public final ResponseEntity<ExceptionResponse> handleConflictExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = 
