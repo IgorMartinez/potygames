@@ -46,6 +46,10 @@ public class OrderService {
         this.securityContextManager = securityContextManager;
     }
 
+    /**
+     * Get all orders from authenticated user.
+     * @return List of all orders with detailed informations.
+     */
     public List<OrderDetailResponseDTO> findAllByUser() {
         User user = securityContextManager.getUser();
 
@@ -55,6 +59,11 @@ public class OrderService {
             .toList();
     }
 
+    /**
+     * Get a order from provided id.
+     * @param id must be not null and greater than zero.
+     * @return A order with detailed informations.
+     */
     public OrderDetailResponseDTO findById(Long id) {
         Order order = orderRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("The order was not found with the given ID."));
@@ -65,6 +74,11 @@ public class OrderService {
         return orderMapper.apply(order);
     }
 
+    /**
+     * Create a new order.
+     * @param request must be not null and already validated.
+     * @return New order ID and its status.
+     */
     @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO request) {
         Order order = new Order();
@@ -114,6 +128,11 @@ public class OrderService {
         return new OrderResponseDTO(persistedOrder.getId(), persistedOrder.getStatus().name());
     }
 
+    /**
+     * Cancel a existing order.
+     * @param id must be not null and greater than zero.
+     * @return Canceled order ID and its status.
+     */
     @Transactional
     public OrderResponseDTO cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
