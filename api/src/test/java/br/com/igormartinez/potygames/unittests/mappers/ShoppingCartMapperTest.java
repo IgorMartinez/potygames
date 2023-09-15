@@ -10,31 +10,21 @@ import org.junit.jupiter.api.Test;
 
 import br.com.igormartinez.potygames.data.response.ShoppingCartItemResponseDTO;
 import br.com.igormartinez.potygames.mappers.ShoppingCartItemEntityToDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockInventoryItem;
-import br.com.igormartinez.potygames.mocks.MockProduct;
-import br.com.igormartinez.potygames.mocks.MockProductType;
-import br.com.igormartinez.potygames.mocks.MockShoppingCart;
-import br.com.igormartinez.potygames.mocks.MockUser;
+import br.com.igormartinez.potygames.mocks.ShoppingCartMocker;
 import br.com.igormartinez.potygames.models.ShoppingCartItem;
 
 public class ShoppingCartMapperTest {
     
-    private MockShoppingCart mocker;
     private ShoppingCartItemEntityToDTOMapper mapper;
 
     @BeforeEach
     public void setup() {
-        mocker = new MockShoppingCart(
-            new MockUser(),
-            new MockInventoryItem(new MockProduct(new MockProductType()))
-        );
-
         mapper = new ShoppingCartItemEntityToDTOMapper();
     }
 
     @Test
     void testEntityToDTO() {
-        ShoppingCartItem entity = mocker.mockEntity(1);
+        ShoppingCartItem entity = ShoppingCartMocker.mockEntity(1);
 
         ShoppingCartItemResponseDTO dto = mapper.apply(entity);
         assertEquals(1L, dto.idInventoryItem());
@@ -58,7 +48,7 @@ public class ShoppingCartMapperTest {
 
     @Test
     void testEntityToDTOWithItemNull() {
-        ShoppingCartItem entity = mocker.mockEntity(1);
+        ShoppingCartItem entity = ShoppingCartMocker.mockEntity(1);
         entity.setItem(null);
 
         ShoppingCartItemResponseDTO dto = mapper.apply(entity);
@@ -72,7 +62,7 @@ public class ShoppingCartMapperTest {
 
     @Test
     void testEntityToDTOWithProductNull() {
-        ShoppingCartItem entity = mocker.mockEntity(1);
+        ShoppingCartItem entity = ShoppingCartMocker.mockEntity(1);
         entity.getItem().setProduct(null);
 
         ShoppingCartItemResponseDTO dto = mapper.apply(entity);

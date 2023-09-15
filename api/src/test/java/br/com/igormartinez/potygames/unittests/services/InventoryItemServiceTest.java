@@ -34,9 +34,7 @@ import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.InventoryItemToInventoryItemDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockInventoryItem;
-import br.com.igormartinez.potygames.mocks.MockProduct;
-import br.com.igormartinez.potygames.mocks.MockProductType;
+import br.com.igormartinez.potygames.mocks.InventoryItemMocker;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.repositories.InventoryItemRepository;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
@@ -47,8 +45,6 @@ import br.com.igormartinez.potygames.services.InventoryItemService;
 @ExtendWith(MockitoExtension.class)
 public class InventoryItemServiceTest {
 
-    private MockProduct productMocker;
-    private MockInventoryItem mocker;
     private InventoryItemService service;
 
     @Mock
@@ -62,9 +58,6 @@ public class InventoryItemServiceTest {
 
     @BeforeEach
     void setup() {
-        productMocker = new MockProduct(new MockProductType());
-        mocker = new MockInventoryItem(productMocker);
-
         service = new InventoryItemService(
             repository,
             productRepository,
@@ -76,7 +69,7 @@ public class InventoryItemServiceTest {
     @Test
     void testFindAllWithProductsPage0() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.ASC, "id"));
-        Page<InventoryItem> page = mocker.mockPage(94, pageable);
+        Page<InventoryItem> page = InventoryItemMocker.mockPage(94, pageable);
 
         when(repository.findAll(pageable)).thenReturn(page);
 
@@ -118,7 +111,7 @@ public class InventoryItemServiceTest {
     @Test
     void testFindAllWithProductsPage9() {
         Pageable pageable = PageRequest.of(9, 10, Sort.by(Direction.ASC, "name"));
-        Page<InventoryItem> page = mocker.mockPage(94, pageable);
+        Page<InventoryItem> page = InventoryItemMocker.mockPage(94, pageable);
 
         when(repository.findAll(pageable)).thenReturn(page);
 
@@ -178,7 +171,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testFindByIdWithItemFound() {
-        InventoryItem item = mocker.mockEntity(1);
+        InventoryItem item = InventoryItemMocker.mockEntity(1);
 
         when(repository.findById(1L)).thenReturn(Optional.of(item));
 
@@ -204,7 +197,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testCreateWithoutPermission() {
-        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
+        InventoryItemCreateDTO itemDTO = InventoryItemMocker.mockCreateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -217,8 +210,8 @@ public class InventoryItemServiceTest {
 
     @Test
     void testCreateWithPermission() {
-        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
-        InventoryItem item = mocker.mockEntity(1, itemDTO);
+        InventoryItemCreateDTO itemDTO = InventoryItemMocker.mockCreateDTO(1);
+        InventoryItem item = InventoryItemMocker.mockEntity(1, itemDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productRepository.findById(itemDTO.product())).thenReturn(Optional.of(item.getProduct()));
@@ -247,7 +240,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testCreateWithProductNotFound() {
-        InventoryItemCreateDTO itemDTO = mocker.mockCreateDTO(1);
+        InventoryItemCreateDTO itemDTO = InventoryItemMocker.mockCreateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productRepository.findById(itemDTO.product())).thenReturn(Optional.ofNullable(null));
@@ -261,7 +254,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithParamIdNull() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(null, itemDTO);
@@ -272,7 +265,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithParamIdZero() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(0L, itemDTO);
@@ -283,7 +276,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithParamIdNegative() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(-10L, itemDTO);
@@ -294,7 +287,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithMismatchParamIdAndDTOId() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(2L, itemDTO);
@@ -305,7 +298,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithoutPermission() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -321,8 +314,8 @@ public class InventoryItemServiceTest {
         InventoryItemUpdateDTO itemDTO = new InventoryItemUpdateDTO(
             1L, 1L, "Version updated", "Condition updated", 
             new BigDecimal("55.1"), 5);
-        InventoryItem item = mocker.mockEntity(1);
-        InventoryItem itemUpdated = mocker.mockEntity(itemDTO);
+        InventoryItem item = InventoryItemMocker.mockEntity(1);
+        InventoryItem itemUpdated = InventoryItemMocker.mockEntity(itemDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(itemDTO.id())).thenReturn(Optional.of(item));
@@ -352,7 +345,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithItemNotFound() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(itemDTO.id())).thenReturn(Optional.ofNullable(null));
@@ -366,8 +359,8 @@ public class InventoryItemServiceTest {
 
     @Test
     void testUpdateWithProductNotFound() {
-        InventoryItemUpdateDTO itemDTO = mocker.mockUpdateDTO(1);
-        InventoryItem item = mocker.mockEntity(1);
+        InventoryItemUpdateDTO itemDTO = InventoryItemMocker.mockUpdateDTO(1);
+        InventoryItem item = InventoryItemMocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(itemDTO.id())).thenReturn(Optional.of(item));
@@ -432,7 +425,7 @@ public class InventoryItemServiceTest {
 
     @Test
     void testDeleteWithItemFound() {
-        InventoryItem item = mocker.mockEntity(1);
+        InventoryItem item = InventoryItemMocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(repository.findById(1L)).thenReturn(Optional.of(item));

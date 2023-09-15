@@ -12,6 +12,31 @@ import br.com.igormartinez.potygames.models.Permission;
 import br.com.igormartinez.potygames.models.User;
 
 public class MockUser {
+
+    public static User mockEntity(int number) {
+        User user = new User();
+        user.setId(Long.valueOf(number));
+        user.setEmail("user_mail" + number + "@test.com");
+        user.setName("User name " + number);
+        user.setPassword("password" + number);
+        user.setBirthDate(LocalDate.of((number%100)+1950, (number%12)+1, (number%28)+1));
+        user.setDocumentNumber("000.000.000-"+String.format("%02d", number%100));
+        user.setPhoneNumber("+550090000"+String.format("%04d", number%10000));
+        user.setAccountNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+        user.setAccountNonLocked((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+        user.setCredentialsNonExpired((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+        user.setEnabled((number%2==0) ? Boolean.TRUE : Boolean.FALSE);
+
+        List<Permission> permissionList = new ArrayList<>();
+        Permission permission = new Permission();
+        permission.setDescription(
+                (number%2==0) 
+                ? PermissionType.ADMIN.getValue() 
+                : PermissionType.CUSTOMER.getValue());
+        permissionList.add(permission);
+        user.setPermissions(permissionList);
+        return user;
+    }
     
     public User mockUser(Integer number) {
         User user = new User();

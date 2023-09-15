@@ -9,25 +9,21 @@ import org.junit.jupiter.api.Test;
 
 import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.mappers.InventoryItemToInventoryItemDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockInventoryItem;
-import br.com.igormartinez.potygames.mocks.MockProduct;
-import br.com.igormartinez.potygames.mocks.MockProductType;
+import br.com.igormartinez.potygames.mocks.InventoryItemMocker;
 import br.com.igormartinez.potygames.models.InventoryItem;
 
 public class InventoryItemMapperTest {
 
-    private MockInventoryItem mocker;
     private InventoryItemToInventoryItemDTOMapper mapper;
 
     @BeforeEach
     public void setup() {
-        mocker = new MockInventoryItem(new MockProduct(new MockProductType()));
         mapper = new InventoryItemToInventoryItemDTOMapper();
     }
 
     @Test
     void testInventoryProductItemToDTO() {
-        InventoryItem item = mocker.mockEntity(1);
+        InventoryItem item = InventoryItemMocker.mockEntity(1);
 
         InventoryItemDTO itemDTO = mapper.apply(item);
         assertEquals(1L, itemDTO.id());

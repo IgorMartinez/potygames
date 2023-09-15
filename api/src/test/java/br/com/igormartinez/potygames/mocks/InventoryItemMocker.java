@@ -14,15 +14,9 @@ import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.models.Product;
 
-public class MockInventoryItem {
+public class InventoryItemMocker {
 
-    private final MockProduct productMocker;
-
-    public MockInventoryItem(MockProduct productMocker) {
-        this.productMocker = productMocker;
-    }
-
-    private InventoryItem mockEntity(int number, Product product) {
+    private static InventoryItem mockEntity(int number, Product product) {
         InventoryItem item = new InventoryItem();
         item.setId(Long.valueOf(number));
         item.setProduct(product);
@@ -34,10 +28,10 @@ public class MockInventoryItem {
         return item;
     }
 
-    public InventoryItem mockEntity(int number, InventoryItemCreateDTO itemDTO) {
+    public static InventoryItem mockEntity(int number, InventoryItemCreateDTO itemDTO) {
         InventoryItem item = new InventoryItem();
         item.setId(Long.valueOf(number));
-        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
+        item.setProduct(ProductMocker.mockEntity(itemDTO.product().intValue()));
         item.setVersion(itemDTO.version());
         item.setCondition(itemDTO.condition());
         item.setPrice(itemDTO.price());
@@ -46,10 +40,10 @@ public class MockInventoryItem {
         return item;
     }
 
-    public InventoryItem mockEntity(InventoryItemUpdateDTO itemDTO) {
+    public static InventoryItem mockEntity(InventoryItemUpdateDTO itemDTO) {
         InventoryItem item = new InventoryItem();
         item.setId(itemDTO.id());
-        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
+        item.setProduct(ProductMocker.mockEntity(itemDTO.product().intValue()));
         item.setVersion(itemDTO.version());
         item.setCondition(itemDTO.condition());
         item.setPrice(itemDTO.price());
@@ -58,14 +52,14 @@ public class MockInventoryItem {
         return item;
     }
 
-    public InventoryItem mockEntity(int number) {
-        return mockEntity(number, productMocker.mockEntity(number));
+    public static InventoryItem mockEntity(int number) {
+        return mockEntity(number, ProductMocker.mockEntity(number));
     }
 
-    public InventoryItem mockEntity(InventoryItemDTO itemDTO) {
+    public static InventoryItem mockEntity(InventoryItemDTO itemDTO) {
         InventoryItem item = new InventoryItem();
         item.setId(itemDTO.id());
-        item.setProduct(productMocker.mockEntity(itemDTO.product().intValue()));
+        item.setProduct(ProductMocker.mockEntity(itemDTO.product().intValue()));
         item.setVersion(itemDTO.version());
         item.setCondition(itemDTO.condition());
         item.setPrice(itemDTO.price());
@@ -74,7 +68,7 @@ public class MockInventoryItem {
         return item;
     }
 
-    public List<InventoryItem> mockEntityList(int startNumber, int endNumber) {
+    public static List<InventoryItem> mockEntityList(int startNumber, int endNumber) {
         List<InventoryItem> list = new ArrayList<>();
         for (int i=startNumber; i<=endNumber; i++) {
             list.add(mockEntity(i));
@@ -82,7 +76,7 @@ public class MockInventoryItem {
         return list;
     }
 
-    public Page<InventoryItem> mockPage(int totalElements, Pageable pageable) {
+    public static Page<InventoryItem> mockPage(int totalElements, Pageable pageable) {
         int sizePage = pageable.getPageSize();
         int numberPage = pageable.getPageNumber();
 
@@ -94,7 +88,7 @@ public class MockInventoryItem {
         return page;
     }
 
-    public InventoryItemDTO mockDTOWithProduct(int number) {
+    public static InventoryItemDTO mockDTOWithProduct(int number) {
         return new InventoryItemDTO(
             Long.valueOf(number), 
             Long.valueOf(number), 
@@ -104,7 +98,7 @@ public class MockInventoryItem {
             number);
     }
 
-    public InventoryItemCreateDTO mockCreateDTO(int number) {
+    public static InventoryItemCreateDTO mockCreateDTO(int number) {
         return new InventoryItemCreateDTO(
             Long.valueOf(number), 
             "Version " + number, 
@@ -113,7 +107,7 @@ public class MockInventoryItem {
             number);
     }
 
-    public InventoryItemUpdateDTO mockUpdateDTO(int number) {
+    public static InventoryItemUpdateDTO mockUpdateDTO(int number) {
         return new InventoryItemUpdateDTO(
             Long.valueOf(number), 
             Long.valueOf(number), 

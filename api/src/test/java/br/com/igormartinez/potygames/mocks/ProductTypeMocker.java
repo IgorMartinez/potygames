@@ -8,9 +8,9 @@ import br.com.igormartinez.potygames.data.request.ProductTypeUpdateDTO;
 import br.com.igormartinez.potygames.data.response.ProductTypeDTO;
 import br.com.igormartinez.potygames.models.ProductType;
 
-public class MockProductType {
+public class ProductTypeMocker {
 
-    public ProductType mockEntity(int number) {
+    public static ProductType mockEntity(int number) {
         ProductType type = new ProductType();
         type.setId(Long.valueOf(number));
         type.setDescription("Description " + number);
@@ -18,7 +18,7 @@ public class MockProductType {
         return type;
     }
 
-    public ProductType mockEntity(int number, ProductTypeCreateDTO typeDTO) {
+    public static ProductType mockEntity(int number, ProductTypeCreateDTO typeDTO) {
         ProductType type = new ProductType();
         type.setId(Long.valueOf(number));
         type.setDescription(typeDTO.description());
@@ -26,7 +26,7 @@ public class MockProductType {
         return type;
     }
 
-    public ProductType mockEntity(ProductTypeUpdateDTO typeDTO) {
+    public static ProductType mockEntity(ProductTypeUpdateDTO typeDTO) {
         ProductType type = new ProductType();
         type.setId(typeDTO.id());
         type.setDescription(typeDTO.description());
@@ -34,14 +34,14 @@ public class MockProductType {
         return type;
     }
 
-    public ProductType mockPreparedEntity(int number) {
+    public static ProductType mockPreparedEntity(int number) {
         ProductType type = new ProductType();
         type.setDescription("Description " + number);
         type.setKeyword("keyword-" + number);
         return type;
     }
 
-    public ProductType mockPreparedEntity(ProductTypeDTO typeDTO) {
+    public static ProductType mockPreparedEntity(ProductTypeDTO typeDTO) {
         ProductType type = new ProductType();
         type.setDescription(typeDTO.description());
         type.setKeyword(typeDTO.keyword());
@@ -49,18 +49,18 @@ public class MockProductType {
     }
 
 
-    public List<ProductType> mockEntityList(int number) {
+    public static List<ProductType> mockEntityList(int number) {
         List<ProductType> list = new ArrayList<>();
         for (int i=1; i<=number; i++)
             list.add(mockEntity(i));
         return list;
     }
 
-    public ProductTypeDTO mockDTO(int number) {
+    public static ProductTypeDTO mockDTO(int number) {
         return new ProductTypeDTO(Long.valueOf(number), "keyword-" + number, "Description " + number);
     }
 
-    public ProductTypeUpdateDTO mockUpdateDTO(int number) {
+    public static ProductTypeUpdateDTO mockUpdateDTO(int number) {
         return new ProductTypeUpdateDTO(Long.valueOf(number), "keyword-" + number, "Description " + number);
     }
 }

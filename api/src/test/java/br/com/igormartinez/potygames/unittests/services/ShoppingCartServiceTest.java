@@ -28,10 +28,8 @@ import br.com.igormartinez.potygames.exceptions.ResourceAlreadyExistsException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.ShoppingCartItemEntityToDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockInventoryItem;
-import br.com.igormartinez.potygames.mocks.MockProduct;
-import br.com.igormartinez.potygames.mocks.MockProductType;
-import br.com.igormartinez.potygames.mocks.MockShoppingCart;
+import br.com.igormartinez.potygames.mocks.InventoryItemMocker;
+import br.com.igormartinez.potygames.mocks.ShoppingCartMocker;
 import br.com.igormartinez.potygames.mocks.MockUser;
 import br.com.igormartinez.potygames.models.InventoryItem;
 import br.com.igormartinez.potygames.models.ShoppingCartItem;
@@ -47,10 +45,6 @@ import br.com.igormartinez.potygames.services.ShoppingCartService;
 public class ShoppingCartServiceTest {
     
     private ShoppingCartService service;
-
-    private MockShoppingCart mocker;
-    private MockUser userMocker;
-    private MockInventoryItem inventoryItemMocker;
     
     @Mock
     private ShoppingCartItemRepository repository;
@@ -66,10 +60,6 @@ public class ShoppingCartServiceTest {
     
     @BeforeEach
     void setup() {
-        userMocker = new MockUser();
-        inventoryItemMocker = new MockInventoryItem(new MockProduct(new MockProductType()));
-        mocker = new MockShoppingCart(userMocker, inventoryItemMocker);
-
         service = new ShoppingCartService(
             repository, 
             itemRepository, 
@@ -91,7 +81,7 @@ public class ShoppingCartServiceTest {
 
     @Test
     void testFindAllByUserWithItems() {
-        List<ShoppingCartItem> entityList = mocker.mockEntityList(5);
+        List<ShoppingCartItem> entityList = ShoppingCartMocker.mockEntityList(5);
 
         when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(repository.findAllByUserId(1L)).thenReturn(entityList);
@@ -155,7 +145,7 @@ public class ShoppingCartServiceTest {
     @Test
     void testAddItemToCartWithInventoryItemNotFound() {
         ShoppingCartItemRequestDTO requestDTO = new ShoppingCartItemRequestDTO(1L, 1);
-        User user = userMocker.mockUser(1);
+        User user = MockUser.mockEntity(1);
 
         when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -171,8 +161,8 @@ public class ShoppingCartServiceTest {
     @Test
     void testAddItemToCartWithItemAlreadyAdd() {
         ShoppingCartItemRequestDTO requestDTO = new ShoppingCartItemRequestDTO(1L, 1);
-        User user = userMocker.mockUser(1);
-        InventoryItem inventoryItem = inventoryItemMocker.mockEntity(1);
+        User user = MockUser.mockEntity(1);
+        InventoryItem inventoryItem = InventoryItemMocker.mockEntity(1);
 
         when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -190,9 +180,9 @@ public class ShoppingCartServiceTest {
     void testAddItemToCartWithSuccess() {
         Long idUser = 3L;
         ShoppingCartItemRequestDTO requestDTO = new ShoppingCartItemRequestDTO(2L, 5);
-        User user = userMocker.mockUser(idUser.intValue());
-        InventoryItem inventoryItem = inventoryItemMocker.mockEntity(requestDTO.idInventoryItem().intValue());
-        ShoppingCartItem item = mocker.mockEntity(9L, user, inventoryItem, requestDTO.quantity());
+        User user = MockUser.mockEntity(idUser.intValue());
+        InventoryItem inventoryItem = InventoryItemMocker.mockEntity(requestDTO.idInventoryItem().intValue());
+        ShoppingCartItem item = ShoppingCartMocker.mockEntity(9L, user, inventoryItem, requestDTO.quantity());
         
         when(securityContextManager.checkSameUserOrAdmin(idUser)).thenReturn(Boolean.TRUE);
         when(userRepository.findById(idUser)).thenReturn(Optional.of(user));
@@ -262,7 +252,7 @@ public class ShoppingCartServiceTest {
     @Test
     void testUpdateItemInCartWithSuccess() {
         ShoppingCartItemRequestDTO requestDTO = new ShoppingCartItemRequestDTO(2L, 5);
-        ShoppingCartItem item = mocker.mockEntity(2);
+        ShoppingCartItem item = ShoppingCartMocker.mockEntity(2);
 
         when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(repository.findByUserIdAndItemId(1L, 2L)).thenReturn(Optional.of(item));
@@ -314,7 +304,7 @@ public class ShoppingCartServiceTest {
 
     @Test
     void testRemoveItemFromCartWithSuccess() {
-        ShoppingCartItem item = mocker.mockEntity(1);
+        ShoppingCartItem item = ShoppingCartMocker.mockEntity(1);
 
         when(securityContextManager.checkSameUserOrAdmin(1)).thenReturn(Boolean.TRUE);
         when(repository.findByUserIdAndItemId(1L, 2L)).thenReturn(Optional.of(item));

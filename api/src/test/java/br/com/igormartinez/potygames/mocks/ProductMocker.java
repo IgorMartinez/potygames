@@ -12,45 +12,39 @@ import br.com.igormartinez.potygames.data.request.ProductUpdateDTO;
 import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.models.Product;
 
-public class MockProduct {
-
-    private MockProductType mockProductType;
-
-    public MockProduct(MockProductType mockProductType) {
-        this.mockProductType = mockProductType;
-    }
+public class ProductMocker {
     
-    public Product mockEntity(int number) {
+    public static Product mockEntity(int number) {
         Product product = new Product();
         product.setId(Long.valueOf(number));
-        product.setType(mockProductType.mockEntity(number));
+        product.setType(ProductTypeMocker.mockEntity(number));
         product.setName("Product name " + number);
         product.setDescription("Product description " + number);
 
         return product;
     }
 
-    public Product mockEntity(int number, ProductCreateDTO productDTO) {
+    public static Product mockEntity(int number, ProductCreateDTO productDTO) {
         Product product = new Product();
         product.setId(Long.valueOf(number));
-        product.setType(mockProductType.mockEntity(productDTO.idProductType().intValue()));
+        product.setType(ProductTypeMocker.mockEntity(productDTO.idProductType().intValue()));
         product.setName(productDTO.name());
         product.setDescription(productDTO.description());
 
         return product;
     }
 
-    public Product mockEntity(ProductUpdateDTO productDTO) {
+    public static Product mockEntity(ProductUpdateDTO productDTO) {
         Product product = new Product();
         product.setId(productDTO.id());
-        product.setType(mockProductType.mockEntity(productDTO.idProductType().intValue()));
+        product.setType(ProductTypeMocker.mockEntity(productDTO.idProductType().intValue()));
         product.setName(productDTO.name());
         product.setDescription(productDTO.description());
 
         return product;
     }
 
-    public List<Product> mockEntityList(int number) {
+    public static List<Product> mockEntityList(int number) {
         List<Product> list = new ArrayList<>();
         for (int i=1; i<=number; i++) {
             list.add(mockEntity(i));
@@ -58,7 +52,7 @@ public class MockProduct {
         return list;
     }
 
-    public List<Product> mockEntityList(int startNumber, int endNumber) {
+    public static List<Product> mockEntityList(int startNumber, int endNumber) {
         List<Product> list = new ArrayList<>();
         for (int i=startNumber; i<=endNumber; i++) {
             list.add(mockEntity(i));
@@ -66,7 +60,7 @@ public class MockProduct {
         return list;
     }
 
-    public ProductDTO mockDTO(int number) {
+    public static ProductDTO mockDTO(int number) {
         return new ProductDTO(
             Long.valueOf(number), 
             Long.valueOf(number), 
@@ -74,14 +68,14 @@ public class MockProduct {
             "Product description " + number);
     }
 
-    public ProductCreateDTO mockCreateDTO(int number) {
+    public static ProductCreateDTO mockCreateDTO(int number) {
         return new ProductCreateDTO(
             Long.valueOf(number), 
             "Product name " + number, 
             "Product description " + number);
     }
 
-    public ProductUpdateDTO mockUpdateDTO(int number) {
+    public static ProductUpdateDTO mockUpdateDTO(int number) {
         return new ProductUpdateDTO(
             Long.valueOf(number), 
             Long.valueOf(number), 
@@ -90,7 +84,7 @@ public class MockProduct {
 
     }
 
-    public List<ProductDTO> mockDTOList(int number) {
+    public static List<ProductDTO> mockDTOList(int number) {
         List<ProductDTO> list = new ArrayList<>();
         for (int i=1; i<=number; i++) {
             list.add(mockDTO(i));
@@ -98,7 +92,7 @@ public class MockProduct {
         return list;
     }
 
-    public Page<Product> mockProductPage(int totalElements, Pageable pageable) {
+    public static Page<Product> mockProductPage(int totalElements, Pageable pageable) {
         int sizePage = pageable.getPageSize();
         int numberPage = pageable.getPageNumber();
 

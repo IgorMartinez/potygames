@@ -29,7 +29,7 @@ import br.com.igormartinez.potygames.exceptions.RequestValidationException;
 import br.com.igormartinez.potygames.exceptions.ResourceNotFoundException;
 import br.com.igormartinez.potygames.exceptions.UserUnauthorizedException;
 import br.com.igormartinez.potygames.mappers.ProductTypeToProductTypeDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockProductType;
+import br.com.igormartinez.potygames.mocks.ProductTypeMocker;
 import br.com.igormartinez.potygames.models.ProductType;
 import br.com.igormartinez.potygames.repositories.ProductRepository;
 import br.com.igormartinez.potygames.repositories.ProductTypeRepository;
@@ -41,7 +41,6 @@ import br.com.igormartinez.potygames.services.ProductTypeService;
 public class ProductTypeServiceTest {
 
     private ProductTypeService service;
-    private MockProductType productTypeMocker;
 
     @Mock
     private ProductRepository productRepository;
@@ -54,8 +53,6 @@ public class ProductTypeServiceTest {
 
     @BeforeEach
     void setup() {
-        productTypeMocker = new MockProductType();
-
         service = new ProductTypeService(
             productTypeRepository, 
             productRepository, 
@@ -65,7 +62,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testFindAllWithProductTypes() {
-        List<ProductType> list = productTypeMocker.mockEntityList(10);
+        List<ProductType> list = ProductTypeMocker.mockEntityList(10);
 
         when(productTypeRepository.findAll()).thenReturn(list);
 
@@ -91,7 +88,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testFindAllWithoutProductTypes() {
-        List<ProductType> list = productTypeMocker.mockEntityList(0);
+        List<ProductType> list = ProductTypeMocker.mockEntityList(0);
 
         when(productTypeRepository.findAll()).thenReturn(list);
 
@@ -129,7 +126,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testFindByIdWithProductFound() {
-        ProductType productType = productTypeMocker.mockEntity(1);
+        ProductType productType = ProductTypeMocker.mockEntity(1);
 
         when(productTypeRepository.findById(1L)).thenReturn(Optional.of(productType));
 
@@ -169,7 +166,7 @@ public class ProductTypeServiceTest {
     void testCreateWithPermission() {
         ProductTypeCreateDTO productTypeDTO 
             = new ProductTypeCreateDTO("keyword","Some description");
-        ProductType productType = productTypeMocker.mockEntity(1, productTypeDTO);
+        ProductType productType = ProductTypeMocker.mockEntity(1, productTypeDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productTypeRepository.save(any(ProductType.class))).thenReturn(productType);
@@ -191,7 +188,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithParamIdNull() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(null, typeDTO);
@@ -202,7 +199,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithParamIdZero() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(0L, typeDTO);
@@ -213,7 +210,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithParamIdNegative() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(-13L, typeDTO);
@@ -224,7 +221,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithMismatchParamIdAndDTOId() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         Exception output = assertThrows(RequestValidationException.class, () -> {
             service.update(55L, typeDTO);
@@ -235,7 +232,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithoutPermission() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.FALSE);
 
@@ -250,8 +247,8 @@ public class ProductTypeServiceTest {
     void testUpdateWithPermission() {
         ProductTypeUpdateDTO typeDTO 
             = new ProductTypeUpdateDTO(1L, "keyword-updated", "Some description updated");
-        ProductType productType = productTypeMocker.mockEntity(1);
-        ProductType preparedProductType = productTypeMocker.mockEntity(typeDTO);
+        ProductType productType = ProductTypeMocker.mockEntity(1);
+        ProductType preparedProductType = ProductTypeMocker.mockEntity(typeDTO);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productTypeRepository.findById(1L)).thenReturn(Optional.of(productType));
@@ -274,7 +271,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testUpdateWithProductTypeNotFound() {
-        ProductTypeUpdateDTO typeDTO = productTypeMocker.mockUpdateDTO(1);
+        ProductTypeUpdateDTO typeDTO = ProductTypeMocker.mockUpdateDTO(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productTypeRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
@@ -326,7 +323,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testDeleteWithPermission() {
-        ProductType product = productTypeMocker.mockEntity(1);
+        ProductType product = ProductTypeMocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productTypeRepository.findById(1L)).thenReturn(Optional.of(product));
@@ -349,7 +346,7 @@ public class ProductTypeServiceTest {
 
     @Test
     void testDeleteWithAssociatedProducts() {
-        ProductType productType = productTypeMocker.mockEntity(1);
+        ProductType productType = ProductTypeMocker.mockEntity(1);
 
         when(securityContextManager.checkAdmin()).thenReturn(Boolean.TRUE);
         when(productTypeRepository.findById(1L)).thenReturn(Optional.of(productType));

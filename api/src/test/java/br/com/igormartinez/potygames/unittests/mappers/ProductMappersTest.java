@@ -10,31 +10,25 @@ import br.com.igormartinez.potygames.data.response.ProductDTO;
 import br.com.igormartinez.potygames.data.response.ProductTypeDTO;
 import br.com.igormartinez.potygames.mappers.ProductToProductDTOMapper;
 import br.com.igormartinez.potygames.mappers.ProductTypeToProductTypeDTOMapper;
-import br.com.igormartinez.potygames.mocks.MockProduct;
-import br.com.igormartinez.potygames.mocks.MockProductType;
+import br.com.igormartinez.potygames.mocks.ProductMocker;
+import br.com.igormartinez.potygames.mocks.ProductTypeMocker;
 import br.com.igormartinez.potygames.models.Product;
 import br.com.igormartinez.potygames.models.ProductType;
 
 public class ProductMappersTest {
 
-    private MockProduct productMocker;
     private ProductToProductDTOMapper productDTOMapper;
-
-    private MockProductType productTypeMocker;
     private ProductTypeToProductTypeDTOMapper productTypeDTOMapper;
 
     @BeforeEach
     public void setup() {
-        productTypeMocker = new MockProductType();
         productTypeDTOMapper = new ProductTypeToProductTypeDTOMapper();
-
-        productMocker = new MockProduct(productTypeMocker);
         productDTOMapper = new ProductToProductDTOMapper();
     }
 
     @Test
     public void testProductDTOMapper() {
-        Product product = productMocker.mockEntity(1);
+        Product product = ProductMocker.mockEntity(1);
         
         ProductDTO productDTO = productDTOMapper.apply(product);
         
@@ -47,7 +41,7 @@ public class ProductMappersTest {
 
     @Test
     public void testProductTypeDTOMapper() {
-        ProductType productType = productTypeMocker.mockEntity(1);
+        ProductType productType = ProductTypeMocker.mockEntity(1);
 
         ProductTypeDTO productTypeDTO = productTypeDTOMapper.apply(productType);
 
