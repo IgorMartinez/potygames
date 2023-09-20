@@ -24,7 +24,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.data.security.Token;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 

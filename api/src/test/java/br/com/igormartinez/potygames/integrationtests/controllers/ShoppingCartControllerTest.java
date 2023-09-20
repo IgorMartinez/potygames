@@ -22,7 +22,7 @@ import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
 import br.com.igormartinez.potygames.data.response.APIErrorResponse;
 import br.com.igormartinez.potygames.data.response.ShoppingCartItemResponseDTO;
 import br.com.igormartinez.potygames.data.response.UserDTO;
-import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.data.security.Token;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;

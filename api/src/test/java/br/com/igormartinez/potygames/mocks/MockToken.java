@@ -3,7 +3,7 @@ package br.com.igormartinez.potygames.mocks;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.data.security.Token;
 
 public class MockToken {
 

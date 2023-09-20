@@ -29,7 +29,7 @@ import br.com.igormartinez.potygames.data.response.InventoryItemDTO;
 import br.com.igormartinez.potygames.data.response.OrderDetailResponseDTO;
 import br.com.igormartinez.potygames.data.response.OrderResponseDTO;
 import br.com.igormartinez.potygames.data.response.UserDTO;
-import br.com.igormartinez.potygames.data.security.v1.Token;
+import br.com.igormartinez.potygames.data.security.Token;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.igormartinez.potygames.mocks.OrderMocker;
 import io.restassured.builder.RequestSpecBuilder;

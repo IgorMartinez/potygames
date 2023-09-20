@@ -1,4 +1,4 @@
-package br.com.igormartinez.potygames.data.security.v1;
+package br.com.igormartinez.potygames.data.security;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
