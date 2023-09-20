@@ -94,17 +94,18 @@ public class OrderService {
             if (item.getQuantity() < itemDTO.quantity())
                 throw new ResourceInsufficientException("The order exceeded the quantity in inventory.");
 
-            item.setQuantity(item.getQuantity() - itemDTO.quantity());
-
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setItem(item);
             orderItem.setQuantity(itemDTO.quantity());
             orderItem.setUnitPrice(item.getPrice());
-
+            
+            // Save the avaliable quantity of the item
+            // If any error occur, a rollback will happen in item's quantity
+            item.setQuantity(item.getQuantity() - itemDTO.quantity());
             inventoryItemRepository.save(item);
 
-            totalPrice = totalPrice.add(item.getPrice());
+            totalPrice = totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(itemDTO.quantity())));
             orderItems.add(orderItem);
         }
 
@@ -145,6 +146,8 @@ public class OrderService {
             throw new RequestValidationException("The order is already cancelled.");
 
         for (OrderItem orderItem : order.getOrderItems()) {
+            // Save the avaliable quantity of the item
+            // If any error occur, a rollback will happen in item's quantity
             InventoryItem item = orderItem.getItem();
             item.setQuantity(item.getQuantity() + orderItem.getQuantity());
             inventoryItemRepository.save(item);
