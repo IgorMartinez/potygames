@@ -5,4 +5,7 @@ VALUES
 (2,'Structure Deck: Legend of the Crystal Beasts','Each Structure Deck: Legend of the Crystal Beasts contains 46 cards in total (40 cards in the Main Deck and 6 cards in the Extra Deck), 3 Special Tokens, and a double-sided Playmat/Dueling Guide.'),
 (3,'Cyberstorm Access', 'Booster Box containing 24 booster packs of 9 cards each.'),
 (3,'Dawn of Majesty', 'Booster Box containing 24 booster packs of 9 cards each.'),
-(3,'Battle of Legends: Armagedon', 'Booster Box containing 24 booster packs of 5 cards each.');
+(3,'Battle of Legends: Armagedon', 'Booster Box containing 24 booster packs of 5 cards each.'),
+(4, 'Orange Cassidy - I Do Not Have A Catchphrase', 'This is the perfect shirt for fans of wrestler Orange Cassidy who appreciate his unique and laid-back style. With a touch of humor, the shirt prominently features the phrase ''I Do Not Have A Catchphrase'' reflecting Orange Cassidy''s irreverent personality.'),
+(4, 'Hikaru Shida - Shining Samurai Anime', 'Step into the world of professional wrestling with style and elegance with the ''Shining Samurai Anime'' shirt by Hikaru Shida. Inspired by her samurai warrior persona, this shirt captures Shida''s unique essence in the world of wrestling.'),
+(4, 'Samoa Joe - King of Television', 'Show your respect for the iconic Samoa Joe with this ''King of Television'' shirt. This exclusive design celebrates Samoa Joe''s ability to dominate the wrestling ring and the television screen with his commanding presence.');
