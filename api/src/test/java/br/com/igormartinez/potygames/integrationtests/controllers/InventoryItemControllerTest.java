@@ -54,7 +54,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                     .getList("content", InventoryItemDTO.class);
 
         
-        assertEquals(2, output.size());
+        assertEquals(6, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -64,13 +64,21 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition1 = output.get(1);
-        assertEquals(2L, outputPosition1.id());
-        assertEquals(2L, outputPosition1.product());
-        assertEquals("HLXKCCTW7", outputPosition1.version());
-        assertEquals("Used", outputPosition1.condition());
-        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
-        assertEquals(1, outputPosition1.quantity());
+        InventoryItemDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals(7L, outputPosition2.product());
+        assertEquals("White", outputPosition2.version());
+        assertEquals("New", outputPosition2.condition());
+        assertEquals(0, outputPosition2.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(1, outputPosition2.quantity());
+
+        InventoryItemDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(9L, outputPosition5.product());
+        assertEquals("Black", outputPosition5.version());
+        assertEquals("New", outputPosition5.condition());
+        assertEquals(0, outputPosition5.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(2, outputPosition5.quantity());
     }
 
     @Test
@@ -274,7 +282,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", InventoryItemDTO.class);
 
-        assertEquals(2, output.size());
+        assertEquals(6, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -284,13 +292,21 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition1 = output.get(1);
-        assertEquals(2L, outputPosition1.id());
-        assertEquals(2L, outputPosition1.product());
-        assertEquals("HLXKCCTW7", outputPosition1.version());
-        assertEquals("Used", outputPosition1.condition());
-        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
-        assertEquals(1, outputPosition1.quantity());
+        InventoryItemDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals(7L, outputPosition2.product());
+        assertEquals("White", outputPosition2.version());
+        assertEquals("New", outputPosition2.condition());
+        assertEquals(0, outputPosition2.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(1, outputPosition2.quantity());
+
+        InventoryItemDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(9L, outputPosition5.product());
+        assertEquals("Black", outputPosition5.version());
+        assertEquals("New", outputPosition5.condition());
+        assertEquals(0, outputPosition5.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(2, outputPosition5.quantity());
     }
 
     @Test
@@ -726,7 +742,7 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
                                     .getList("content", InventoryItemDTO.class);
 
         
-        assertEquals(2, output.size());
+        assertEquals(6, output.size());
 
         InventoryItemDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -736,13 +752,21 @@ public class InventoryItemControllerTest extends AbstractIntegrationTest {
         assertEquals(0, outputPosition0.price().compareTo(new BigDecimal("190.65")));
         assertEquals(3, outputPosition0.quantity());
 
-        InventoryItemDTO outputPosition1 = output.get(1);
-        assertEquals(2L, outputPosition1.id());
-        assertEquals(2L, outputPosition1.product());
-        assertEquals("HLXKCCTW7", outputPosition1.version());
-        assertEquals("Used", outputPosition1.condition());
-        assertEquals(0, outputPosition1.price().compareTo(new BigDecimal("100")));
-        assertEquals(1, outputPosition1.quantity());
+        InventoryItemDTO outputPosition2 = output.get(2);
+        assertEquals(3L, outputPosition2.id());
+        assertEquals(7L, outputPosition2.product());
+        assertEquals("White", outputPosition2.version());
+        assertEquals("New", outputPosition2.condition());
+        assertEquals(0, outputPosition2.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(1, outputPosition2.quantity());
+
+        InventoryItemDTO outputPosition5 = output.get(5);
+        assertEquals(6L, outputPosition5.id());
+        assertEquals(9L, outputPosition5.product());
+        assertEquals("Black", outputPosition5.version());
+        assertEquals("New", outputPosition5.condition());
+        assertEquals(0, outputPosition5.price().compareTo(new BigDecimal("29.99")));
+        assertEquals(2, outputPosition5.quantity());
     }
 
     @Test

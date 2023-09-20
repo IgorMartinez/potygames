@@ -34,7 +34,7 @@ public class ShoppingCartControllerTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
 
     private static Long CUSTOMER_ID; // signupAndAuthenticationAsCustomer()
-    private static String CUSTOMER_EMAIL = "useraddresscontroler@customer.test";
+    private static String CUSTOMER_EMAIL = "shoppingcartcontroller@customer.test";
 	private static String CUSTOMER_PASSWORD = "securedpassword";
 
     @Test

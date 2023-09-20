@@ -55,7 +55,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertEquals(6, output.size());
+        assertEquals(9, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -125,7 +125,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertEquals(6, output.size());
+        assertEquals(9, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -160,19 +160,19 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertEquals(6, output.size());
+        assertEquals(9, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
-        assertEquals(6, outputPosition0.id());
-        assertEquals(3L, outputPosition0.idProductType());
-        assertEquals("Battle of Legends: Armagedon", outputPosition0.name());
-        assertTrue(outputPosition0.description().startsWith("Booster Box containing"));
+        assertEquals(9, outputPosition0.id());
+        assertEquals(4L, outputPosition0.idProductType());
+        assertEquals("Samoa Joe - King of Television", outputPosition0.name());
+        assertTrue(outputPosition0.description().startsWith("Show your respect for the iconic Samoa Joe"));
 
         ProductDTO outputPosition5 = output.get(5);
-        assertEquals(1L, outputPosition5.id());
-        assertEquals(1L, outputPosition5.idProductType());
-        assertEquals("Peaky Blinders: Birmingham Domain", outputPosition5.name());
-        assertTrue(outputPosition5.description().startsWith("Completely based on the famous TV series"));
+        assertEquals(4L, outputPosition5.id());
+        assertEquals(3L, outputPosition5.idProductType());
+        assertEquals("Cyberstorm Access", outputPosition5.name());
+        assertTrue(outputPosition5.description().startsWith("Booster Box containing 24 booster"));
 
     }
 
@@ -375,7 +375,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertEquals(6, output.size());
+        assertEquals(9, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
@@ -779,7 +779,7 @@ public class ProductControllerTest extends AbstractIntegrationTest {
 								.jsonPath()
                                     .getList("content", ProductDTO.class);
 
-        assertEquals(6, output.size());
+        assertEquals(9, output.size());
 
         ProductDTO outputPosition0 = output.get(0);
         assertEquals(1L, outputPosition0.id());
