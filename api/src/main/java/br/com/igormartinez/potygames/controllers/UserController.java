@@ -7,14 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.potygames.data.request.UserPersonalInformationDTO;
-import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
 import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,20 +26,6 @@ public class UserController {
 
     @Autowired
     UserService service;
-
-    @Operation(
-        summary = "Signup a user",
-        responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
-            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-            @ApiResponse(description = "Conflict", responseCode = "409", content = @Content),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-        }
-    )
-    @PostMapping("/signup")
-    public UserDTO signup(@RequestBody @Valid UserRegistrationDTO registrationDTO) {
-        return service.signup(registrationDTO);
-    }
     
     @Operation(
         summary = "Find all user",

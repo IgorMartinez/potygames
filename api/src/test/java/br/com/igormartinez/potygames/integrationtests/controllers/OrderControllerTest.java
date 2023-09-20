@@ -164,7 +164,7 @@ public class OrderControllerTest extends AbstractIntegrationTest {
 
     @Test
     @Order(99)
-    void signupAndAuthenticationAsAuthenticated() {
+    void signupAndAuthentication() {
 		UserRegistrationDTO user = 
             new UserRegistrationDTO(
                 CUSTOMER_EMAIL, 
@@ -176,7 +176,7 @@ public class OrderControllerTest extends AbstractIntegrationTest {
 
         CUSTOMER_ID = 
             given()
-                .basePath("/api/v1/user/signup")
+                .basePath("/auth/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)

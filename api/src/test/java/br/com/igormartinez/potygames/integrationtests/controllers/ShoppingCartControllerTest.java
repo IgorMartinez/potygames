@@ -153,7 +153,7 @@ public class ShoppingCartControllerTest extends AbstractIntegrationTest {
 
         CUSTOMER_ID = 
             given()
-                .basePath("/api/v1/user/signup")
+                .basePath("/auth/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)

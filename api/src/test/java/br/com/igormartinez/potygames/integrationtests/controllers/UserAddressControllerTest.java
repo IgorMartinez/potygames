@@ -12,8 +12,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
@@ -28,12 +30,10 @@ import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.filter.log.LogDetail;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
 public class UserAddressControllerTest extends AbstractIntegrationTest {
     
@@ -44,14 +44,21 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 	private static Long CUSTOMER_ID; // defined in signupAndAuthentication() 
 	private static Long CUSTOMER_ADDRESS_ID; // defined in testCreateWithSameUser()
 
+	@BeforeAll
+	void setup() {
+		specification = new RequestSpecBuilder()
+			.setBasePath("/api/v1/user")
+			.setPort(TestConfigs.SERVER_PORT)
+			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
+			.build();
+	}
+
 	@Test
     @Order(0)
     void testFindAllAsUnauthenticated() {
         APIErrorResponse output = 
             given()
-				.basePath("/api/v1/user")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.spec(specification)
                     .pathParam("user-id", 1)
 				.when()
 				    .get("/{user-id}/address")
@@ -74,9 +81,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
     void testFindByIdAsUnauthenticated() {
         APIErrorResponse output = 
             given()
-				.basePath("/api/v1/user")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.spec(specification)
                     .pathParam("user-id", 1)
                     .pathParam("address-id", 1)
 				.when()
@@ -107,9 +112,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 
         APIErrorResponse output = 
             given()
-				.basePath("/api/v1/user")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.spec(specification)
                     .pathParam("user-id", 1)
 					.body(addressDTO)
 				.when()
@@ -140,9 +143,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 
         APIErrorResponse output = 
             given()
-				.basePath("/api/v1/user")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.spec(specification)
                     .pathParam("user-id", 1)
 					.pathParam("address-id", 1)
 					.body(addressDTO)
@@ -167,9 +168,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
     void testDeleteAsUnauthenticated() {
         APIErrorResponse output = 
             given()
-				.basePath("/api/v1/user")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.spec(specification)
                     .pathParam("user-id", 1)
 					.pathParam("address-id", 1)
 				.when()
@@ -202,7 +201,7 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 
         CUSTOMER_ID = 
             given()
-                .basePath("/api/v1/user/signup")
+                .basePath("/auth/signup")
                     .port(TestConfigs.SERVER_PORT)
                     .contentType(TestConfigs.CONTENT_TYPE_JSON)
                     .body(user)
@@ -240,8 +239,6 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 
@@ -1090,8 +1087,6 @@ public class UserAddressControllerTest extends AbstractIntegrationTest {
 			.setBasePath("/api/v1/user")
 			.setPort(TestConfigs.SERVER_PORT)
 			.setContentType(TestConfigs.CONTENT_TYPE_JSON)
-			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
     }
 

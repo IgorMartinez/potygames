@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.potygames.data.request.AccountCredentials;
+import br.com.igormartinez.potygames.data.request.UserRegistrationDTO;
+import br.com.igormartinez.potygames.data.response.UserDTO;
 import br.com.igormartinez.potygames.data.security.v1.Token;
 import br.com.igormartinez.potygames.services.AuthService;
 
@@ -23,6 +25,20 @@ public class AuthController {
     
     @Autowired
     AuthService service;
+
+    @Operation(
+        summary = "Signup a user",
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+            @ApiResponse(description = "Conflict", responseCode = "409", content = @Content),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+        }
+    )
+    @PostMapping("/signup")
+    public UserDTO signup(@RequestBody @Valid UserRegistrationDTO registrationDTO) {
+        return service.signup(registrationDTO);
+    }
 
     @Operation(
         summary = "Authenticates a user and return a token",
